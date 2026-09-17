@@ -1328,3 +1328,159 @@ def test_facilities_record_says_the_library_page_is_a_photo_gallery() -> None:
     assert "gallery of library photographs" in record["body"]
     assert "no holdings, timings or capacity" in record["structured"]["library_page"]
     assert record["verified"] is True
+
+
+# --------------------------------------------------------------------------- #
+# transport: answer the mode the caller named
+# --------------------------------------------------------------------------- #
+
+TRANSPORT_STRUCTURED = {
+    "nearest_airport": "Aurangabad (Chh. Sambhajinagar) Airport, about 157 km from Dhule",
+    "by_air": "Aurangabad is the nearest airport at about 157 km by road.",
+    "by_rail": (
+        "Trains from New Delhi passing through Bhusawal: alight at Bhusawal "
+        "Railway Station and continue by road via Jalgaon to Dhule, about 125 km."
+    ),
+    "road_distances": ["Mumbai \u2014 330 km", "Pune \u2014 355 km", "Indore \u2014 225 km"],
+    "on_highway": "The campus is on the Mumbai Agra National Highway, behind the Gurudwara.",
+}
+
+
+def _transport_chunk() -> RetrievedChunk:
+    return _chunk(
+        text="NMIMS Global University, Dhule \u00b7 How to reach the Dhule campus",
+        title="How to reach the Dhule campus",
+        category="transport",
+        structured=dict(TRANSPORT_STRUCTURED),
+        verified=True,
+        chunk_id="transport:facts",
+        record_id="university-transport",
+    )
+
+
+def _ask_transport(question: str, language: str = "en-IN"):
+    return compose(_retrieval(question, _transport_chunk()),
+                   language=language, question=question)
+
+
+@pytest.mark.parametrize("question", [
+    "How do I reach the campus by train?",
+    "which is the nearest railway station",
+    "\u091F\u094D\u0930\u0947\u0928 \u0938\u0947 \u0915\u0948\u0938\u0947 \u092A\u0939\u0941\u0902\u091A\u0947\u0902?",
+    "\u0930\u0947\u0932\u094D\u0935\u0947\u0928\u0947 \u0915\u0938\u0947 \u092A\u094B\u0939\u094B\u091A\u093E\u0935\u0947?",
+])
+def test_train_questions_are_answered_with_the_rail_route(question: str) -> None:
+    """A rail question used to be answered with the airport and road distances."""
+    answer = _ask_transport(question)
+    assert answer.template == "transport_rail", answer.text
+    assert "Bhusawal" in answer.text, answer.text
+    assert "airport" not in answer.text.lower(), answer.text
+    assert "330 km" not in answer.text, answer.text
+
+
+@pytest.mark.parametrize("question", [
+    "How do I reach by flight?",
+    "which is the nearest airport",
+    "\u0935\u093F\u092E\u093E\u0928 \u0938\u0947 \u0915\u0948\u0938\u0947 \u0906\u090A\u0902?",
+])
+def test_flight_questions_are_answered_with_the_air_route(question: str) -> None:
+    answer = _ask_transport(question)
+    assert answer.template == "transport_air", answer.text
+    assert "Aurangabad" in answer.text, answer.text
+    assert "Bhusawal" not in answer.text, answer.text
+
+
+@pytest.mark.parametrize("question", [
+    "Can I come by bus?",
+    "how do I drive there",
+    "\u092C\u0938 \u0938\u0947 \u0915\u0948\u0938\u0947 \u092A\u0939\u0941\u0902\u091A\u0947\u0902?",
+])
+def test_road_questions_give_distances_not_the_airport(question: str) -> None:
+    answer = _ask_transport(question)
+    assert answer.template == "transport_road", answer.text
+    assert "330 km" in answer.text and "Mumbai Agra National Highway" in answer.text
+    assert "airport" not in answer.text.lower(), answer.text
+
+
+def test_a_general_how_to_reach_still_names_airport_and_distances() -> None:
+    answer = _ask_transport("How do I reach the campus?")
+    assert answer.template == "transport_summary", answer.text
+    assert "Aurangabad" in answer.text and "330 km" in answer.text
+    # The rail route still reaches the caller by SMS.
+    assert answer.followup and any("Bhusawal" in i for i in answer.followup["items"])
+
+
+def test_transport_frames_exist_in_every_language() -> None:
+    for language in FRAMES:
+        for key in ("transport_rail", "transport_air", "transport_road"):
+            assert key in FRAMES[language], (language, key)
+    # The rail/air frames must expose {detail}; road must expose {distances}.
+    for language, frames in FRAMES.items():
+        assert "{detail}" in frames["transport_rail"], language
+        assert "{detail}" in frames["transport_air"], language
+        assert "{distances}" in frames["transport_road"], language
+
+
+@pytest.mark.parametrize("question", [
+    "\u0917\u093E\u0921\u0940\u0928\u0947 \u0915\u0938\u0947 \u092F\u093E\u0935\u0947?",
+    "\u0930\u0938\u094D\u0924\u094D\u092F\u093E\u0928\u0947 \u0915\u0938\u0947 \u092F\u093E\u0935\u0947?",
+    "\u092C\u0938\u0928\u0947 \u0915\u0938\u0947 \u092F\u093E\u0935\u0947?",
+])
+def test_marathi_road_questions_use_the_road_route(question: str) -> None:
+    """Marathi spells car/road with a short a, which the Hindi pattern missed."""
+    answer = _ask_transport(question, "mr-IN")
+    assert answer.template == "transport_road", answer.text
+    assert "330 km" in answer.text, answer.text
+
+
+# --------------------------------------------------------------------------- #
+# a bare degree name must not be answered as one niche variant
+# --------------------------------------------------------------------------- #
+
+def test_bare_degree_fee_question_names_the_degree_the_caller_said() -> None:
+    """'B.Tech' retrieved B.Tech (Cosmetic Technology), a pharmacy-school variant.
+
+    Seven other B.Tech records exist and no fee is published for any of them, so
+    naming the variant answered a question nobody asked.
+    """
+    from app.ai.templates import _caller_named_only_the_degree
+
+    assert _caller_named_only_the_degree(
+        "What is the fee for B.Tech?", "B.Tech (Cosmetic Technology)") == "B.Tech"
+    assert _caller_named_only_the_degree(
+        "B.Tech fee kitni hai?", "B.Tech (Cosmetic Technology)") == "B.Tech"
+    assert _caller_named_only_the_degree(
+        "What is the fee for B.Pharm?", "B.Pharm + MBA (Pharma Tech)") == "B.Pharm"
+
+
+def test_a_specific_programme_question_keeps_the_record_title() -> None:
+    from app.ai.templates import _caller_named_only_the_degree
+
+    assert _caller_named_only_the_degree(
+        "What is the fee for B.Tech Computer Engineering?",
+        "B.Tech Computer Engineering") is None
+    assert _caller_named_only_the_degree(
+        "fee for B.Tech Cosmetic Technology",
+        "B.Tech (Cosmetic Technology)") is None
+    # No degree named at all: nothing to narrow.
+    assert _caller_named_only_the_degree("what is the fee", "B.Tech (Cosmetic Technology)") is None
+
+
+def test_fee_answer_speaks_the_bare_degree_not_the_variant() -> None:
+    chunk = _chunk(
+        text="NMIMS Global University, Dhule \u00b7 B.Tech (Cosmetic Technology)",
+        title="B.Tech (Cosmetic Technology)",
+        category="course",
+        structured={"programme": "B.Tech (Cosmetic Technology)", "duration_years": 4},
+        verified=True,
+        chunk_id="cosmetic:facts",
+        record_id="course-btech-cosmetic-technology",
+    )
+    answer = compose(_retrieval("What is the fee for B.Tech?", chunk),
+                     language="en-IN", question="What is the fee for B.Tech?")
+    assert answer.template == "fees_not_recorded", answer.text
+    assert "Cosmetic" not in answer.text, answer.text
+    assert "B.Tech" in answer.text
+    assert answer.needs_escalation is True and answer.escalation_reason == "fee_not_in_kb"
+    # No number is ever invented for a fee that is not published.
+    assert not re.search(r"\d{3,}", answer.text), answer.text

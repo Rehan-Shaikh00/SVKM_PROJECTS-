@@ -233,6 +233,19 @@ _PATTERNS: dict[str, tuple[tuple[str, ...], float]] = {
         (r"कैसे पहुंचें|कैसे पहुँचें|कैसै पहूँच", 1.5),
         (r"कसे पोहोचावे|कसं पोहोचावं|कसे जावे", 1.6), (r"वाहतूक", 1.4),
         (r"रेल्वे|स्टेशन", 1.1), (r"विमानतळ", 1.2), (r"पत्ता", 1.0),
+        # A caller who names a mode of travel is asking how to reach the campus,
+        # even without the word "reach": "how do I drive there", "विमान से कैसे
+        # आऊं?". Without these the question fell through to the generic branch and
+        # the caller was read the record's header line instead of the route.
+        (r"\btrains?\b|\brailways?\b|\bflights?\b|\bplanes?\b|\bdriv\w*\b|\btaxi\b|\bcab\b", 1.4),
+        (r"\bby (air|road|rail|bus|train|car)\b|\bcars?\b", 1.3),
+        (r"विमान|हवाई अड्डा|फ्लाइट|ट्रेन|रेलगाडी|रेलवे|गाड़ी से|सड़क मार्ग", 1.3),
+        # Marathi asks "कसे यावे?" (how to come) as often as "कसे पोहोचावे?" (how to
+        # reach), and names the mode in its inflected form: "गाडीने", "बसने",
+        # "रेल्वेने". Without these the question never reached the transport branch,
+        # so the caller was read the record's header line instead of the route.
+        (r"कसे यावे|कसं यावं|कसे येऊ|कसे पोहोचाल", 1.6),
+        (r"गाडीने|रस्त्याने|बसने|एसटीने|विमानाने|रेल्वेने|ट्रेनने", 1.5),
     ),
     "loan_payment": (
         (r"\bloan\b|\beducation loan\b|\bpayment\b|\bpay the fee\b|\bupi\b|\bneft\b", 1.2),

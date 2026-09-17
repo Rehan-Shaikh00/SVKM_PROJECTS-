@@ -177,9 +177,20 @@
   category: transport
   subcategory: reachability
   title: "How to reach the Dhule campus"
+  # Mode-of-travel phrasings, so a caller who says only "by train" or "how do I
+  # drive there" still reaches this record. Kept multi-word where possible: a bare
+  # generic alias becomes a token-group entry and can hijack neighbouring records.
   aliases: ["how to reach", "directions", "nearest airport", "nearest station",
             "distance from Mumbai", "कसे पोहोचावे", "वाहतूक", "विमानतळ",
-            "स्टेशन", "कैसे पहुंचें", "दूरी"]
+            "स्टेशन", "कैसे पहुंचें", "दूरी",
+            "by train", "by rail", "railway route", "nearest railway station",
+            "by flight", "by air", "nearest airport to dhule",
+            "by road", "by bus", "by car", "driving directions", "how do i drive",
+            "self drive route", "taxi or cab to campus",
+            "ट्रेन से कैसे आएं", "रेलवे स्टेशन", "विमान से कैसे आएं",
+            "बस से कैसे आएं", "गाड़ी से कैसे आएं", "सड़क मार्ग",
+            "रेल्वेने कसे यावे", "विमानाने कसे यावे", "बसने कसे यावे",
+            "गाडीने कसे यावे", "रस्त्याने कसे यावे"]
   title_localized:
     hi-IN: "धुले कैंपस कैसे पहुंचें"
     mr-IN: "धुळे कॅम्पसला कसे पोहोचावे"

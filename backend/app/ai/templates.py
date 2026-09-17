@@ -79,6 +79,9 @@ FRAMES: dict[str, dict[str, str]] = {
         "contact_email": "The email is {email}.",
         "documents": "You will need {items}.",
         "facilities": "The campus has {items}.",
+        "transport_rail": "{detail}",
+        "transport_air": "{detail}",
+        "transport_road": "By road from Dhule it is {distances}.",
         "transport": "{summary}",
         "catalog": "We offer {items}, and many more programmes.",
         "comparison": "Comparing the two: {left} is {left_fee}, and {right} is {right_fee}.",
@@ -127,6 +130,9 @@ FRAMES: dict[str, dict[str, str]] = {
         "contact_email": "ईमेल है {email}।",
         "documents": "आपको {items} चाहिए होंगे।",
         "facilities": "कैंपस में {items} हैं।",
+        "transport_rail": "ट्रेन से यात्रा: {detail}",
+        "transport_air": "हवाई यात्रा: {detail}",
+        "transport_road": "धुले से सड़क मार्ग से दूरी है {distances}।",
         "transport": "{summary}",
         "catalog": "हमारे पास {items} और भी कई कोर्स हैं।",
         "comparison": "दोनों की तुलना में: {left} की फीस {left_fee} है, और {right} की {right_fee}।",
@@ -175,6 +181,9 @@ FRAMES: dict[str, dict[str, str]] = {
         "contact_email": "ईमेल आहे {email}.",
         "documents": "तुम्हाला {items} आवश्यक असतील.",
         "facilities": "कॅम्पसमध्ये {items} आहेत.",
+        "transport_rail": "रेल्वेने प्रवास: {detail}",
+        "transport_air": "विमानाने प्रवास: {detail}",
+        "transport_road": "धुळ्यापासून रस्त्याने अंतरे आहेत {distances}.",
         "transport": "{summary}",
         "catalog": "आमच्याकडे {items} आणि अजून अनेक अभ्यासक्रम आहेत.",
         "comparison": "दोघांची तुलना करता: {left} चे शुल्क {left_fee} आहे, आणि {right} चे {right_fee}.",
@@ -223,6 +232,9 @@ FRAMES: dict[str, dict[str, str]] = {
         "contact_email": "ईमेल है {email}।",
         "documents": "थानै {items} चाइए पड़सी।",
         "facilities": "कैंपस में {items} है।",
+        "transport_rail": "ट्रेन सूं यात्रा: {detail}",
+        "transport_air": "हवाई यात्रा: {detail}",
+        "transport_road": "धुले सूं सड़क रास्ते दूरी है {distances}।",
         "transport": "{summary}",
         "catalog": "म्हाड़ै {items} अर भी ढेर कोर्स है।",
         "comparison": "दूवां री तुलना में: {left} री फीस {left_fee} है, अर {right} री {right_fee}।",
@@ -311,6 +323,87 @@ def _group_by_record(items: list[RetrievedChunk]) -> list[tuple[RetrievedChunk, 
             order.append(item.record_id)
         grouped[item.record_id].append(item)
     return [(grouped[rid][0], grouped[rid]) for rid in order]
+
+
+# A caller who asks "how do I reach the campus by train" must not be told about
+# the airport. The record publishes by_rail / by_air / road_distances separately,
+# so answer the mode the question actually names.
+_RAIL_RE = re.compile(
+    r"\btrains?\b|\brailways?\b|\brail\b|ट्रेन|रेलवे|रेल्वे|रेलगाडी|रेल",
+    re.IGNORECASE,
+)
+_AIR_RE = re.compile(
+    r"\bflights?\b|\bplanes?\b|\bairports?\b|\bair\b|\bfly\b|\bflying\b|विमान|हवाई|फ्लाइट|विमानतळ",
+    re.IGNORECASE,
+)
+_ROAD_RE = re.compile(
+    r"\bbus\b|\bbuses?\b|\bcars?\b|\bdriv\w*\b|\broad\b|\btaxi\b|\bcab\b"
+    # Hindi "गाड़ी/सड़क/रस्ता", Marathi "गाडी/रस्त्याने/एसटी" (the short-a forms the
+    # Hindi spellings do not cover).
+    r"|बस|गाड़ी|गाडी|सड़क|रस्ता|रस्त्याने|मार्ग|महामार्ग|एसटी",
+    re.IGNORECASE,
+)
+
+
+_BARE_DEGREE_RE = re.compile(
+    r"\b(b\.?tech|b\.?e|b\.?pharm|b\.?pharmacy|d\.?pharm|d\.?pharmacy|m\.?pharm"
+    r"|m\.?tech|mca|bba|bca|b\.?sc|m\.?sc|mba|ph\.?d)\b",
+    re.IGNORECASE,
+)
+# Words a fee question is made of, in the languages this assistant serves. They
+# carry no programme information, so they must not count as a specialisation.
+_QUESTION_FILLER = {
+    "what", "whats", "is", "are", "the", "a", "an", "for", "of", "to", "in", "at",
+    "fee", "fees", "cost", "charges", "charge", "total", "annual", "yearly",
+    "per", "year", "how", "much", "many", "kitna", "kitni", "kitne", "kya", "hai",
+    "hain", "ki", "ka", "ke", "kar", "karke", "dena", "batana", "bataye", "batao",
+    "please", "tell", "me", "i", "do", "you", "have", "and", "or", "with",
+    "किती", "आहे", "काय", "शुल्क", "फी", "किंमत", "सांगा", "वर्ष", "साठी",
+    "que", "quanto",
+}
+
+
+def _caller_named_only_the_degree(question: str, programme: str) -> str | None:
+    """The degree prefix to speak, when the caller named nothing more specific.
+
+    "What is the fee for B.Tech?" retrieved B.Tech (Cosmetic Technology), so the
+    caller was told "I do not have the confirmed fee for B.Tech (Cosmetic
+    Technology)" — a programme nobody asked about, when seven other B.Tech records
+    exist. Since no fee is published for any of them, the honest answer names the
+    degree the caller actually said. Returns None when the caller did name a
+    specialisation that the winning record matches.
+    """
+    match = _BARE_DEGREE_RE.search(question or "")
+    if not match:
+        return None
+    prefix = match.group(0)
+    prefix_core = prefix.lower().replace(".", "")
+    title = (programme or "").lower()
+    # Only narrow a *variant* title; a record titled exactly the prefix is already right.
+    if prefix_core not in title.replace(".", "") or title.strip() == prefix_core:
+        return None
+    title_words = set(re.findall(r"[a-z]{3,}", title)) - {prefix_core, "tech", "pharm"}
+    asked_words = {
+        w for w in re.findall(r"[a-z]{3,}", (question or "").lower())
+        if w not in _QUESTION_FILLER and w != prefix_core
+    }
+    # The caller used a word that belongs to this record's own name: they were
+    # specific, so keep the record's title.
+    if asked_words & title_words:
+        return None
+    return prefix
+
+
+def _transport_mode(text: str) -> str | None:
+    """The mode of travel a caller named, or None for a general 'how to reach'."""
+    sample = text or ""
+    if _RAIL_RE.search(sample):
+        return "rail"
+    if _AIR_RE.search(sample):
+        return "air"
+    if _ROAD_RE.search(sample):
+        return "road"
+    return None
 
 
 def _join(items: list[str], language: str) -> str:
@@ -616,7 +709,8 @@ def compose(
             # caller's own language and handing over beats reading English field
             # dumps — and beats inventing a number, which is the one thing this
             # assistant must never do on a live admissions line.
-            sentences.append(frames["fees_not_recorded"].format(programme=programme))
+            sentences.append(frames["fees_not_recorded"].format(
+                programme=_caller_named_only_the_degree(question, str(programme)) or programme))
             template_used = "fees_not_recorded"
             needs_escalation = True
             escalation_reason = "fee_not_in_kb"
@@ -1032,7 +1126,48 @@ def compose(
             template_used = "generic"
 
     elif intent.intent in {"facilities", "transport"}:
-        if intent.intent == "transport" and structured.get("nearest_airport") and structured.get("road_distances"):
+        transport_mode = _transport_mode(question) if intent.intent == "transport" else None
+        if intent.intent == "transport" and transport_mode == "rail" and structured.get("by_rail"):
+            sentences.append(frames["transport_rail"].format(detail=str(structured["by_rail"])))
+            template_used = "transport_rail"
+            rail_items = [str(structured["by_rail"])]
+            if structured.get("on_highway"):
+                rail_items.append(str(structured["on_highway"]))
+            if structured.get("nearest_airport"):
+                rail_items.append(f"Nearest airport: {structured['nearest_airport']}")
+            followup = {
+                "channel": "sms", "title": "Reaching the Dhule campus",
+                "items": rail_items[:6],
+            }
+        elif intent.intent == "transport" and transport_mode == "air" and structured.get("by_air"):
+            sentences.append(frames["transport_air"].format(detail=str(structured["by_air"])))
+            template_used = "transport_air"
+            air_items = [str(structured["by_air"])]
+            if structured.get("nearest_airport"):
+                air_items.append(f"Nearest airport: {structured['nearest_airport']}")
+            followup = {
+                "channel": "sms", "title": "Reaching the Dhule campus",
+                "items": air_items[:6],
+            }
+        elif intent.intent == "transport" and transport_mode == "road" and structured.get("road_distances"):
+            road = structured["road_distances"]
+            if isinstance(road, str):
+                road = [x.strip() for x in re.split(r"[;\n]", road) if x.strip()]
+            sentences.append(frames["transport_road"].format(
+                distances=_join([str(d) for d in road[:3]], language)))
+            if structured.get("on_highway"):
+                sentences.append(str(structured["on_highway"]))
+            template_used = "transport_road"
+            road_items = [str(d) for d in road]
+            if structured.get("on_highway"):
+                road_items.append(str(structured["on_highway"]))
+            if structured.get("nearest_airport"):
+                road_items.append(f"Nearest airport: {structured['nearest_airport']}")
+            followup = {
+                "channel": "sms", "title": "Reaching the Dhule campus",
+                "items": road_items[:6],
+            }
+        elif intent.intent == "transport" and structured.get("nearest_airport") and structured.get("road_distances"):
             # Verified travel data from the university's own "How to reach" section:
             # name the airport and a few road distances, then send the rest by SMS.
             distances = structured["road_distances"]

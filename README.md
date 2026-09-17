@@ -223,7 +223,7 @@ older misspelt `TWILIO_HELLINE_NUMBER` is still accepted as an alias.
 ## Development
 
 ```bash
-# backend tests (261 tests, ~7s, no DB/network/keys)
+# backend tests (279 tests, ~7s, no DB/network/keys)
 cd backend && ../.venv/bin/pytest -q
 
 # lint (ruff config in .ruff.toml; ignores are documented with reasons)
@@ -243,7 +243,7 @@ cd frontend && npm run build
 ## Known limitations (read before production)
 
 1. **Zero-key answer quality.** Without an LLM key the assistant answers through
-   deterministic templates over retrieved KB rows. 46 sentence frames exist per
+   deterministic templates over retrieved KB rows. 49 sentence frames exist per
    language for English, Hindi, Marathi and Rajasthani, and money, duration and
    seat counts are rendered natively in all four, so the *shape* of an answer is
    in the caller's language. What is not translated is the KB payload itself: the
