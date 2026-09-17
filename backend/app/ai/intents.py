@@ -104,6 +104,13 @@ _PATTERNS: dict[str, tuple[tuple[str, ...], float]] = {
         (r"शेवटची तारीख|अंतिम तारीख", 1.8), (r"मुदत", 1.4), (r"डेडलाइन", 1.3),
         (r"कधी", 0.9),
         (r"आवेदन की अंतिम", 1.4),
+        # Teaching-calendar questions: class start, term end exams, breaks. These
+        # are weighted above entrance_exam's bare "परीक्षा" so "परीक्षा कब होगी?"
+        # answers with dates rather than with the list of entrance tests.
+        (r"\bacademic calendar\b|\bsemester (start|begin|dates?)\b|\bterm end exam|\bexam (dates?|schedule)\b|\bwhen (do|does) (the )?(class|classes|semester|term)", 1.6),
+        (r"\bdiwali break\b|\bwinter vacation\b|\bsemester break\b|\bsports day\b|\bre-?exam\b", 1.3),
+        (r"क्लास कब|कक्षा कब|सेमेस्टर कब|टर्म एंड|परीक्षा कब|परीक्षाएं कब|परीक्षा की तारीख|छुट्टी कब|शैक्षणिक कैलेंडर|दिनदर्शिका", 1.7),
+        (r"वर्ग कधी|सेमेस्टर कधी|क्लास कधी|परीक्षा कधी|सुट्टी कधी|शैक्षणिक दिनदर्शिका|परीक्षेच्या तारखा|टर्म एंड परीक्षा", 1.8),
         # "Has the merit list come out?" and "which round is admission in?" are
         # timeline questions. Without these they fell to admission_process and the
         # caller was read the registration steps instead of the round status.
@@ -169,7 +176,11 @@ _PATTERNS: dict[str, tuple[tuple[str, ...], float]] = {
         (r"हॉस्टल", 1.4), (r"छात्रावास", 1.4), (r"कमरा", 0.8), (r"आवास", 1.0),
         # Marathi: "वसतिगृह", "हॉस्टेल" (long o), "राहण्याची सोय", "मेस".
         (r"वसतिगृह", 1.6), (r"हॉस्टेल", 1.5), (r"राहण्याची सोय", 1.4),
-        (r"मेस", 1.0), (r"खोली", 0.8),
+        # "मेस" must not match inside "सेमेस्टर" (semester): \b fails there because
+        # Devanagari matras are not \w, so guard on the Devanagari block itself and
+        # list the inflected forms a trailing guard would drop.
+        (r"(?<![\u0900-\u097F])मेस(?![\u0900-\u097F])|मेसच[ीं]|मेसमध्ये", 1.0),
+        (r"(?<![\u0900-\u097F])खोली", 0.8),
         # "हॉस्टल की सुविधा" also matches facilities ("सुविधा"), and facilities
         # used to win, sending a hostel question to the campus-facilities record.
         (r"हॉस्टल की सुविधा|हॉस्टेल ची सोय|वसतिगृह सुविधा|hostel ki suvidha", 2.2),

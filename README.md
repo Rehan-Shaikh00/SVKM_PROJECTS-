@@ -127,8 +127,11 @@ boundaries **without deleting conjunctions**.
 
 ### 6. Knowledge base = single source of truth
 `data/kb/*.yaml` (or CSV/JSON/Google Sheets) seeds the Dhule knowledge base —
-eight topic files covering the university, engineering, pharmacy, commerce and
-management, admissions, fees and scholarships, campus life, and placements/FAQs.
+nine topic files covering the university, engineering, pharmacy, commerce and
+management, admissions, the academic calendar, fees and scholarships, campus
+life, and placements/FAQs. 54 records, all sourced from the university's own
+website, including the AY 2026-27 academic calendar transcribed from the PDF
+signed by the Vice-Chancellor.
 Staff update it through the dashboard: create/edit/delete records,
 mark them **verified**, bulk-verify, import a CSV (with dry-run preview), sync a
 Google Sheet, preview chunking, reindex, export. **No code change, no redeploy**
@@ -220,7 +223,7 @@ older misspelt `TWILIO_HELLINE_NUMBER` is still accepted as an alias.
 ## Development
 
 ```bash
-# backend tests (244 tests, ~4.8s, no DB/network/keys)
+# backend tests (261 tests, ~7s, no DB/network/keys)
 cd backend && ../.venv/bin/pytest -q
 
 # lint (ruff config in .ruff.toml; ignores are documented with reasons)

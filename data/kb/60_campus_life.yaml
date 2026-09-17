@@ -85,21 +85,22 @@
       - "academic blocks for all three schools"
     published_detail: false
     virtual_tour: "The homepage offers a See Virtual Tour link with video walkthroughs of the campus."
+    library_page: "The Facilities link opens a gallery of library photographs only; no holdings, timings or capacity are published."
     website: "https://www.svkmnmimsgu.ac.in"
     assistant_instruction: "Say what the website does publish — a library section, a virtual tour and the three schools on one campus — and do not list laboratories, sports facilities, a canteen, a medical room or transport as confirmed. Offer to send the virtual tour link and the school numbers by SMS, and connect the caller for specifics."
   body: |
     The campus is at Survey Number four ninety nine behind the Gurudwara on the
     Mumbai Agra National Highway at Dhule, and holds all three schools of the
-    university: Commerce, Technology Management and Engineering, and Pharmacy and
-    Technology Management. What the university's own website publishes about
-    facilities is a Facilities section that leads to its library page, a virtual
-    tour with video walkthroughs of the campus, and programme level information
-    for each school. A detailed list of laboratories, sports facilities, canteen,
-    medical room or transport is not published on the website, so those cannot be
-    confirmed here. If you would like to see the campus, the virtual tour link can be sent to
-    you by message, and the school office confirms a specific facility and
+    university: Commerce, Technology Management and Engineering, and Pharmacy
+    and Technology Management. What the university's own website publishes about
+    facilities is a Facilities link that opens a gallery of library photographs,
+    with no text on holdings, timings or capacity, a virtual tour with video
+    walkthroughs of the campus, and programme level information for each school.
+    A detailed list of laboratories, sports facilities, canteen, medical room or
+    transport is not published on the website, so those cannot be confirmed
+    here. If you would like to see the campus, the virtual tour link can be sent
+    to you by message, and the school office confirms a specific facility and
     arranges a visit.
-
 - slug: anti-ragging-policy
   category: policy
   subcategory: safety

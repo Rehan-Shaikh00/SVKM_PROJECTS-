@@ -152,6 +152,36 @@ occasionally new programmes.
 `KB_STALENESS_DAYS` controls when a record is considered stale; stale records are
 penalised in ranking so last cycle's dates stop outranking this cycle's.
 
+### Recording dates
+
+Dates are the one thing a caller cannot recover from being wrong about, and the
+university publishes two different kinds. Keep them in separate records:
+
+* **Admission dates** (`40_admissions.yaml`) — merit lists, admission schedules and
+  rounds. These are published per programme and per round as PDFs, so the record
+  says *where* to find the current one rather than quoting a single deadline that
+  does not exist.
+* **Teaching dates** (`45_academic_calendar.yaml`) — the academic calendar signed by
+  the Vice-Chancellor: when classes begin, term tests, term end exams, breaks and
+  re-exams.
+
+Three rules when you add or update a date:
+
+1. **Copy the date exactly as published, and give it its scope.** "Classes begin on
+   13 July 2026" is wrong for most callers: the calendar says 13 July for Pharmacy,
+   27 July for Engineering and 29 July for Commerce. Write the school or semester
+   into the same line as the date.
+2. **Never extrapolate.** If the calendar does not list a school, do not infer its
+   date from another school's. Leave it out and let the assistant connect the
+   caller — a missing date is recoverable, a plausible wrong one is not.
+3. **Put the dates a caller asks for first in `important_dates`.** The assistant
+   speaks the first two lines of that list and sends the rest by SMS, so the order
+   is editorial, not cosmetic.
+
+The calendar record also carries a `calendar_caveat` saying that school-wise
+schedules are communicated by the Examination Department. Keep that caveat when you
+update the dates: it is what makes the answer honest rather than over-confident.
+
 ---
 
 ## Writing answers that work well on a phone

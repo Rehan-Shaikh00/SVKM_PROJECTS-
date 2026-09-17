@@ -149,11 +149,45 @@ class AssistantAnswer:
         }
 
 
+# A Devanagari word can bridge to different English records depending on what the
+# caller is actually asking. "परीक्षा" means an entrance test in "परीक्षा कौन सी
+# देनी होगी?" but the term end exams in "परीक्षा कब होगी?", and the single generic
+# bridge to "Exam" pulled the admission-dates record above the academic calendar
+# for the second question. Intent-specific bridges take precedence.
+INTENT_CROSS_SCRIPT: dict[str, dict[str, str]] = {
+    "important_dates": {
+        "परीक्षा": "term end examination dates academic calendar",
+        "परीक्षाएं": "term end examination dates academic calendar",
+        "परीक्षेच्या": "term end examination dates academic calendar",
+        "परीक्षेत": "term end examination dates academic calendar",
+        "क्लास": "classes commence semester begins",
+        "कक्षा": "classes commence semester begins",
+        "कक्षाएं": "classes commence semester begins",
+        "वर्ग": "classes commence semester begins",
+        "सेमेस्टर": "semester academic calendar",
+        "सत्र": "semester academic calendar",
+        "सुट्टी": "vacation break",
+        "सुट्ट्या": "vacation break",
+        "छुट्टी": "vacation break",
+        "छुट्टियां": "vacation break",
+    },
+    "entrance_exam": {
+        "परीक्षा": "entrance test accepted exams",
+        "परीक्षेच्या": "entrance test accepted exams",
+    },
+}
+
+
 def augment_query(question: str, intent: IntentResult) -> str:
-    """Add Latin equivalents so a Hindi/Marwari query finds English records."""
+    """Add Latin equivalents so a Hindi/Marathi query finds English records."""
     extra: list[str] = []
+    overrides = INTENT_CROSS_SCRIPT.get(intent.intent, {})
     for native, latin in CROSS_SCRIPT_COURSES.items():
         if native in question:
+            # An intent-specific bridge wins over the generic one for that word.
+            extra.append(overrides.get(native, latin))
+    for native, latin in overrides.items():
+        if native in question and native not in CROSS_SCRIPT_COURSES:
             extra.append(latin)
     extra.extend(intent.course_tokens)
     extra.extend(intent.specialisations)
@@ -295,7 +329,11 @@ class AnswerEngine:
 
         # --- numeric grounding check --------------------------------------- #
         if answer.grounded and answer.provider != "guardrail":
-            context = retrieval.context_block(max_chars=6000)
+            # Containment check, not a prompt: give it the whole retrieved set. At
+            # 6000 chars the academic calendar's 33-key facts chunk was cut mid-way,
+            # so a correct date the record itself published ("28 February") looked
+            # ungrounded and a good answer was escalated.
+            context = retrieval.context_block(max_chars=20000)
             check = guardrails.numeric_grounding_check(answer.text, context)
             answer.debug["numeric_grounding"] = check
             if not check["ok"]:

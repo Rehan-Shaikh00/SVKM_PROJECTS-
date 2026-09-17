@@ -823,7 +823,19 @@ def compose(
                     "items": items[:6],
                 }
         elif lines:
-            sentences.append(frames["important_dates"].format(dates=_join(lines, language)))
+            # Date lines written as full sentences must not be glued together with
+            # ", " and " and ": the calendar record produced one 320-character
+            # run-on that the trim then cut in the middle of a date. Short labels
+            # keep the conjunction join; long prose lines are spoken as separate
+            # sentences, two at a time, with the rest sent by SMS.
+            spoken_lines = lines if max((len(x) for x in lines), default=0) <= 60 else lines[:2]
+            if spoken_lines is lines:
+                dates_text = _join(spoken_lines, language)
+            else:
+                dates_text = " ".join(
+                    ln.strip().rstrip(".") + "." for ln in spoken_lines
+                )
+            sentences.append(frames["important_dates"].format(dates=dates_text))
             template_used = "important_dates"
             if isinstance(dates, (dict, list)) and len(dates) > 3:
                 followup = {

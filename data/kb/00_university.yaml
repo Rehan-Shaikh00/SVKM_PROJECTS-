@@ -291,3 +291,44 @@
     are handed to a person immediately without the assistant attempting an answer.
     Exact cut offs, allotment outcomes and refund amounts are never stated by the
     assistant.
+
+- slug: university-collaborations
+  category: university
+  subcategory: collaborations
+  title: "Collaborations and national programme partnerships"
+  aliases: ["collaborations", "partnerships", "collaborating organisations",
+            "NPTEL", "SWAYAM", "MOOC", "e-Yantra", "FOSSEE", "Spoken Tutorial",
+            "GitHub", "NSDL", "industry tie ups", "सहयोग", "साझेदारी",
+            "एनपीटीएल", "स्वयं", "सहभाग", "भागीदारी"]
+  title_localized:
+    hi-IN: "सहयोग और राष्ट्रीय कार्यक्रम साझेदारी"
+    mr-IN: "सहभाग आणि राष्ट्रीय कार्यक्रम भागीदारी"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [university, collaborations, nptel, swayam]
+  verified: true
+  verified_by: "svkmnmimsgu.ac.in/collaborations"
+  source: "https://www.svkmnmimsgu.ac.in/collaborations"
+  structured:
+    collaborations:
+      - "e-Yantra"
+      - "NPTEL"
+      - "FOSSEE"
+      - "SWAYAM"
+      - "Spoken Tutorial"
+      - "GitHub"
+      - "NSDL"
+    # The page publishes these as logos with no description, so what each one
+    # gives a student is not a fact this record may state.
+    published_detail: false
+    page: "https://www.svkmnmimsgu.ac.in/collaborations"
+    assistant_instruction: "Name the partnerships the university publishes on its collaborations page. The page shows logos only, with no description of what each partnership gives a student, so do not claim credit transfer, free access, certification or placement benefit from any of them. Offer the page link by SMS and connect the caller to the school office for specifics."
+  body: |
+    The university's collaborations page lists seven partnerships: e-Yantra,
+    NPTEL, FOSSEE, SWAYAM, Spoken Tutorial, GitHub and NSDL. These are national
+    education programmes and platforms, and several of them are common across
+    Indian engineering and pharmacy institutions. The page publishes them as
+    logos, without describing what each partnership means for a student, so if
+    you want to know how a specific programme works here, whether it carries
+    credit or how you enrol, the school office can confirm that and the page
+    link can be sent to you.

@@ -1139,3 +1139,192 @@ def test_the_followup_offer_line_is_length_neutral_in_every_language() -> None:
         for claim in ("long answer", "लंबी", "लांब", "लम्बी"):
             assert claim not in line and claim not in lowered, f"{code}: {line}"
         assert "SMS" in line or "एसएमएस" in line, f"{code} offers no channel"
+
+
+# --------------------------------------------------------------------------- #
+# AY 2026-27 academic calendar (official signed PDF) and collaborations
+# --------------------------------------------------------------------------- #
+
+CALENDAR_TITLE = "Academic calendar for AY 2026-27"
+
+
+def _record(slug: str) -> dict[str, Any]:
+    found = next((r for r in _kb_records() if r.get("slug") == slug), None)
+    assert found is not None, f"KB record {slug} is missing"
+    return found
+
+
+def _record_chunk(slug: str, *, kind: str = "facts") -> RetrievedChunk:
+    """A chunk carrying the real record's prose and structured fields, as ingested."""
+    record = _record(slug)
+    body = " ".join(str(record.get("body") or "").split())
+    return _chunk(
+        text=f"NMIMS Global University, Dhule \u00b7 {record['title']}\n{body}",
+        title=record["title"],
+        category=record["category"],
+        structured=record.get("structured") or {},
+        verified=bool(record.get("verified")),
+        chunk_id=f"{slug}:{kind}",
+        record_id=slug,
+    )
+
+
+@pytest.mark.parametrize("question", [
+    "When do classes start?",
+    "When are the term end exams?",
+    "what is the academic calendar",
+])
+def test_calendar_questions_speak_the_published_dates(question: str) -> None:
+    chunk = _record_chunk("academic-calendar-ay-2026-27")
+    answer = compose(_retrieval(question, chunk), language="en-IN", question=question)
+    assert answer.template == "important_dates", answer.text
+    assert answer.needs_escalation is False, "the calendar is published and verified"
+    assert "13 July 2026" in answer.text and "24 December 2026" in answer.text, answer.text
+    assert len(answer.text) <= MAX_SPOKEN_CHARS
+
+
+def test_date_lines_are_spoken_as_sentences_not_a_run_on() -> None:
+    """Three long date sentences joined with ", " and " and " made one run-on
+    that the trim then cut in the middle of a date ("12 January to 28")."""
+    chunk = _record_chunk("academic-calendar-ay-2026-27")
+    answer = compose(_retrieval("When do classes start?", chunk),
+                     language="en-IN", question="When do classes start?")
+    text = answer.text.rstrip()
+    assert text.endswith("."), text
+    assert ", Term end" not in text and " and The semester" not in text, text
+    assert " to 28\u201d" not in text and not text.endswith("to 28"), text
+    # The rest of the calendar still reaches the caller by SMS.
+    assert answer.followup and len(answer.followup["items"]) > 3, answer.followup
+
+
+def test_calendar_dates_are_read_from_the_real_record() -> None:
+    """Pin the transcription against the signed PDF the website publishes."""
+    structured = _record("academic-calendar-ay-2026-27")["structured"]
+    assert structured["term_end_exam"] == "01 December to 24 December 2026"
+    assert structured["diwali_break"] == "07 November to 14 November 2026"
+    assert structured["even_semester_term_end_exam"] == "15 May to 10 June 2027"
+    assert structured["next_academic_year_commences"] == "12 July 2027"
+    assert "Examination Department" in structured["calendar_caveat"]
+
+
+def test_calendar_record_does_not_pass_teaching_dates_off_as_admission_deadlines() -> None:
+    record = _record("academic-calendar-ay-2026-27")
+    assert record["verified"] is True
+    assert "svkmnmimsgu.ac.in" in (record.get("source") or "")
+    assert "Admission deadlines are published separately" in record["body"]
+    instruction = record["structured"]["assistant_instruction"]
+    assert "never extrapolate" in instruction.lower()
+
+
+# --- Indic routing: a calendar question must not be read as hostel or exams --- #
+
+HI_EXAM_WHEN = "\u092A\u0930\u0940\u0915\u094D\u0937\u093E \u0915\u092C \u0939\u094B\u0917\u0940?"
+HI_CLASS_START = "\u0915\u094D\u0932\u093E\u0938 \u0915\u092C \u0938\u0947 \u0936\u0941\u0930\u0942 \u0939\u094B\u0902\u0917\u0947?"
+MR_SEMESTER = "\u0938\u0947\u092E\u0947\u0938\u094D\u091F\u0930 \u0915\u0927\u0940 \u0938\u0941\u0930\u0942 \u0939\u094B\u0908\u0932?"
+MR_EXAM_DATES = "\u092A\u0930\u0940\u0915\u094D\u0937\u0947\u091A\u094D\u092F\u093E \u0924\u093E\u0930\u0916\u093E \u0915\u093E\u092F \u0906\u0939\u0947\u0924?"
+
+
+@pytest.mark.parametrize("question", [HI_EXAM_WHEN, HI_CLASS_START, MR_SEMESTER, MR_EXAM_DATES])
+def test_indic_calendar_questions_are_dates_questions(question: str) -> None:
+    assert detect_intent(question).intent == "important_dates", detect_intent(question).scores
+
+
+def test_marathi_mess_does_not_match_inside_semester() -> None:
+    r"""The Marathi word for mess is a substring of the Marathi word for semester.
+
+    Python's \b does not catch it: Devanagari matras are not \w, so a word
+    boundary exists inside the word. A semester question was detected as a hostel
+    question and escalated as unconfirmed accommodation.
+    """
+    assert detect_intent(MR_SEMESTER).intent != "hostel", detect_intent(MR_SEMESTER).scores
+    # Real mess questions still reach the hostel branch.
+    hi_mess = "\u0939\u0949\u0938\u094D\u091F\u0932 \u092E\u0947\u0902 \u092E\u0947\u0938 \u0915\u0940 \u0938\u0941\u0935\u093F\u0927\u093E \u0939\u0948?"
+    mr_mess = "\u092E\u0947\u0938\u091A\u0940 \u0938\u094B\u092F \u0906\u0939\u0947 \u0915\u093E?"
+    assert detect_intent(hi_mess).intent == "hostel", detect_intent(hi_mess).scores
+    assert detect_intent(mr_mess).intent == "hostel", detect_intent(mr_mess).scores
+
+
+def test_indic_exam_word_bridges_to_the_calendar_for_a_dates_question() -> None:
+    """One Devanagari word, two meanings: which exams, or when the exams are."""
+    from app.ai.rag import augment_query
+
+    when = augment_query(HI_EXAM_WHEN, detect_intent(HI_EXAM_WHEN))
+    assert "term end examination dates" in when, when
+    which = augment_query(
+        "\u092A\u0930\u0940\u0915\u094D\u0937\u093E \u0915\u094C\u0928 \u0938\u0940 \u0926\u0947\u0928\u0940 \u0939\u094B\u0917\u0940?",
+        detect_intent("\u092A\u0930\u0940\u0915\u094D\u0937\u093E \u0915\u094C\u0928 \u0938\u0940 \u0926\u0947\u0928\u0940 \u0939\u094B\u0917\u0940?"),
+    )
+    assert "entrance test" in which and "term end" not in which, which
+
+
+def test_the_intent_bridge_makes_the_calendar_chunk_outrank_admission_dates() -> None:
+    """Scored with the real BM25 index over the augmented query.
+
+    Before the intent-aware bridge, the Devanagari word for exam bridged to the
+    bare English word "Exam", which lexically favoured the admission-schedules
+    record, so "when is the exam?" was answered with admission round status.
+    """
+    from app.ai.rag import augment_query
+    from app.kb.embeddings import expand
+    from app.kb.retriever import BM25Index
+
+    calendar_text = (
+        "Academic calendar for AY 2026-27 Classes commence on 13 July 2026 for "
+        "Pharmacy and term end examinations run from 01 December to 24 December 2026."
+    )
+    admission_text = (
+        "Admission dates and how to get the current schedules Merit lists and "
+        "admission schedules are published programme by programme and round by round."
+    )
+    index = BM25Index()
+    index.build([("cal", expand(calendar_text)), ("adm", expand(admission_text))])
+
+    intent = detect_intent(HI_EXAM_WHEN)
+    bridged = index.score(expand(augment_query(HI_EXAM_WHEN, intent)), top_k=2)
+    assert bridged and bridged[0][0] == "cal", bridged
+
+    # The old generic bridge ranked the admission record first.
+    legacy = index.score(expand(f"{HI_EXAM_WHEN} Exam"), top_k=2)
+    assert legacy and legacy[0][0] == "adm", legacy
+
+
+def test_entrance_exam_questions_are_not_stolen_by_the_calendar() -> None:
+    from app.ai.rag import augment_query
+
+    question = "\u092A\u0930\u0940\u0915\u094D\u0937\u093E \u0915\u094C\u0928 \u0938\u0940 \u0926\u0947\u0928\u0940 \u0939\u094B\u0917\u0940?"
+    assert detect_intent(question).intent == "entrance_exam"
+    assert "term end" not in augment_query(question, detect_intent(question))
+    chunk = _record_chunk("admission-entrance-tests")
+    answer = compose(_retrieval(question, chunk), language="en-IN", question=question)
+    assert "MHT-CET" in answer.text, answer.text
+
+
+# --- collaborations: logos only, so no invented benefit ---------------------- #
+
+def test_collaborations_names_the_published_partnerships_without_inventing_benefit() -> None:
+    chunk = _record_chunk("university-collaborations")
+    answer = compose(_retrieval("Do you have NPTEL or SWAYAM?", chunk),
+                     language="en-IN", question="Do you have NPTEL or SWAYAM?")
+    for name in ("NPTEL", "SWAYAM", "e-Yantra", "Spoken Tutorial"):
+        assert name in answer.text, answer.text
+    # The page publishes logos with no description: no credit, certification,
+    # free-access or placement benefit may be claimed from any of them.
+    for claim in ("credit", "certificat", "free of cost", "guarantee", "placement"):
+        assert claim not in answer.text.lower(), answer.text
+
+
+def test_collaborations_record_does_not_claim_detail_the_page_never_published() -> None:
+    record = _record("university-collaborations")
+    assert record["verified"] is True
+    assert record["structured"]["published_detail"] is False
+    assert "without describing what each partnership means" in record["body"]
+    assert len(record["structured"]["collaborations"]) == 7
+
+
+# --- library page is a photo gallery, so no facility detail is invented ------- #
+
+def test_facilities_record_says_the_library_page_is_a_photo_gallery() -> None:
+    record = _record("campus-facilities")
+    assert "gallery of library photographs" in record["body"]
+    assert "no holdings, timings or capacity" in record["structured"]["library_page"]
+    assert record["verified"] is True
