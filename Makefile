@@ -84,6 +84,11 @@ format:
 smoke:
 	cd $(ROOT) && $(PY) scripts/smoke_ws.py
 
+## verify: assert what a caller hears for 57 questions (needs a running server)
+.PHONY: verify
+verify:
+	cd $(ROOT) && $(PY) scripts/verify_answers.py
+
 ## reindex: rebuild chunks + embeddings from data/kb and the database
 .PHONY: reindex
 reindex:

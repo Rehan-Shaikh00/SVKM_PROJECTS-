@@ -159,6 +159,11 @@ _PATTERNS: dict[str, tuple[tuple[str, ...], float]] = {
         (r"\b(recogni[sz]ed|recognition|accreditation|accredited|approved|valid|affiliated|affiliation|deemed|government|private)\b", 1.2),
         (r"\b(established|founded|ranking|rank|nirf|history|about (the )?university|who (are|is) you)\b", 1.1),
         (r"\b(nims|university|campus)\b.*\b(good|reputed|legit|genuine|fake)\b", 1.2),
+        # "Which NBA accredited programmes do you have?" mentions programmes, so it
+        # used to score as a catalogue question and the caller was read three
+        # arbitrary course names. Naming an accrediting body is the stronger signal.
+        (r"\b(nba|naac|aicte|pci|ugc|nmc|dci)\b.*\b(programmes?|accredited|accreditation|approved|courses?)\b", 2.6),
+        (r"\b(accredited|accreditation)\b.*\b(programmes?|courses?|by)\b", 2.0),
         (r"मान्यता", 1.4), (r"मान्यता प्राप्त", 1.5), (r"यूजीसी", 1.4), (r"एकरेडिट", 1.2),
         (r"विश्वविद्यालय के बारे", 1.3), (r"प्राइवेट है या सरकारी", 1.4),
     ),
@@ -192,6 +197,13 @@ _PATTERNS: dict[str, tuple[tuple[str, ...], float]] = {
         (r"\bjob\b|\binternship\b|\bcampus drive\b|\bcompanies visit\b", 0.9),
         (r"प्लेसमेंट", 1.4), (r"नौकरी", 1.1), (r"वेतन", 1.0), (r"कंपनी", 0.8),
         (r"नोकरी", 1.2), (r"पगार", 1.0), (r"कंपन्या", 0.9),
+        # Hindi and Marathi callers ask about packages and recruiters in their own
+        # words, and none of it reached this intent: "पैकेज कितना मिलता है?" scored
+        # `other`, and Marathi "पॅकेज किती मिळतो?" scored `fees` because "किती" is a
+        # fee-amount word, so a placement question was answered with fee wording.
+        # Weighted above fees' "किती" so the subject of the question wins.
+        (r"पैकेज|सैलरी|कंपनियां|कंपनी कौन|भर्ती|प्लेसमेंट रिपोर्ट|प्लेसमेंट कितनी", 1.5),
+        (r"पॅकेज|नोकरी किती|प्लेसमेंट किती|कंपन्या कोणत्या|भरती", 1.6),
     ),
     "facilities": (
         (r"\bfacilit|\blab\b|\blibrary\b|\bsports\b|\bgym\b|\bhospital\b", 1.2),
@@ -403,13 +415,29 @@ _QUESTION_INTENTS = frozenset({
 _COURSE_TOKEN_OVERRIDE_MIN = 0.8
 
 
+#: Characters that end a word in `normalise`d text. Everything else — letters,
+#: digits and the combining matras that Indian scripts use — continues one.
+_WORD_EDGE = frozenset(" .-")
+
+
+def _at_word_edge(norm: str, index: int) -> bool:
+    return index == 0 or norm[index - 1] in _WORD_EDGE
+
+
 def _translit_hits(norm: str, mapping: dict[str, str]) -> set[str]:
-    """Find non-overlapping matches, longest key first.
+    """Find non-overlapping matches, longest key first, at word edges only.
 
     Indian-script degree names collide as substrings of each other — `बीबीए`
     (BBA) sits inside `एमबीबीएस` (MBBS) — so a naive `key in norm` scan invents
     courses the caller never said. We walk the string once and, at each position,
     take the longest matching key and skip past it.
+
+    Longest-first is not enough: the Devanagari word for SMS, `एसएमएस`, contains
+    the Devanagari for M.A., `एमए`. A caller asking for the document list "by SMS"
+    was given course tokens for M.A. and MS, and retrieval went to the travel
+    record. Only the *leading* edge is required, because Indian languages inflect
+    the degree name itself (`बीटेकसाठी`, `एमफार्मची`), so a trailing-edge rule
+    would drop genuine mentions.
     """
     if not norm:
         return set()
@@ -417,6 +445,9 @@ def _translit_hits(norm: str, mapping: dict[str, str]) -> set[str]:
     hits: set[str] = set()
     i, n = 0, len(norm)
     while i < n:
+        if not _at_word_edge(norm, i):
+            i += 1
+            continue
         for key in by_length:
             if key and norm.startswith(key, i):
                 hits.add(mapping[key])

@@ -223,7 +223,7 @@ older misspelt `TWILIO_HELLINE_NUMBER` is still accepted as an alias.
 ## Development
 
 ```bash
-# backend tests (279 tests, ~7s, no DB/network/keys)
+# backend tests (298 tests, ~7s, no DB/network/keys)
 cd backend && ../.venv/bin/pytest -q
 
 # lint (ruff config in .ruff.toml; ignores are documented with reasons)
@@ -234,7 +234,18 @@ cd frontend && npm run dev
 
 # rebuild the dashboard into backend/static/dashboard
 cd frontend && npm run build
+
+# verify what a caller actually hears, end to end, against a running server
+# (57 questions in English, Hindi and Marathi; exits non-zero on any failure)
+.venv/bin/python scripts/verify_answers.py
 ```
+
+The unit tests pin the composing rules against hand-built retrieval results.
+`scripts/verify_answers.py` pins the whole path — retrieval, ranking, intent,
+compose, guardrails — against a live server, so a knowledge-base edit or a
+ranking tweak that changes what a caller hears is caught before it ships. Every
+case in it was a real bad answer at some point, and each one carries a note
+saying why it matters.
 
 `make` targets wrap these — see the `Makefile`.
 
@@ -243,7 +254,7 @@ cd frontend && npm run build
 ## Known limitations (read before production)
 
 1. **Zero-key answer quality.** Without an LLM key the assistant answers through
-   deterministic templates over retrieved KB rows. 49 sentence frames exist per
+   deterministic templates over retrieved KB rows. 51 sentence frames exist per
    language for English, Hindi, Marathi and Rajasthani, and money, duration and
    seat counts are rendered natively in all four, so the *shape* of an answer is
    in the caller's language. What is not translated is the KB payload itself: the

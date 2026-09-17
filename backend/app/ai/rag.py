@@ -79,6 +79,11 @@ CROSS_SCRIPT_COURSES: dict[str, str] = {
     "पात्रता": "Eligibility", "गुण": "Marks Percentage",
     "वसतिगृह": "Hostel", "राहण्याची सोय": "Hostel Accommodation",
     "शिष्यवृत्ती": "Scholarship", "कागदपत्रे": "Documents",
+    # Hindi spells documents its own way, and the Marathi "कागदपत्रे" alone left
+    # "डॉक्यूमेंट्स की लिस्ट एसएमएस से भेजो" with no bridge to the English record,
+    # so retrieval returned the travel record instead.
+    "डॉक्यूमेंट्स": "Documents", "डॉक्युमेंट्स": "Documents", "दस्तावेज़": "Documents",
+    "दस्तावेज": "Documents", "कागजात": "Documents", "प्रवेश दस्तावेज़": "Admission Documents",
     "प्रमाणपत्र": "Certificate", "मुदत": "Deadline Dates",
     "शेवटची तारीख": "Last Date Deadline", "परीक्षा": "Exam",
     "नोकरी": "Placement Job", "प्लेसमेंट": "Placement", "पगार": "Salary Package",
@@ -178,16 +183,37 @@ INTENT_CROSS_SCRIPT: dict[str, dict[str, str]] = {
 }
 
 
+_NATIVE_EDGE = " .-,:;!?()\u2019\"'"
+
+
+def _contains_native(text: str, native: str) -> bool:
+    """True when a Devanagari term occurs in `text` at a word edge.
+
+    Plain `native in text` invents courses the caller never said: the Devanagari
+    word for SMS contains the Devanagari for M.A., so "डॉक्यूमेंट्स की लिस्ट एसएमएस
+    से भेजो" was bridged to "M.A" and retrieval left the documents record. Only
+    the leading edge is checked, because degree names are inflected in Indian
+    languages ("बीटेकसाठी", "एमफार्मची").
+    """
+    sample = text or ""
+    index = sample.find(native)
+    while index != -1:
+        if index == 0 or sample[index - 1] in _NATIVE_EDGE:
+            return True
+        index = sample.find(native, index + 1)
+    return False
+
+
 def augment_query(question: str, intent: IntentResult) -> str:
     """Add Latin equivalents so a Hindi/Marathi query finds English records."""
     extra: list[str] = []
     overrides = INTENT_CROSS_SCRIPT.get(intent.intent, {})
     for native, latin in CROSS_SCRIPT_COURSES.items():
-        if native in question:
+        if _contains_native(question, native):
             # An intent-specific bridge wins over the generic one for that word.
             extra.append(overrides.get(native, latin))
     for native, latin in overrides.items():
-        if native in question and native not in CROSS_SCRIPT_COURSES:
+        if native not in CROSS_SCRIPT_COURSES and _contains_native(question, native):
             extra.append(latin)
     extra.extend(intent.course_tokens)
     extra.extend(intent.specialisations)

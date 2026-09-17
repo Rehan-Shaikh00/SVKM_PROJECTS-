@@ -1484,3 +1484,233 @@ def test_fee_answer_speaks_the_bare_degree_not_the_variant() -> None:
     assert answer.needs_escalation is True and answer.escalation_reason == "fee_not_in_kb"
     # No number is ever invented for a fee that is not published.
     assert not re.search(r"\d{3,}", answer.text), answer.text
+
+
+# --------------------------------------------------------------------------- #
+# Devanagari word edges: SMS is not M.A.
+# --------------------------------------------------------------------------- #
+
+HI_DOCUMENTS_SMS = (
+    "\u0921\u0949\u0915\u094D\u092F\u0942\u092E\u0947\u0902\u091F\u094D\u0938 \u0915\u0940 \u0932\u093F\u0938\u094D\u091F "
+    "\u090F\u0938\u090F\u092E\u090F\u0938 \u0938\u0947 \u092D\u0947\u091C\u094B"
+)
+
+
+def test_the_word_for_sms_does_not_invent_an_ma_degree() -> None:
+    """The Devanagari for SMS contains the Devanagari for M.A.
+
+    A caller asking for the document list "by SMS" was given course tokens for
+    M.A. and MS, the query was bridged to those, and retrieval answered with the
+    travel record. Longest-match-first was not enough; matches now need a word
+    edge. Only the leading edge, because Indian languages inflect the degree name
+    itself.
+    """
+    intent = detect_intent(HI_DOCUMENTS_SMS)
+    assert intent.intent == "documents", intent.scores
+    assert intent.course_tokens == [], intent.course_tokens
+
+
+def test_inflected_degree_names_still_match() -> None:
+    """The word-edge rule must not drop genuine mentions."""
+    assert detect_intent("\u092C\u0940\u091F\u0947\u0915\u0915\u0940 \u092B\u0940\u0938").course_tokens == ["BTECH"]
+    # Marathi inflection: "बीटेकसाठी" (for B.Tech), "एमफार्मची" (M.Pharm's).
+    assert "BTECH" in detect_intent("\u092C\u0940\u091F\u0947\u0915\u0938\u093E\u0920\u0940 \u092A\u093E\u091F\u094D\u0930\u0924\u093E").course_tokens
+    assert detect_intent("\u090F\u092E\u092C\u0940\u092C\u0940\u090F\u0938 \u0939\u0948 \u0915\u094D\u092F\u093E?").course_tokens == ["MBBS"]
+
+
+def test_the_cross_script_bridge_needs_a_word_edge_too() -> None:
+    from app.ai.rag import _contains_native, augment_query
+
+    intent = detect_intent(HI_DOCUMENTS_SMS)
+    assert "M.A" not in augment_query(HI_DOCUMENTS_SMS, intent)
+    assert "Documents" in augment_query(HI_DOCUMENTS_SMS, intent)
+    assert _contains_native("\u0926\u0938\u094D\u0924\u093E\u0935\u0947\u091C \u091A\u093E\u0939\u093F\u090F", "\u0926\u0938\u094D\u0924\u093E\u0935\u0947\u091C")
+    assert not _contains_native("\u090F\u0938\u090F\u092E\u090F\u0938", "\u090F\u092E\u090F")
+
+
+# --------------------------------------------------------------------------- #
+# catalogue: programme names, not school-overview titles
+# --------------------------------------------------------------------------- #
+
+def _overview_chunk() -> RetrievedChunk:
+    return _chunk(
+        text="NMIMS Global University, Dhule \u00b7 School of Commerce \u2014 programmes overview",
+        title="School of Commerce \u2014 programmes overview",
+        category="course",
+        structured={
+            "school": "School of Commerce",
+            "levels": ["UG (BBA, BCA)"],
+            "programmes": [
+                "Bachelor of Business Administration (BBA) \u2014 3 years, semester, intake 60",
+                "Bachelor in Computer Applications (BCA) \u2014 3 years, semester, intake 60",
+            ],
+        },
+        verified=True,
+        chunk_id="soc:facts",
+        record_id="school-soc-overview",
+    )
+
+
+def test_catalogue_speaks_programme_names_not_overview_titles() -> None:
+    """The catalogue used to offer "School of Commerce — programmes overview"
+    as though it were a course a caller could enrol in."""
+    question = "What courses do you offer?"
+    answer = compose(_retrieval(question, _overview_chunk()),
+                     language="en-IN", question=question)
+    assert answer.template == "catalog", answer.text
+    assert "overview" not in answer.text.lower(), answer.text
+    assert "Bachelor of Business Administration (BBA)" in answer.text
+    # The detail after the dash stays out of the spoken line but goes by message.
+    assert "intake 60" not in answer.text
+    assert answer.followup and any("BCA" in i for i in answer.followup["items"])
+
+
+# --------------------------------------------------------------------------- #
+# degree exactness: a bare degree is not its dual-degree variant
+# --------------------------------------------------------------------------- #
+
+def test_a_bare_degree_prefers_the_plain_record_over_a_dual_degree() -> None:
+    """'How many seats in B.Pharm?' landed on B.Pharm + MBA and said forty seats.
+
+    The plain record spells its degree out — "Bachelor of Pharmacy (B.Pharm)" — so
+    the spoken prefix never matched the caller's token, while the dual degree's
+    title merely started with it.
+    """
+    plain = _doc("bpharm:facts", "Bachelor of Pharmacy (B.Pharm)", "course",
+                 "Four year semester programme.", {"seats": 60})
+    dual = _doc("dual:facts", "B.Pharm + MBA (Pharma Tech) \u2014 five year dual degree",
+                "course", "Five year dual degree.", {"seats": 40})
+    intent = detect_intent("How many seats in B.Pharm?")
+    ranked = _rerank([dual, plain], intent, ("course",),
+                     course_tokens=intent.course_tokens,
+                     query="How many seats in B.Pharm?")
+    assert ranked[0].chunk_id == "bpharm:facts", [r.chunk_id for r in ranked]
+    assert ranked[0].signals.get("degree_exact"), ranked[0].signals
+
+
+def test_a_named_dual_degree_still_reaches_its_own_record() -> None:
+    dual = _doc("dual:facts", "B.Pharm + MBA (Pharma Tech) \u2014 five year dual degree",
+                "course", "Five year dual degree.", {"seats": 40})
+    plain = _doc("bpharm:facts", "Bachelor of Pharmacy (B.Pharm)", "course",
+                 "Four year semester programme.", {"seats": 60})
+    question = "B.Pharm + MBA ki fees?"
+    intent = detect_intent(question)
+    ranked = _rerank([plain, dual], intent, ("course",),
+                     course_tokens=intent.course_tokens, query=question)
+    assert ranked[0].chunk_id == "dual:facts", [r.chunk_id for r in ranked]
+
+
+# --------------------------------------------------------------------------- #
+# placements: a detail nobody published is not answered with a claim
+# --------------------------------------------------------------------------- #
+
+PLACEMENTS_STRUCTURED = {
+    "website_claim": "The university's homepage states '100% job placement.'",
+    "published_detail": False,
+    "not_published": [
+        "A placement report, placement percentage or number of offers",
+        "Highest, average or median package",
+        "A recruiter list or the names of visiting companies",
+    ],
+}
+
+
+def _placements_chunk() -> RetrievedChunk:
+    return _chunk(
+        text="NMIMS Global University, Dhule \u00b7 Placements",
+        title="Placements",
+        category="placements",
+        structured=dict(PLACEMENTS_STRUCTURED),
+        verified=True,
+        chunk_id="placements:facts",
+        record_id="placements-overview",
+    )
+
+
+@pytest.mark.parametrize("question", [
+    "What is the highest package?",
+    "what is the average salary",
+    "Which companies come for placement?",
+    "\u092A\u0948\u0915\u0947\u091C \u0915\u093F\u0924\u0928\u093E \u092E\u093F\u0932\u0924\u093E \u0939\u0948?",
+])
+def test_placement_details_nobody_published_are_not_answered_with_a_claim(question: str) -> None:
+    answer = compose(_retrieval(question, _placements_chunk()),
+                     language="en-IN", question=question)
+    assert answer.template == "placements_not_published", answer.text
+    assert answer.needs_escalation is True and answer.escalation_reason == "not_published"
+    assert "100" not in answer.text and "placement report" in answer.text.lower()
+    assert answer.followup and len(answer.followup["items"]) == 3
+
+
+def test_a_general_placement_question_keeps_the_attributed_claim() -> None:
+    question = "Do you have placement support?"
+    answer = compose(_retrieval(question, _placements_chunk()),
+                     language="en-IN", question=question)
+    assert answer.template != "placements_not_published", answer.text
+    assert answer.needs_escalation is False
+
+
+# --------------------------------------------------------------------------- #
+# address: an address question is answered with the address
+# --------------------------------------------------------------------------- #
+
+ADDRESS_STRUCTURED = {
+    "address": "SVKM NMIMS Global University, Survey No. 499, Behind Gurudwara, Dhule 424001",
+    "pin_code": "424001",
+    "landmark": "Behind the Gurudwara, on the Mumbai Agra National Highway",
+    "website": "https://www.svkmnmimsgu.ac.in",
+}
+
+
+def _address_chunk() -> RetrievedChunk:
+    return _chunk(
+        text="NMIMS Global University, Dhule \u00b7 Campus address",
+        title="Campus address",
+        category="contact",
+        structured=dict(ADDRESS_STRUCTURED),
+        verified=True,
+        chunk_id="address:facts",
+        record_id="university-address",
+    )
+
+
+@pytest.mark.parametrize("question,language", [
+    ("What is the campus address?", "en-IN"),
+    ("\u0927\u0941\u0932\u0947 \u0915\u0948\u0902\u092A\u0938 \u0915\u093E \u092A\u0924\u093E \u092C\u0924\u093E\u0913", "hi-IN"),
+    ("\u0915\u0945\u092E\u094D\u092A\u0938\u091A\u093E \u092A\u0924\u094D\u0924\u093E \u0915\u093E\u092F \u0906\u0939\u0947?", "mr-IN"),
+])
+def test_an_address_question_speaks_the_address(question: str, language: str) -> None:
+    """It used to read the landmarks and spell out the pin code in words."""
+    answer = compose(_retrieval(question, _address_chunk()),
+                     language=language, question=question)
+    assert answer.template == "campus_address", answer.text
+    assert "Survey No. 499" in answer.text and "424001" in answer.text
+    # The frame is the whole answer: no extractive prose tail appended to it.
+    assert answer.text.count("Gurudwara") == 1, answer.text
+    assert answer.followup and any("424001" in i for i in answer.followup["items"])
+
+
+def test_a_contact_number_question_is_not_answered_with_the_address() -> None:
+    chunk = _address_chunk()
+    chunk.structured["contact_phone"] = "02562 350620"
+    answer = compose(_retrieval("What is the contact number?", chunk),
+                     language="en-IN", question="What is the contact number?")
+    assert answer.template == "contact_phone", answer.text
+    assert "02562 350620" in answer.text
+
+
+# --------------------------------------------------------------------------- #
+# accreditation questions are not catalogue questions
+# --------------------------------------------------------------------------- #
+
+@pytest.mark.parametrize("question", [
+    "Which NBA accredited programmes do you have?",
+    "Is the university UGC recognised?",
+    "Is it NAAC accredited?",
+])
+def test_accreditation_questions_are_university_questions(question: str) -> None:
+    assert detect_intent(question).intent == "university_info", detect_intent(question).scores
+
+
+def test_a_catalogue_question_is_still_a_catalogue_question() -> None:
+    assert detect_intent("What courses do you offer?").intent == "courses"

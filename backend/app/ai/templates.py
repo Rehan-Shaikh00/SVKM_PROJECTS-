@@ -70,6 +70,8 @@ FRAMES: dict[str, dict[str, str]] = {
         "transport_summary": "The nearest airport is at {airport}. By road from Dhule it is {distances}.",
         "important_dates_mechanism": "Admission dates are published programme by programme and round by round on the university website. Should I send you the link by SMS?",
         "round_status": "For {programme}, {status}. Shall I send the schedule link by SMS?",
+        "placements_not_published": "The university does not publish a placement report, package figures or a recruiter list, so I cannot confirm that. Let me connect you to the school office.",
+        "campus_address": "The campus address is {address}.",
         "placements": "{summary}",
         "placement_numbers": "Last year the highest package was {highest} and the average was {average}.",
         "recruiters": "Recruiters include {names}.",
@@ -121,6 +123,8 @@ FRAMES: dict[str, dict[str, str]] = {
         "transport_summary": "सबसे नज़दीकी हवाई अड्डा {airport} है। धुले से सड़क मार्ग से दूरी है {distances}।",
         "important_dates_mechanism": "प्रवेश की तारीखें विश्वविद्यालय की वेबसाइट पर कोर्स और राउंड के हिसाब से प्रकाशित की जाती हैं। क्या मैं लिंक एसएमएस से भेज दूँ?",
         "round_status": "{programme} के लिए, {status}। क्या मैं शेड्यूल का लिंक एसएमएस से भेज दूँ?",
+        "placements_not_published": "विश्वविद्यालय प्लेसमेंट रिपोर्ट, पैकेज के आंकड़े या रिक्रूटर सूची प्रकाशित नहीं करता, इसलिए मैं इसकी पुष्टि नहीं कर सकता। मैं आपको स्कूल कार्यालय से जोड़ता हूँ।",
+        "campus_address": "कैंपस का पता है {address}।",
         "placements": "{summary}",
         "placement_numbers": "पिछले साल सबसे ऊँचा पैकेज {highest} रहा और औसत {average}।",
         "recruiters": "कंपनियों में {names} शामिल हैं।",
@@ -172,6 +176,8 @@ FRAMES: dict[str, dict[str, str]] = {
         "transport_summary": "सर्वात जवळचे विमानतळ {airport} आहे. धुळ्यापासून रस्त्याने अंतरे आहेत {distances}.",
         "important_dates_mechanism": "प्रवेशाच्या तारखा विद्यापीठाच्या संकेतस्थळावर अभ्यासक्रम आणि फेरीनुसार प्रसिद्ध केल्या जातात. लिंक एसएमएसने पाठवू का?",
         "round_status": "{programme} साठी, {status}. वेळापत्रकाची लिंक एसएमएसने पाठवू का?",
+        "placements_not_published": "विद्यापीठ प्लेसमेंट अहवाल, पॅकेज आकडे किंवा रिक्रुटर यादी प्रसिद्ध करत नाही, त्यामुळे मी याची पुष्टी करू शकत नाही. मी तुम्हाला शाळेच्या कार्यालयाशी जोडतो.",
+        "campus_address": "कॅम्पसचा पत्ता आहे {address}.",
         "placements": "{summary}",
         "placement_numbers": "गेल्या वर्षी सर्वाधिक पॅकेज {highest} होते आणि सरासरी {average} होती.",
         "recruiters": "कंपन्यांमध्ये {names} यांचा समावेश आहे.",
@@ -223,6 +229,8 @@ FRAMES: dict[str, dict[str, str]] = {
         "transport_summary": "सब सूं नीड़ो हवाई अड्डो {airport} है। धुले सूं सड़क रास्ते दूरी है {distances}।",
         "important_dates_mechanism": "प्रवेश री तारीखां युनिवर्सिटी री वेबसाइट पर कोर्स अर राउंड का हिसाब सूं छपै है। एसएमएस सूं लिंक भेज दूँ?",
         "round_status": "{programme} खातर, {status}। म्हूँ शेड्यूल री लिंक एसएमएस सूं भेज दूँ?",
+        "placements_not_published": "युनिवर्सिटी प्लेसमेंट रिपोर्ट, पैकेज रा आँकडा या रिक्रूटर सूची छपै नहीं, इसलियै म्हूँ ए की पुष्टि कोनी कर सकूँ। म्हूँ थानै स्कूल ऑफिस सूं जोड़ दूँ।",
+        "campus_address": "कैंपस रो पतो है {address}।",
         "placements": "{summary}",
         "placement_numbers": "गत साल सारूँ ऊँचो पैकेज {highest} रह्यो अर औसत {average}।",
         "recruiters": "कंपनियों में {names} शामिल है।",
@@ -392,6 +400,26 @@ def _caller_named_only_the_degree(question: str, programme: str) -> str | None:
     if asked_words & title_words:
         return None
     return prefix
+
+
+# "What is the highest package?" asks for a placement detail the university has
+# never published; "do you have placements?" does not, and the homepage claim is a
+# fair answer to that one.
+_PLACEMENT_DETAIL_RE = re.compile(
+    r"\bpackages?\b|\bctc\b|\bsalar(?:y|ies)\b|\bhighest\b|\baverage\b|\bmedian\b"
+    r"|\brecruiters?\b|\bcompanies\b|\bplacement report\b|\bplacement percentage\b"
+    r"|पैकेज|सैलरी|वेतन|पगार|रिक्रूटर|कंपनी|कंपनियाँ|प्लेसमेंट कितनी"
+    r"|पॅकेज|रिक्रुटर|कंपन्या|नोकरी किती|प्लेसमेंट किती",
+    re.IGNORECASE,
+)
+
+# An address question. The contact record also carries phone numbers, so without
+# this a caller asking for the address was read a number or the landmarks.
+_ADDRESS_RE = re.compile(
+    r"\baddress\b|\blocation\b|\bwhere (is|are)\b|\bdirections?\b|\bpin ?code\b"
+    r"|पत्ता|पता|ठिकाण|कोठे|कुठे|कहाँ है|कहां है|पिन कोड",
+    re.IGNORECASE,
+)
 
 
 def _transport_mode(text: str) -> str | None:
@@ -1044,10 +1072,30 @@ def compose(
                     "channel": "sms", "title": f"{programme} recruiters",
                     "items": [str(r) for r in recruiters],
                 }
-        if not pieces:
-            pieces = _best_sentences(question, primary, language=language)
-        sentences.append(frames["placements"].format(summary=" ".join(pieces[:2])))
-        template_used = "placements"
+        if not pieces and _PLACEMENT_DETAIL_RE.search(question or "") and (
+            structured.get("published_detail") is False or structured.get("not_published")
+        ):
+            # "What is the highest package?" was answered with the homepage's
+            # "100% job placement" claim, which says nothing about a package. The
+            # record lists exactly what is not published, so say that and hand over
+            # rather than letting an unrelated claim stand in for the answer.
+            sentences.append(frames["placements_not_published"])
+            template_used = "placements_not_published"
+            needs_escalation = True
+            escalation_reason = "not_published"
+            missing = structured.get("not_published")
+            if isinstance(missing, str):
+                missing = [x.strip() for x in re.split(r"[;\n]", missing) if x.strip()]
+            if missing:
+                followup = {
+                    "channel": "sms", "title": "Placements — not published",
+                    "items": [str(m) for m in missing][:6],
+                }
+        else:
+            if not pieces:
+                pieces = _best_sentences(question, primary, language=language)
+                sentences.append(frames["placements"].format(summary=" ".join(pieces[:2])))
+            template_used = "placements"
 
     elif intent.intent == "contact":
         phone = structured.get("contact_phone")
@@ -1064,7 +1112,24 @@ def compose(
             # `language` is a full locale code (mr-IN), so key on the base.
             or DEPARTMENT_FALLBACK.get(base, "the admissions office")
         )
-        if phone and email:
+        address = structured.get("address")
+        if address and _ADDRESS_RE.search(question or ""):
+            # "धुले कैंपस का पता बताओ" was answered with the landmarks and a pin
+            # code spelled out in words, because the address record carries no
+            # phone number and the branch fell through to extractive prose.
+            sentences.append(frames["campus_address"].format(address=str(address)))
+            template_used = "campus_address"
+            card_items = [str(address)]
+            for label, key in (("Landmark", "landmark"), ("Pin code", "pin_code"),
+                               ("Website", "website")):
+                if structured.get(key):
+                    card_items.append(f"{label}: {structured[key]}")
+            followup = {
+                "channel": "sms",
+                "title": "SVKM NMIMS Global University, Dhule — address",
+                "items": card_items[:6],
+            }
+        elif phone and email:
             sentences.append(
                 frames["contact"].format(department=department, phone=phone, email=email)
             )
@@ -1080,7 +1145,13 @@ def compose(
         elif email:
             sentences.append(frames["contact_email"].format(email=email))
             template_used = "contact_email"
-        if template_used in {"contact", "contact_phone", "contact_email"}:
+        if template_used == "campus_address":
+            # The address frame is the whole answer and its SMS card is already
+            # set. Without this the branch below appended extractive prose and
+            # overwrote the template name with "generic", so a caller asking for
+            # the address heard the address and then the landmarks again.
+            pass
+        elif template_used in {"contact", "contact_phone", "contact_email"} and not followup:
             # One number is easy to say aloud; the full card is easier to read.
             # The website publishes school-wise numbers only (no email, no toll
             # free line), so the card lists every school number plus the portal and
@@ -1250,14 +1321,54 @@ def compose(
                 payload.get("programme") or payload.get("degree")
             )
 
+        def _overview_programmes(group: tuple[Any, Any]) -> list[str]:
+            """The real course names inside a school-overview record.
+
+            An overview record's *title* is a school label ("School of Commerce —
+            programmes overview"), not a course name, and the catalogue used to
+            speak it as one: "We offer B.Tech (Cosmetic Technology), School of
+            Commerce — programmes overview and Master of Pharmacy…". Its
+            `programmes` list holds the names a caller can actually enrol in.
+            """
+            head = group[0]
+            payload = getattr(head, "structured", None) or {}
+            title = (head.title or "").lower()
+            is_overview = (
+                "overview" in title
+                or "at a glance" in title
+                or (
+                    isinstance(payload.get("programmes"), (list, str))
+                    and bool(payload.get("school"))
+                    and not (payload.get("programme") or payload.get("degree"))
+                )
+            )
+            if not is_overview:
+                return []
+            listed = payload.get("programmes") or []
+            if isinstance(listed, str):
+                listed = [x.strip() for x in re.split(r"[;\n]", listed) if x.strip()]
+            names: list[str] = []
+            for entry in listed:
+                # Entries carry their own detail after a dash ("B.Pharm — 4 years,
+                # semester, intake 60"); the catalogue speaks the name only.
+                name = re.split(r"\s+\u2014\s+|\s+-\s+", str(entry))[0].strip()
+                if name and name not in names:
+                    names.append(name)
+            return names[:4]
+
         programme_groups = [g for g in groups if _is_programme_group(g)]
-        if programme_groups:
-            titles = [g[0].title for g in programme_groups[:3]]
-            sentences.append(frames["catalog"].format(items=_join(titles, language)))
+        titles: list[str] = []
+        for group in programme_groups:
+            contributed = _overview_programmes(group) or [group[0].title]
+            for name in contributed:
+                if name and name not in titles:
+                    titles.append(name)
+        if titles:
+            sentences.append(frames["catalog"].format(items=_join(titles[:3], language)))
             template_used = "catalog"
             followup = {
                 "channel": "whatsapp", "title": "NMIMS Global University, Dhule programmes",
-                "items": [g[0].title for g in programme_groups],
+                "items": titles[:12],
             }
         else:
             sentences.extend(_best_sentences(question, primary, language=language))

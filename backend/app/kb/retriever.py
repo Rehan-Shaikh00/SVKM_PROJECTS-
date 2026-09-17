@@ -605,17 +605,39 @@ class HybridRetriever:
             # space-folded: "BBA LL.B. (Honours) — …" -> "bballb".
             degree_prefix = re.split(r"[(\u2014\u2013,]", title_lower, maxsplit=1)[0]
             degree_prefix = degree_prefix.replace(".", "").replace(" ", "").strip()
+            # A record that spells its degree out -- "Bachelor of Pharmacy
+            # (B.Pharm)" -- carries the code the caller actually says inside
+            # brackets, and the spoken prefix alone never matched it. So a bare
+            # "how many seats in B.Pharm?" landed on "B.Pharm + MBA (Pharma Tech)",
+            # a five year dual degree, and the caller was told forty seats.
+            bracketed = [
+                match.replace(".", "").replace(" ", "").strip().lower()
+                for match in re.findall(r"\(([^)]+)\)", title_lower)
+            ]
+            exact_candidates = [c for c in (degree_prefix, *bracketed) if c]
             folded_tokens = [t.replace(".", "").lower() for t in course_tokens if t]
-            if degree_prefix and folded_tokens:
-                if any(degree_prefix == token for token in folded_tokens):
+            if exact_candidates and folded_tokens:
+                # Every degree the caller named must be the record's own degree.
+                # "Is BBA LL.B. available here?" carries tokens for BBA *and* LL.B.,
+                # and the plain BBA record matches one of them -- but it is not the
+                # programme asked about, so it must not win as an exact match.
+                if all(
+                    any(cand == token for cand in exact_candidates)
+                    for token in folded_tokens
+                ):
                     score += 0.25
-                    signals["degree_exact"] = degree_prefix
-                elif all(degree_prefix.startswith(token) for token in folded_tokens):
+                    signals["degree_exact"] = degree_prefix or bracketed[0]
+                elif degree_prefix and all(degree_prefix.startswith(token) for token in folded_tokens):
                     # `startswith`, not `in`: "Lateral entry to B.Tech for diploma
                     # holders" contains "btech" but is not a B.Tech programme
                     # record, and it used to outrank the entrance-exam record for
                     # "which entrance exam for B.Tech".
-                    score += 0.18
+                    #
+                    # A dual or integrated degree is a *different* programme from
+                    # the one the caller named, so a prefix match alone must not
+                    # outrank the record whose degree code matches exactly.
+                    combined = bool(re.search(r"\+|dual|integrated", f"{degree_prefix} {title_lower}"))
+                    score += 0.04 if combined else 0.18
                     signals["degree_prefix_match"] = degree_prefix
 
             # "We do not run that programme" records exist to intercept the exact
