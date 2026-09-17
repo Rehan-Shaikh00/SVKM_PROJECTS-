@@ -84,10 +84,16 @@ format:
 smoke:
 	cd $(ROOT) && $(PY) scripts/smoke_ws.py
 
-## verify: assert what a caller hears for 57 questions (needs a running server)
+## verify: assert what a caller hears for 59 questions (needs a running server)
 .PHONY: verify
 verify:
 	cd $(ROOT) && $(PY) scripts/verify_answers.py
+
+## multiturn: drive a follow-up conversation — context carry-over, language
+## switch mid-call, barge-in (needs a running server)
+.PHONY: multiturn
+multiturn:
+	cd $(ROOT) && $(PY) scripts/smoke_multiturn.py
 
 ## reindex: rebuild chunks + embeddings from data/kb and the database
 .PHONY: reindex

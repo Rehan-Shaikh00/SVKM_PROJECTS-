@@ -223,7 +223,7 @@ older misspelt `TWILIO_HELLINE_NUMBER` is still accepted as an alias.
 ## Development
 
 ```bash
-# backend tests (298 tests, ~7s, no DB/network/keys)
+# backend tests (321 tests, ~7s, no DB/network/keys)
 cd backend && ../.venv/bin/pytest -q
 
 # lint (ruff config in .ruff.toml; ignores are documented with reasons)
@@ -235,8 +235,12 @@ cd frontend && npm run dev
 # rebuild the dashboard into backend/static/dashboard
 cd frontend && npm run build
 
+# drive a follow-up conversation: context carry-over across turns, a language
+# switch mid-call, barge-in (needs a running server)
+.venv/bin/python scripts/smoke_multiturn.py
+
 # verify what a caller actually hears, end to end, against a running server
-# (57 questions in English, Hindi and Marathi; exits non-zero on any failure)
+# (59 questions in English, Hindi and Marathi; exits non-zero on any failure)
 .venv/bin/python scripts/verify_answers.py
 ```
 

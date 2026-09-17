@@ -82,6 +82,12 @@ class Settings(BaseSettings):
     # switch to it — but they are not announced, and Rajasthani in particular is
     # no longer a greeting language for this campus.
     greeting_languages: str = "en-IN,hi-IN,mr-IN"
+    # Hindi and Marathi share the Devanagari script, so an utterance with no
+    # lexical evidence in either direction used to fall to Hindi purely because
+    # it came first in the candidate list. This campus is in Dhule, Maharashtra,
+    # where an undifferentiated Devanagari caller is far likelier to be speaking
+    # Marathi, so ties break that way. Change it for a campus in another state.
+    devanagari_preference: str = "mr-IN"
     lid_confidence_threshold: float = 0.62
     allow_dtmf_fallback: bool = True
 

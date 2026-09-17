@@ -87,12 +87,41 @@ DEVANAGARI_MARKERS: dict[str, dict[str, float]] = {
         "करना": 2.5, "हूँ": 3.0, "हुन": 2.5, "बताइए": 3.0, "कितनी": 3.0,
         "कितना": 3.0, "चाहिए": 3.0, "लिए": 2.0, "यह": 1.5, "वह": 1.5, "नहीं": 2.5,
         "फीस": 1.0, "एडमिशन": 1.0, "पढ़ाई": 2.0, "बताओ": 2.5, "कैसे": 3.0,
+        # Question words, auxiliaries and the -एगा future: the words a caller
+        # actually puts in a sentence. Without them a Hindi question that happens
+        # to avoid "है" or "की" scored nothing above the bare script vote.
+        "कब": 3.0, "कहाँ": 3.0, "कहां": 3.0, "कौनसा": 3.0, "कौनसी": 3.0,
+        "कौनसे": 3.0, "कौन": 2.5, "लगेगा": 3.0, "लगेगी": 3.0, "लगता": 2.5,
+        "होगा": 3.0, "होगी": 3.0, "हुआ": 2.5, "हुई": 2.5, "मिलता": 3.0,
+        "मिलती": 3.0, "मिलेगा": 3.0, "मिलेगी": 3.0, "बताएं": 3.0, "बताये": 2.5,
+        "इसका": 3.0, "इसकी": 3.0, "उसका": 2.5, "लेकिन": 3.0, "क्योंकि": 3.0,
+        "छात्र": 2.5, "विश्वविद्यालय": 3.0, "पाठ्यक्रम": 3.0, "तक": 2.0,
+        "बाद": 2.0, "पहले": 2.5, "साक्षात्कार": 3.0, "दीजिए": 3.0, "देना": 2.5,
+        "भरें": 2.5, "देखें": 2.5, "करें": 2.5, "करेंगे": 3.0, "रहा": 2.0,
+        "रही": 2.0, "गया": 2.0, "गई": 2.0, "जाएगा": 3.0, "भी": 1.5,
     },
     "mr-IN": {
         "आहे": 3.5, "आहेस": 3.5, "आहोत": 3.5, "मी": 2.5, "माझा": 3.0, "माझी": 3.0,
         "तुमचा": 3.0, "तुमची": 3.0, "आपला": 2.5, "काय": 3.0, "किती": 3.0,
         "करावे": 3.0, "म्हणून": 3.5, "आणि": 2.5, "नाही": 2.5, "पाहिजे": 3.5,
         "शिकायचे": 3.0, "ठिकाणी": 3.0, "साठी": 2.5,
+        # Marathi shares the Devanagari script with Hindi, so the script vote is
+        # worth nothing on its own: a Marathi sentence with none of the words
+        # below tied Hindi at 6.0 and lost on candidate order. These are the
+        # Marathi-only question words, auxiliaries, the -ईल future and the
+        # oblique inflections (च्या, मध्ये) that Hindi does not use.
+        "कधी": 3.5, "कुठे": 3.5, "कुठं": 3.5, "कोणता": 3.5, "कोणती": 3.5,
+        "कोणते": 3.5, "कोणत्या": 3.5, "कसा": 3.5, "कशी": 3.5, "कसे": 3.5,
+        "लागते": 3.5, "लागतील": 3.5, "लागेल": 3.5, "लागणार": 3.5,
+        "सुरू": 3.0, "होईल": 3.5, "होणार": 3.5, "होते": 3.0, "झाले": 3.0,
+        "मिळते": 3.5, "मिळेल": 3.5, "मिळणार": 3.5, "सांगा": 3.5, "सांगितले": 3.0,
+        "त्याची": 3.5, "त्याचे": 3.5, "त्यांची": 3.5, "याची": 3.0, "हे": 2.0,
+        "पण": 3.0, "कारण": 2.5, "विद्यार्थी": 3.0, "विद्यापीठ": 3.5,
+        "अभ्यासक्रम": 3.5, "पर्यंत": 3.0, "नंतर": 3.0, "पूर्वी": 3.0,
+        "मुलाखत": 3.0, "द्या": 2.5, "घ्या": 2.5, "करा": 3.0, "करून": 2.5,
+        "मध्ये": 3.0, "हवे": 3.0, "हवी": 3.0, "नको": 3.0, "आहेत": 3.5,
+        "केली": 2.5, "केले": 2.5, "भरा": 2.5, "पहा": 2.5, "पाहा": 2.5,
+        "च्या": 3.0, "जागा": 2.0, "सुरुवात": 3.0, "असेल": 3.0, "असते": 3.0,
     },
     "raj-IN": {
         "म्हो": 3.5, "म्हूँ": 3.5, "म्हाणै": 3.5, "म्हाड़े": 3.5, "म्हारो": 3.5,
@@ -188,6 +217,19 @@ def _marker_score(tokens: list[str], raw: str, markers: dict[str, float]) -> flo
         elif len(marker) > 2 and marker.lower() in raw.lower():
             score += weight * 0.5
     return score
+
+
+def _tiebreak_rank(code: str) -> int:
+    """Order equal scores by the campus's regional language, not dict order.
+
+    Hindi and Marathi share the Devanagari script, so an utterance whose words
+    are in neither marker list scores identically for both. Before this, the
+    winner was whichever code happened to come first in the candidate list,
+    which silently sent Marathi callers to Hindi.
+    """
+    from ...config import settings
+
+    return 0 if code == settings.devanagari_preference else 1
 
 
 # --------------------------------------------------------------------------- #
@@ -307,6 +349,15 @@ def detect_language_text(
         # long English function words with no Indic markers → clearly English
         if hinglish == 0 and english_hits > 0:
             scores["en-IN"] += 6.0
+        # A wholly Latin-script utterance with no romanised-Indic marker in it is
+        # English. Without this floor a question whose words all sit outside the
+        # marker list ("When do classes start?") scored zero everywhere and came
+        # back with zero confidence, which re-prompts a caller who has already
+        # said, in English, what they want. English is the only Latin-script
+        # candidate here, so the script itself is the evidence.
+        if latin_share >= 0.6 and not script_codes and hinglish == 0 and marathi == 0 \
+                and rajasthani == 0:
+            scores["en-IN"] = scores.get("en-IN", 0.0) + 6.0 * latin_share
 
     # --- normalise to a confidence ---------------------------------------- #
     for code in list(scores.keys()):
@@ -315,7 +366,7 @@ def detect_language_text(
     if not scores:
         scores = {"en-IN": 1.0}
     total = sum(max(0.0, v) for v in scores.values())
-    ranked = sorted(scores.items(), key=lambda kv: -kv[1])
+    ranked = sorted(scores.items(), key=lambda kv: (-kv[1], _tiebreak_rank(kv[0])))
     top_code, top_score = ranked[0]
     second_score = ranked[1][1] if len(ranked) > 1 else 0.0
 

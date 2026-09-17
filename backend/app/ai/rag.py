@@ -24,7 +24,7 @@ import logging
 import re
 import time
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from sqlalchemy import select
@@ -104,6 +104,16 @@ class AnswerRequest:
     stage: str = "conversation"
     turn_index: int = 0
     caller_ref: str | None = None
+    #: The programme the caller was last talking about, as the session saw it.
+    #: A follow-up such as "and what about the fees?" names no programme, and
+    #: `history` is text only, so the session passes what it answered from.
+    #: `context_record_title` is the one that carries weight: it identifies the
+    #: branch ("B.Tech Computer Engineering"), which the token list cannot, since
+    #: `extract_entities` reduces that to BTECH and so cannot tell Computer
+    #: Engineering from Cosmetic Technology.
+    context_record_title: str | None = None
+    context_course_tokens: list[str] = field(default_factory=list)
+    context_specialisations: list[str] = field(default_factory=list)
 
     @property
     def language_name(self) -> str:
@@ -223,6 +233,56 @@ def augment_query(question: str, intent: IntentResult) -> str:
     return augmented
 
 
+#: Intents whose answer differs per programme. Carrying a programme into one of
+#: these is what makes "and the fees?" work; carrying it into, say, `transport`
+#: or `contact` would be nonsense, and into `placements` or `hostel` it would
+#: invent a programme-specific answer where the university publishes none.
+PROGRAMME_SCOPED_INTENTS = frozenset({
+    "courses", "eligibility", "entrance_exam", "fees", "documents", "comparison",
+})
+
+
+@dataclass(frozen=True)
+class InheritedProgramme:
+    """The programme a follow-up question is still about."""
+
+    title: str
+    tokens: list[str]
+    specialisations: list[str]
+
+
+def _inherit_programme_context(
+    intent: IntentResult, request: AnswerRequest
+) -> InheritedProgramme | None:
+    """Reuse the programme from the previous turn when this turn names none.
+
+    A caller who has just asked about B.Tech Computer Engineering and then says
+    "how many seats are there?" means that programme. Answering with a catalogue
+    of three unrelated ones — or worse, silently picking one, which is what
+    "त्याची पात्रता काय आहे?" used to do, coming back with B.Tech Mechanical —
+    makes the caller repeat themselves on a phone line.
+
+    Only a record title is precise enough to inherit. Carrying the tokens alone
+    was measured to make things worse: with just BTECH, "how many seats are
+    there?" ranked the five-year B.Tech + MBA dual degree first and would have
+    quoted sixty seats for a programme that has one hundred and eighty. With the
+    title in the query the right record wins outright. So when all we know is a
+    bare degree, we ask rather than guess.
+    """
+    if intent.course_tokens or intent.specialisations:
+        return None  # this turn named its own programme
+    if intent.intent not in PROGRAMME_SCOPED_INTENTS:
+        return None
+    title = (request.context_record_title or "").strip()
+    if not title:
+        return None
+    return InheritedProgramme(
+        title=title,
+        tokens=list(request.context_course_tokens or []),
+        specialisations=list(request.context_specialisations or []),
+    )
+
+
 class AnswerEngine:
     """Owns retrieval + generation for a call. One instance per process."""
 
@@ -242,10 +302,20 @@ class AnswerEngine:
     def provider_name(self) -> str:
         return str(self.llm_info.get("active", "local"))
 
+
     async def _retrieve(
-        self, question: str, intent: IntentResult, language: str, session: AsyncSession | None
+        self,
+        question: str,
+        intent: IntentResult,
+        language: str,
+        session: AsyncSession | None,
+        context_title: str | None = None,
     ) -> RetrievalResult:
         query = augment_query(question, intent)
+        if context_title:
+            # Retrieval matches on the query text, and the branch name is the
+            # part of it that separates one B.Tech from the next.
+            query = f"{query} {context_title}"
         return await self.retriever.search(query, language=language, intent=intent)
 
     # ------------------------------------------------------------------ #
@@ -260,6 +330,17 @@ class AnswerEngine:
         started = time.perf_counter()
         question = (request.question or "").strip()
         intent = detect_intent(question)
+        inherited = _inherit_programme_context(intent, request)
+        if inherited is not None:
+            intent = replace(
+                intent,
+                course_tokens=inherited.tokens,
+                specialisations=inherited.specialisations or intent.specialisations,
+            )
+            logger.info(
+                "carrying programme context into turn %d: %s",
+                request.turn_index, inherited.title,
+            )
 
         # --- topic guardrails ------------------------------------------- #
         topic, topic_confidence = guardrails.classify_topic(question)
@@ -305,7 +386,10 @@ class AnswerEngine:
 
         # --- retrieval --------------------------------------------------- #
         retrieval_started = time.perf_counter()
-        retrieval = await self._retrieve(question, intent, request.language, session)
+        retrieval = await self._retrieve(
+            question, intent, request.language, session,
+            context_title=inherited.title if inherited is not None else None,
+        )
         retrieval_ms = (time.perf_counter() - retrieval_started) * 1000
 
         if not retrieval.items:

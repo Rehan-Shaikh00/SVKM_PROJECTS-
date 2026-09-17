@@ -159,6 +159,22 @@ LANGUAGES: dict[str, Language] = {
         markers=(
             "what", "the", "fee", "course", "admission", "please", "is", "for",
             "how", "can", "you", "and", "eligibility",
+            # A caller's question is mostly function words and helpline nouns.
+            # With only thirteen markers, ordinary English sentences such as
+            # "When do classes start?" or "Are scholarships available?" scored no
+            # evidence at all and came back with zero confidence, which re-prompts
+            # a caller who has already told us, in English, what they want.
+            "when", "where", "which", "who", "why", "are", "was", "were", "will",
+            "would", "should", "could", "do", "does", "did", "have", "has", "had",
+            "my", "your", "our", "this", "that", "these", "those", "there", "here",
+            "want", "need", "tell", "know", "get", "give", "take", "come", "about",
+            "from", "with", "not", "but", "or", "of", "to", "in", "on", "at", "by",
+            "fees", "courses", "seats", "seat", "hostel", "scholarship",
+            "scholarships", "placement", "placements", "documents", "document",
+            "exam", "exams", "entrance", "apply", "application", "college",
+            "university", "campus", "department", "programme", "program",
+            "semester", "start", "starts", "last", "date", "available", "offer",
+            "offers", "refund", "talk", "person", "help", "any", "many", "much",
         ),
     ),
     "hi-IN": Language(
@@ -347,9 +363,13 @@ HINGLISH_MARKERS = (
     "aap", "aapka", "aapki", "kitna", "kitni", "kitne", "kaun", "kaise", "kab",
     "kahan", "batao", "bataiye", "bataye", "chahiye", "karna", "karein", "kar",
     "padhai", "padhna", "lena", "dena", "hai?", "nahi", "acha", "accha", "theek",
-    "thik", "saab", "ji", "bhai", "dijiye", "liye", "wala", "wali", "mein", "me",
+    "thik", "saab", "ji", "bhai", "dijiye", "liye", "wala", "wali", "mein",
     "ka", "ki", "ke", "se", "par", "tak", "aur", "lekin", "agar", "toh",
 )
+# Bare "me" used to sit in this list. It is the Hindi postposition, but it is
+# also one of the commonest English words, so "Tell me about placements." scored
+# as romanised Hindi and was answered in Devanagari. "mein", "mujhe" and "mera"
+# still carry the same signal without the collision.
 
 #: Romanised Rajasthani/Marwari markers (subset that is unlikely in Hindi).
 HINGLISH_RAJASTHANI_MARKERS = (

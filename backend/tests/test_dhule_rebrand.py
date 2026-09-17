@@ -152,6 +152,104 @@ def test_local_lid_routes_marathi_correctly(utterance: str, expected: str) -> No
     assert result.confidence >= settings.lid_confidence_threshold or result.method == "explicit_name"
 
 
+# Hindi and Marathi share the Devanagari script, so the script vote is worth
+# nothing on its own: both codes get it. These sentences are unambiguously
+# Marathi, and every one of them used to tie Hindi at 6.0-6.0 and lose, because
+# the winner was whichever code came first in the candidate list. A Marathi
+# caller from Dhule was answered in Hindi.
+MARATHI_ONLY_QUESTIONS = (
+    "सेमेस्टर कधी सुरू होईल?",
+    "कागदपत्रे कोणती लागतील?",
+    "परीक्षा कधी होणार?",
+    "प्रवेशासाठी कोणती परीक्षा द्यावी लागेल?",
+    "त्याची पात्रता काय आहे?",
+    "अभ्यासक्रमांची यादी सांगा",
+)
+
+HINDI_ONLY_QUESTIONS = (
+    "परीक्षा कब होगी?",
+    "कौन से डॉक्यूमेंट्स चाहिए?",
+    "इसका शुल्क कितना लगेगा?",
+    "एडमिशन कब तक खुला रहेगा?",
+    "बीटेक की पात्रता क्या है?",
+)
+
+
+@pytest.mark.parametrize("utterance", MARATHI_ONLY_QUESTIONS)
+def test_marathi_question_words_beat_the_shared_script(utterance: str) -> None:
+    """A Marathi sentence must win on its own words, not on script order."""
+    result = detect_language_text(utterance, candidates=ALLOWED)
+    assert result.language == "mr-IN", f"{utterance!r} -> {result.language} ({result.detail})"
+    # Above the bare script vote (6.0), i.e. it found Marathi evidence.
+    assert result.scores.get("mr-IN", 0.0) > result.scores.get("hi-IN", 0.0), result.scores
+
+
+@pytest.mark.parametrize("utterance", HINDI_ONLY_QUESTIONS)
+def test_hindi_still_wins_its_own_sentences(utterance: str) -> None:
+    """Expanding the Marathi list must not steal Hindi callers."""
+    result = detect_language_text(utterance, candidates=ALLOWED)
+    assert result.language == "hi-IN", f"{utterance!r} -> {result.language} ({result.detail})"
+
+
+def test_a_devanagari_tie_breaks_toward_the_campus_language() -> None:
+    """With no lexical evidence either way, order must not decide.
+
+    "संगणक" is Devanagari and in neither marker list, so Hindi and Marathi score
+    identically. The campus is in Maharashtra, so the tie goes to Marathi — and
+    it must do that whichever way the candidate list happens to be ordered.
+    """
+    tied = "संगणक"
+    for candidates in (("en-IN", "hi-IN", "mr-IN"), ("mr-IN", "hi-IN", "en-IN"),
+                       ("hi-IN", "mr-IN")):
+        result = detect_language_text(tied, candidates=candidates)
+        assert result.language == settings.devanagari_preference, (
+            f"{candidates} -> {result.language}; tie broken by candidate order, "
+            "not by the configured regional language"
+        )
+
+
+def test_the_english_word_me_is_not_romanised_hindi() -> None:
+    """"Tell me about placements." was detected as Hindi and answered in Devanagari.
+
+    Bare "me" sat in the Hinglish marker list as the Hindi postposition, but it
+    is also one of the commonest English words, and this sentence had no English
+    marker in it either, so Hindi won with 0.98 confidence.
+    """
+    from app.i18n.languages import HINGLISH_MARKERS
+
+    assert "me" not in HINGLISH_MARKERS
+    # "mein", "mujhe" and "mera" carry the same signal without the collision.
+    assert {"mein", "mujhe", "mera"} <= set(HINGLISH_MARKERS)
+    for utterance in ("Tell me about placements.", "Can you send me the details?",
+                      "Please text me the brochure."):
+        result = detect_language_text(utterance, candidates=ALLOWED)
+        assert result.language == "en-IN", f"{utterance!r} -> {result.language}"
+
+
+@pytest.mark.parametrize(
+    "utterance",
+    [
+        "When do classes start?",
+        "Are scholarships available?",
+        "Which documents should I bring?",
+        "I want to talk to a person.",
+        "Is parking available near campus?",
+    ],
+)
+def test_an_english_question_never_comes_back_with_zero_confidence(utterance: str) -> None:
+    """Zero confidence re-prompts a caller who already asked in English.
+
+    English is the only Latin-script candidate on this line, so wholly Latin
+    text with no romanised-Indic marker in it is evidence in itself.
+    """
+    result = detect_language_text(utterance, candidates=ALLOWED)
+    assert result.language == "en-IN", f"{utterance!r} -> {result.language}"
+    assert result.confidence >= settings.lid_confidence_threshold, (
+        f"{utterance!r} scored {result.confidence} — the caller would be asked "
+        "to choose a language again"
+    )
+
+
 def test_romanised_marathi_marker_list_is_marathi_specific() -> None:
     """Guards against adding a word that is really English or Hindi.
 

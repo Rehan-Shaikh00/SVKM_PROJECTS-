@@ -93,6 +93,12 @@ CASES: list[Case] = [
     # --- eligibility and documents ------------------------------------------ #
     Case("बीबीए की पात्रता क्या है?", "hi-IN", template="eligibility_long",
          contains=("50%",), note="Maths is not compulsory for BBA"),
+    Case("What is the eligibility?", template="ask_clarify", escalate=False,
+         avoids=("Mechanical", "Computer", "Pharmacy", "B.Tech", "BBA"),
+         note="no programme named, so it asks instead of quoting one it picked"),
+    Case("पात्रता काय आहे?", "mr-IN", template="ask_clarify", escalate=False,
+         contains=("अभ्यासक्रमाविषयी",),
+         note="Marathi inflects the noun before the postposition"),
     Case("What documents do I need for admission?", template="documents",
          contains=("Class 10", "Class 12")),
     Case("डॉक्यूमेंट्स की लिस्ट एसएमएस से भेजो", "hi-IN", template="documents",

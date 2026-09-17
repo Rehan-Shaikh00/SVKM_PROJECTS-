@@ -29,6 +29,7 @@ from app.ai.templates import (
     FRAMES,
     MAX_SPOKEN_CHARS,
     PROGRAMME_NEUTRAL,
+    PROGRAMME_NOUN,
     _script_compatible,
     _sentences,
     compose,
@@ -711,7 +712,8 @@ def test_non_programme_records_get_a_neutral_subject_not_their_title() -> None:
         structured={"published": False, "eligibility": "Class 10+2 from a recognised board"},
         verified=True,
     )
-    question = "what is the eligibility for admission"
+    # Names a programme, so the answer composes rather than asking which one.
+    question = "what is the eligibility for B.Tech"
     answer = compose(_retrieval(question, chunk), language="en-IN", question=question)
     assert "Programme transfer and deferral" not in answer.text
     assert PROGRAMME_NEUTRAL["en"] in answer.text
@@ -1714,3 +1716,111 @@ def test_accreditation_questions_are_university_questions(question: str) -> None
 
 def test_a_catalogue_question_is_still_a_catalogue_question() -> None:
     assert detect_intent("What courses do you offer?").intent == "courses"
+
+# --------------------------------------------------------------------------- #
+# Round 6 — a follow-up keeps its programme, and an ambiguous one asks
+# --------------------------------------------------------------------------- #
+def test_eligibility_without_a_programme_asks_instead_of_guessing() -> None:
+    """Retrieval always ranks something first; that is not what they asked about.
+
+    "What is the eligibility?" used to come back "For B.Tech Mechanical
+    Engineering, the eligibility is…" to a caller who had never mentioned
+    Mechanical. Eligibility is what someone decides whether to apply on.
+    """
+    chunk = _chunk(
+        text="NMIMS Global University, Dhule · B.Tech Mechanical Engineering\n"
+             "Eligibility: Class 10+2 with Physics and Mathematics, at least 45% in PCM.",
+        title="B.Tech Mechanical Engineering",
+        category="course",
+        structured={"programme": "B.Tech Mechanical Engineering",
+                    "eligibility": "Class 10+2 with Physics and Mathematics, at least 45% in PCM"},
+        verified=True,
+    )
+    question = "what is the eligibility"
+    answer = compose(_retrieval(question, chunk), language="en-IN", question=question)
+    assert "Mechanical" not in answer.text, answer.text
+    assert answer.text == FRAMES["en-IN"]["ask_clarify"].format(programme="programme")
+    # Asking a question is not giving up: the caller can answer it.
+    assert not answer.needs_escalation, answer.escalation_reason
+    assert answer.template == "ask_clarify"
+
+
+@pytest.mark.parametrize(
+    ("question", "language", "noun"),
+    [
+        ("पात्रता क्या है?", "hi-IN", PROGRAMME_NOUN["hi"]),
+        ("पात्रता काय आहे?", "mr-IN", PROGRAMME_NOUN["mr"]),
+    ],
+)
+def test_the_clarifying_question_is_asked_in_the_callers_language(
+    question: str, language: str, noun: str
+) -> None:
+    chunk = _chunk(
+        text="NMIMS Global University, Dhule · B.Tech Mechanical Engineering\n"
+             "Eligibility: Class 10+2 with Physics and Mathematics.",
+        title="B.Tech Mechanical Engineering",
+        category="course",
+        structured={"eligibility": "Class 10+2 with Physics and Mathematics"},
+        verified=True,
+    )
+    answer = compose(_retrieval(question, chunk), language=language, question=question)
+    assert answer.text == FRAMES[language]["ask_clarify"].format(programme=noun)
+    assert "Mechanical" not in answer.text
+    assert not answer.needs_escalation
+
+
+def test_eligibility_with_a_programme_named_still_answers() -> None:
+    """Asking is for when we do not know; it must not become a habit."""
+    chunk = _chunk(
+        text="NMIMS Global University, Dhule · BBA\n"
+             "Eligibility: Class 10+2 from a recognised board, at least 50% aggregate. "
+             "Mathematics is not compulsory.",
+        title="Bachelor of Business Administration (BBA)",
+        category="course",
+        structured={"programme": "BBA",
+                    "eligibility": "Class 10+2 from a recognised board, at least 50% aggregate. "
+                                   "Mathematics is not compulsory."},
+        verified=True,
+    )
+    question = "what is the eligibility for BBA"
+    answer = compose(_retrieval(question, chunk), language="en-IN", question=question)
+    assert answer.template == "eligibility_long"
+    assert "50%" in answer.text and "BBA" in answer.text
+
+
+def test_a_follow_up_inherits_the_record_not_just_the_degree_token() -> None:
+    """"How many seats are there?" must not be answered about another B.Tech.
+
+    `extract_entities` reduces "B.Tech Computer Engineering" to the token BTECH,
+    which cannot tell it from the five other B.Tech branches here. Measured
+    against the real index, inheriting the token alone ranked the five-year
+    B.Tech + MBA dual degree first — sixty seats quoted for a programme that has
+    one hundred and eighty. Only the record title is precise enough to carry.
+    """
+    from app.ai.rag import AnswerRequest, _inherit_programme_context
+
+    bare = detect_intent("How many seats are there?")
+    request = AnswerRequest(
+        call_id="c", question="How many seats are there?",
+        context_record_title="B.Tech Computer Engineering",
+        context_course_tokens=["BTECH"],
+    )
+    inherited = _inherit_programme_context(bare, request)
+    assert inherited is not None
+    assert inherited.title == "B.Tech Computer Engineering"
+    assert inherited.tokens == ["BTECH"]
+
+    # A bare degree with no record behind it is not enough to inherit: guessing
+    # a branch is worse than asking.
+    coarse = AnswerRequest(call_id="c", question="How many seats are there?",
+                           context_course_tokens=["BTECH"])
+    assert _inherit_programme_context(bare, coarse) is None
+
+    # A turn that names its own programme is left alone.
+    named = detect_intent("How many seats in B.Pharm?")
+    assert _inherit_programme_context(named, request) is None
+
+    # So is a question no programme would change the answer to.
+    for question in ("How do I reach the campus?", "What is the contact number?",
+                     "What is the highest package?"):
+        assert _inherit_programme_context(detect_intent(question), request) is None, question

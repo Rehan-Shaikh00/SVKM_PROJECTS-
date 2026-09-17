@@ -23,7 +23,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..ai.intents import IntentResult, detect_intent, is_control_utterance
+from ..ai.intents import IntentResult, detect_intent, extract_entities, is_control_utterance
 from ..ai.llm.base import LLM, Message
 from ..ai.rag import AnswerEngine, AnswerRequest, AssistantAnswer
 from ..ai.summarizer import summarise, whisper_twiml_text
@@ -59,6 +59,23 @@ logger = logging.getLogger("nims.session")
 SILENCE_TIMEOUT_SECONDS = 7.0
 #: confidence above which the detected language is adopted without asking again
 HIGH_LID_CONFIDENCE = 0.82
+
+#: Confidence a *mid-call* switch needs, on each of two consecutive turns.
+#: Measured over 24 ordinary Hindi and Marathi helpline questions, the detector
+#: picked the right language every time, but only a third of them reached the
+#: 0.82 that immediate adoption asks for — so a caller who moved into Marathi
+#: mid-call was almost never followed, and stayed answered in English. At 0.75
+#: nearly all of them clear it while the genuinely ambiguous ones (0.56-0.61,
+#: where Hindi and Marathi share every word in the sentence) still do not. The
+#: two-turn requirement is what makes the lower bar safe here and not at the
+#: language prompt, where one turn is all there is.
+MID_CALL_SWITCH_CONFIDENCE = 0.75
+
+#: How many turns a named programme stays the subject of the call. Long enough
+#: for "and the fees?", "how many seats?", "what documents?" to follow one
+#: another; short enough that a caller who has moved on is not silently
+#: answered about a programme they asked about a minute ago.
+PROGRAMME_CONTEXT_TURNS = 3
 #: how long we wait for the client to finish speaking text (browser TTS)
 WORDS_PER_SECOND = 2.6
 
@@ -127,6 +144,12 @@ class CallSession:
         self._pending_followup: dict[str, Any] | None = None
         self._awaiting_destination = False
         self._language_switch_streak = 0
+        #: The programme record the caller was last talking about, and the turn
+        #: it was established on. Follow-up questions inherit it.
+        self._programme_context_title = ""
+        self._programme_context_tokens: list[str] = []
+        self._programme_context_specs: list[str] = []
+        self._programme_context_turn = -99
         self._answer_turn_seq = 0
         self._asr_info: dict[str, Any] = {}
         self._client_speech_done = asyncio.Event()
@@ -948,7 +971,7 @@ class CallSession:
             result.language
             and result.language != self.language
             and result.language in settings.supported_language_list
-            and result.confidence >= HIGH_LID_CONFIDENCE
+            and result.confidence >= MID_CALL_SWITCH_CONFIDENCE
         ):
             self._language_switch_streak += 1
         else:
@@ -958,6 +981,61 @@ class CallSession:
             await self._adopt_language(
                 result.language, method="mid_call_switch", confidence=result.confidence
             )
+
+    def _programme_context_for(self, seq: int) -> tuple[str, list[str], list[str]]:
+        """The programme still under discussion, if any."""
+        if not self._programme_context_title:
+            return "", [], []
+        if seq - self._programme_context_turn > PROGRAMME_CONTEXT_TURNS:
+            self._forget_programme_context()
+            return "", [], []
+        return (
+            self._programme_context_title,
+            list(self._programme_context_tokens),
+            list(self._programme_context_specs),
+        )
+
+    def _forget_programme_context(self) -> None:
+        self._programme_context_title = ""
+        self._programme_context_tokens = []
+        self._programme_context_specs = []
+
+    def _remember_programme(self, answer: AssistantAnswer, seq: int) -> None:
+        """Note which programme this turn was about, so a follow-up can inherit it.
+
+        Taken from the record that was actually answered from, not from the
+        caller's words: "what is the eligibility for B.Tech Computer
+        Engineering?" yields the token BTECH and nothing else, which cannot tell
+        Computer Engineering from the five other B.Tech branches on this campus.
+        The record title can.
+        """
+        retrieval = answer.retrieval
+        if retrieval is None:
+            return
+        course = next(
+            (item for item in retrieval.items if getattr(item, "category", "") == "course"),
+            None,
+        )
+        if course is None:
+            # Nothing programme-shaped was discussed — a question about the
+            # calendar or the address must not wipe the programme under way.
+            return
+        title = (course.title or "").strip()
+        if not title:
+            return
+        if "overview" in title.lower() or "at a glance" in title.lower():
+            # "What about the pharmacy one?" is answered from a school overview,
+            # which lists programmes rather than being one. Anchoring on it sent
+            # the next "and its eligibility?" to whichever programme happened to
+            # rank first inside that school. Drop the anchor instead, so the
+            # follow-up asks which programme the caller means.
+            self._forget_programme_context()
+            return
+        entities = extract_entities(course.title)
+        self._programme_context_title = course.title
+        self._programme_context_tokens = entities["course_tokens"]
+        self._programme_context_specs = entities["specialisations"]
+        self._programme_context_turn = seq
 
     async def _answer_question(self, text: str, intent: IntentResult, seq: int) -> None:
         engine = self.deps.answer_engine
@@ -974,6 +1052,8 @@ class CallSession:
                 timings.first_audio_ms = (time.perf_counter() - started) * 1000
                 first_audio_recorded = True
 
+        context_title, context_tokens, context_specs = self._programme_context_for(seq)
+
         async with SessionLocal() as session:
             answer: AssistantAnswer = await engine.answer(
                 AnswerRequest(
@@ -984,10 +1064,15 @@ class CallSession:
                     stage=self.state.value,
                     turn_index=seq,
                     caller_ref=redacted_caller(self.ctx.from_number),
+                    context_record_title=context_title,
+                    context_course_tokens=context_tokens,
+                    context_specialisations=context_specs,
                 ),
                 session,
                 on_sentence=on_sentence if settings.llm_streaming else None,
             )
+
+        self._remember_programme(answer, seq)
 
         timings.retrieval_ms = answer.retrieval_ms
         timings.llm_ms = answer.llm_ms

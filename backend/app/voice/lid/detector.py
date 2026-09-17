@@ -286,6 +286,28 @@ class LanguageIdentifier:
             confidence = min(0.99, (top_score / total) * 0.75 + (top_score / 1.6) * 0.45)
             if top_score - runner_up < 0.12:
                 confidence *= 0.85  # ambiguous — force a re-prompt
+
+            # That share is not comparable across scripts. Hindi and Marathi both
+            # collect the Devanagari script vote, so the most a Marathi sentence
+            # can reach is roughly a two-thirds share however many Marathi words
+            # it contains, which pinned confidence near 0.65 — under the 0.82 a
+            # mid-call switch needs. English collects the whole Latin vote alone
+            # and sailed to 0.99 on the same rule, so a caller could switch into
+            # English mid-call but never into Marathi, on a line whose campus is
+            # in Maharashtra. Where the lexical detector picked the winner, trust
+            # the confidence it calibrated against the raw marker scores, and let
+            # the other signals only adjust it.
+            if lexical is not None and lexical.language == top_code:
+                confidence = lexical.confidence
+                if explicit is not None and explicit.language == top_code:
+                    confidence = max(confidence, explicit.confidence)
+                if acoustic is not None:
+                    confidence = (
+                        min(0.99, confidence + 0.08)
+                        if acoustic.language == top_code
+                        else confidence * 0.7
+                    )
+                confidence = min(0.99, confidence)
             method = "+".join(dict.fromkeys(methods)) or "lexicon"
             result = LIDResult(
                 language=top_code,

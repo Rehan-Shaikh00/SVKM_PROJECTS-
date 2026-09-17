@@ -195,7 +195,10 @@ FRAMES: dict[str, dict[str, str]] = {
         "comparison": "दोघांची तुलना करता: {left} चे शुल्क {left_fee} आहे, आणि {right} चे {right_fee}.",
         "not_found": "मला ही माहिती सध्या उपलब्ध नाही. मी तुम्हाला एका व्यक्तीशी जोडतो.",
         "offer_details": "मी पूर्ण यादी व्हॉट्सॲप किंवा एसएमएसने पाठवू शकतो, पाठवू का?",
-        "ask_clarify": "तुम्ही कोणत्या {programme} विषयी विचारत आहात?",
+        # Marathi inflects the noun before a postposition, so the slot carries
+        # the oblique stem and "विषयी" is joined to it: "कोणत्या अभ्यासक्रमाविषयी",
+        # not "कोणत्या अभ्यासक्रम विषयी".
+        "ask_clarify": "तुम्ही कोणत्या {programme}विषयी विचारत आहात?",
         "unverified_warning": "कृपया प्रवेश कार्यालयाकडून खात्री करून घ्या.",
         "generic": "{sentences}",
         "stale_warning": "ही माहिती मागील प्रवेश सत्रातील आहे.",
@@ -287,12 +290,30 @@ PROGRAMME_CATEGORIES = frozenset({"course", "specialisation"})
 
 #: What to call the subject of a question when the record that answered it is a
 #: policy or FAQ record rather than a programme record.
+#: What `ask_clarify` puts in its slot. It cannot take PROGRAMME_NEUTRAL: "Which
+#: this programme are you asking about?" is not a sentence.
+PROGRAMME_NOUN = {
+    "en": "programme",
+    "hi": "\u092a\u093e\u0920\u094d\u092f\u0915\u094d\u0930\u092e",
+    "mr": "\u0905\u092d\u094d\u092f\u093e\u0938\u0915\u094d\u0930\u092e\u093e",
+    "raj": "\u0915\u094b\u0930\u094d\u0938",
+}
+
 PROGRAMME_NEUTRAL = {
     "en": "this programme",
     "hi": "\u0907\u0938 \u092a\u093e\u0920\u094d\u092f\u0915\u094d\u0930\u092e",
     "mr": "\u0939\u093e \u0905\u092d\u094d\u092f\u093e\u0938\u0915\u094d\u0930\u092e",
     "raj": "\u0908 \u0915\u094b\u0930\u094d\u0938",
 }
+
+
+def _programme_named(intent: Any) -> bool:
+    """Did the caller say which programme they mean?
+
+    True when this turn named one, and also when a previous turn did and the
+    engine carried it in — by the time compose runs, both are in `course_tokens`.
+    """
+    return bool(getattr(intent, "course_tokens", None) or getattr(intent, "specialisations", None))
 
 
 def _frames(language: str) -> dict[str, str]:
@@ -795,7 +816,18 @@ def compose(
 
     elif intent.intent == "eligibility":
         eligibility, source = _field_from_groups("eligibility")
-        if eligibility:
+        if eligibility and not _programme_named(intent):
+            # "What is the eligibility?" names no programme, but retrieval still
+            # ranks one first and the frame speaks its title, so a caller who
+            # never said Mechanical was told "For B.Tech Mechanical Engineering,
+            # the eligibility is…". Eligibility is what a caller decides whether
+            # to apply on, so the wrong programme does real damage; asking costs
+            # one turn.
+            sentences.append(frames["ask_clarify"].format(
+                programme=PROGRAMME_NOUN.get(language.split("-")[0], "programme")
+            ))
+            template_used = "ask_clarify"
+        elif eligibility:
             if source is not primary and source.category in PROGRAMME_CATEGORIES:
                 programme = source.title
             payload = str(eligibility).strip()
@@ -1321,7 +1353,16 @@ def compose(
                 payload.get("programme") or payload.get("degree")
             )
 
-        def _overview_programmes(group: tuple[Any, Any]) -> list[str]:
+        def _overview_programmes(group: tuple[Any, Any]) -> list[str] | None:
+            """None when this is not an overview record at all.
+
+            The caller has to tell "not an overview" from "an overview whose
+            chunk carries no programme list", because only the second may be
+            dropped. When it could not tell them apart it fell back to the
+            title, and a caller asking how many seats there are heard "School of
+            Pharmacy & Technology Management — programmes overview" offered as
+            something they could enrol in.
+            """
             """The real course names inside a school-overview record.
 
             An overview record's *title* is a school label ("School of Commerce —
@@ -1343,7 +1384,7 @@ def compose(
                 )
             )
             if not is_overview:
-                return []
+                return None
             listed = payload.get("programmes") or []
             if isinstance(listed, str):
                 listed = [x.strip() for x in re.split(r"[;\n]", listed) if x.strip()]
@@ -1356,10 +1397,27 @@ def compose(
                     names.append(name)
             return names[:4]
 
+        def _spoken_name(title: str) -> str:
+            """The part of a programme title a caller can say out loud.
+
+            "Master of Pharmacy (M.Pharm) — Pharmaceutics, Quality Assurance,
+            Pharmacology, Pharmaceutical Chemistry" is one record, but as a
+            catalogue item it is a twenty-second mouthful. The detail after the
+            dash goes in the follow-up message, which is where the caller can
+            read it.
+            """
+            return re.split(r"\s+\u2014\s+|\s+-\s+", title or "")[0].strip()
+
         programme_groups = [g for g in groups if _is_programme_group(g)]
         titles: list[str] = []
         for group in programme_groups:
-            contributed = _overview_programmes(group) or [group[0].title]
+            listed = _overview_programmes(group)
+            if listed is None:
+                contributed = [_spoken_name(group[0].title)]
+            else:
+                # An overview with no names to give contributes nothing rather
+                # than its own school label.
+                contributed = [_spoken_name(name) for name in listed]
             for name in contributed:
                 if name and name not in titles:
                     titles.append(name)
@@ -1552,6 +1610,14 @@ def compose(
     if not verified and not needs_escalation and confidence < min_confidence + 0.15:
         needs_escalation = True
         escalation_reason = "low_confidence"
+
+    if template_used == "ask_clarify":
+        # A question back to the caller is the opposite of giving up on them.
+        # The record that ranked first may well be an unpublishable one, which
+        # would otherwise have the call transferred while the assistant is still
+        # asking which programme they meant.
+        needs_escalation = False
+        escalation_reason = None
 
     return ComposedAnswer(
         text=text,
