@@ -180,7 +180,7 @@ async def public_config() -> dict[str, Any]:
         "university": "NMIMS Global University, Dhule",
         # Fallback is the verified campus number from svkmnmimsgu.ac.in/contact-us;
         # the university publishes no toll-free line of its own.
-        "helpline": settings.twilio_helline_number or "+91 2562 350620",
+        "helpline": settings.twilio_helpline_number,
         "environment": settings.environment,
         "academic_year": settings.kb_academic_year,
         "languages": settings.supported_language_list,

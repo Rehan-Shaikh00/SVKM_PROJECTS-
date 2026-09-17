@@ -73,7 +73,7 @@ def _transfer_verbs() -> str:
             "Our advisors are unavailable right now. Please call 1 800 120 1020.",
             language="en-IN",
         ) + hangup()
-    return dial(agents[0], caller_id=settings.twilio_helline_number)
+    return dial(agents[0], caller_id=settings.twilio_helpline_number)
 
 
 def build_inbound_xml(call_uuid: str) -> str:

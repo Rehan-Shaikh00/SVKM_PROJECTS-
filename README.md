@@ -174,7 +174,7 @@ backend/
     voice/         audio (G.711 μ-law, resample, VAD, DTMF), ASR, LID, TTS
     config.py      environment-driven settings + degraded-mode resolution
     models.py      SQLAlchemy 2.0 models (calls, turns, escalations, KB, …)
-  tests/           237 unit tests (no DB, no network, no keys required)
+  tests/           244 unit tests (no DB, no network, no keys required)
   static/dashboard built React app served at /dashboard
 data/kb/           seed knowledge base (YAML)
 frontend/          Vite + React + TypeScript dashboard
@@ -208,12 +208,19 @@ Other important settings: `PUBLIC_BASE_URL` (telephony websockets **must** be
 `ANSWER_CONFIDENCE_THRESHOLD`, `RETRIEVAL_TOP_K`, `KB_STALENESS_DAYS`,
 `KB_GOOGLE_SHEET_CSV_URL`, escalation targets and hold music.
 
+Escalation defaults to the three school offices the university publishes on its own
+contact page — `TWILIO_HELPLINE_NUMBER=+912562350620` (STME, 02562 350620) and
+`ESCALATION_AGENTS=+912562350620,+912562350600,+912562350640` (STME, School of
+Commerce, SPTM). No toll-free number is published anywhere on the site, so none is
+assumed: a caller who asks for a human is transferred to a line that exists. The
+older misspelt `TWILIO_HELLINE_NUMBER` is still accepted as an alias.
+
 ---
 
 ## Development
 
 ```bash
-# backend tests (237 tests, ~4.7s, no DB/network/keys)
+# backend tests (244 tests, ~4.8s, no DB/network/keys)
 cd backend && ../.venv/bin/pytest -q
 
 # lint (ruff config in .ruff.toml; ignores are documented with reasons)

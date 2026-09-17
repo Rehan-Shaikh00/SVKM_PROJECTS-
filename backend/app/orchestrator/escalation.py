@@ -41,7 +41,7 @@ def plan_escalation(
         "reason": reason,
         "language": language,
         "summary": summary,
-        "helpline": settings.twilio_helline_number,
+        "helpline": settings.twilio_helpline_number,
     }
     if extra_context:
         context.update(extra_context)

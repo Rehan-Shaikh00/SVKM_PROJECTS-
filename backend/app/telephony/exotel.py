@@ -93,7 +93,7 @@ def _transfer_verbs() -> str:
     agents = settings.escalation_agent_list
     if not agents:
         return say("Our advisors are unavailable. Please call 1 800 120 1020.") + hangup()
-    return dial(agents[0], caller_id=settings.twilio_helline_number, time_limit=300)
+    return dial(agents[0], caller_id=settings.twilio_helpline_number, time_limit=300)
 
 
 def build_language_result_exoml(

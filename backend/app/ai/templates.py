@@ -566,7 +566,25 @@ def compose(
     total = _money(fees.get("total"), language)
     hostel_fee = _money(fees.get("hostel"), language)
 
-    if intent.intent == "fees":
+    if structured.get("not_offered"):
+        # "We do not run that" is a complete answer to any question about the
+        # programme it denies — process, fees, eligibility or seats alike. Letting
+        # the intent frame wrap it produced "एडमिशन की प्रक्रिया है: SVKM NMIMS
+        # Global University does not run MBBS, BDS or any dental programme…" for a
+        # Hindi caller who asked how to get admission to MBBS.
+        sentences.extend(_best_sentences(question, primary, limit=3, language=language))
+        template_used = "not_offered"
+        alternatives = structured.get("offered_instead")
+        if isinstance(alternatives, str):
+            alternatives = [x.strip() for x in re.split(r"[;\n]", alternatives) if x.strip()]
+        if alternatives:
+            followup = {
+                "channel": "sms",
+                "title": "Programmes offered instead",
+                "items": [str(a) for a in alternatives][:6],
+            }
+
+    elif intent.intent == "fees":
         if annual and total:
             sentences.append(frames["fees_both"].format(programme=programme, annual=annual, total=total))
             template_used = "fees_both"

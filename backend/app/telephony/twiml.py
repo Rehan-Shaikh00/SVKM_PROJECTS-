@@ -127,7 +127,7 @@ def transfer_twiml(
         return str(response)
 
     dial = Dial(
-        caller_id=caller_id or settings.twilio_helline_number or None,
+        caller_id=caller_id or settings.twilio_helpline_number or None,
         time_limit=max_wait,
         record="do-not-record" if not settings.call_recording_enabled else "record-from-ringing",
         action=f"{settings.public_base_url}/telephony/twilio/dial-result",

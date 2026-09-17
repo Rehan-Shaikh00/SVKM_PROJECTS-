@@ -53,7 +53,7 @@ async def simulator_config() -> dict[str, Any]:
         "university": "NMIMS Global University, Dhule",
         # Fallback is the verified campus number from svkmnmimsgu.ac.in/contact-us;
         # the university publishes no toll-free line of its own.
-        "helpline": settings.twilio_helline_number or "+91 2562 350620",
+        "helpline": settings.twilio_helpline_number,
         "supported_languages": settings.supported_language_list,
         "greeting_languages": settings.greeting_language_list,
         "server_asr": summary["active"]["asr"],
@@ -94,7 +94,7 @@ async def simulator_websocket(websocket: WebSocket) -> None:
         call_id=call_id,
         provider="simulator",
         from_number=first.get("from") or "+919000000000",
-        to_number=first.get("to") or settings.twilio_helline_number or "+911800120000",
+        to_number=first.get("to") or settings.twilio_helpline_number,
         metadata={"mode": first.get("mode", "voice"), "user_agent": first.get("user_agent", "")},
     )
     metrics.calls_started += 1

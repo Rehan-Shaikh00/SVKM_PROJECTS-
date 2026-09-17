@@ -504,7 +504,7 @@ async def twilio_config() -> dict[str, Any]:
         "media_stream_url": twiml.stream_websocket_url(),
         "sms_webhook": f"{base}/telephony/twilio/sms",
         "configured": settings.twilio_configured,
-        "helline": settings.twilio_helline_number,
+        "helpline": settings.twilio_helpline_number,
         "escalation_agents": settings.escalation_agent_list,
         "queue": settings.escalation_queue_name,
         "recording_enabled": settings.call_recording_enabled,

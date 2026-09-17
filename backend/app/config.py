@@ -14,7 +14,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import field_validator
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/app/config.py -> backend/app -> backend -> repo root
@@ -57,9 +57,18 @@ class Settings(BaseSettings):
     twilio_auth_token: str = ""
     twilio_api_key_sid: str = ""
     twilio_api_key_secret: str = ""
-    twilio_helline_number: str = ""
-    escalation_agents: str = ""
-    escalation_queue_name: str = "nims-admissions-queue"
+    # The outbound number and the escalation targets default to the phone numbers
+    # the university publishes on its own contact page (svkmnmimsgu.ac.in
+    # /contact-us): STME 02562 350620, School of Commerce 02562 350600 and SPTM
+    # 02562 350640. Placeholder numbers here meant a real caller asking for a
+    # human was transferred to a line that does not exist.
+    twilio_helpline_number: str = Field(
+        default="+912562350620",
+        validation_alias=AliasChoices("twilio_helpline_number", "twilio_helline_number",
+                                      "TWILIO_HELPLINE_NUMBER", "TWILIO_HELLINE_NUMBER"),
+    )
+    escalation_agents: str = "+912562350620,+912562350600,+912562350640"
+    escalation_queue_name: str = "svkm-nmims-dhule-admissions-queue"
     escalation_max_wait_seconds: int = 300
     escalation_whisper_context: bool = True
     hold_music_url: str = "https://api.twilio.com/cowbell.mp3"

@@ -81,7 +81,7 @@ async def send_sms(destination: str, body: str, sender: str | None = None) -> di
     if not settings.followup_sms_enabled or not settings.twilio_configured:
         return {"status": "skipped", "reason": "SMS disabled or Twilio not configured"}
     account_sid, token = settings.twilio_credentials
-    sender = sender or settings.twilio_helline_number
+    sender = sender or settings.twilio_helpline_number
     if not sender:
         return {"status": "failed", "reason": "TWILIO_HELLINE_NUMBER not set"}
     url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
@@ -106,7 +106,7 @@ async def send_whatsapp(destination: str, body: str, sender: str | None = None) 
     if not settings.followup_whatsapp_enabled or not settings.twilio_configured:
         return {"status": "skipped", "reason": "WhatsApp disabled or Twilio not configured"}
     account_sid, token = settings.twilio_credentials
-    sender = sender or settings.twilio_helline_number
+    sender = sender or settings.twilio_helpline_number
     to = destination if destination.startswith("whatsapp:") else f"whatsapp:{destination}"
     frm = sender if sender.startswith("whatsapp:") else f"whatsapp:{sender}"
     url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"

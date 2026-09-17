@@ -1045,3 +1045,97 @@ def test_every_language_has_the_same_frame_keys() -> None:
                 "specialisation_intake", "entrance_tests_generic", "round_status",
                 "eligibility_long"):
         assert all(key in frames for frames in FRAMES.values()), key
+
+
+# --------------------------------------------------------------------------- #
+# a denial is an answer, not a payload for an intent frame
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("question", [
+    "how do I take admission in MBBS",
+    "what is the fee for MBBS",
+    "what is the eligibility for BDS",
+])
+def test_a_not_offered_record_is_never_wrapped_in_an_intent_frame(question: str) -> None:
+    """A Hindi caller asking how to get into MBBS used to hear "एडमिशन की प्रक्रिया
+    है: SVKM NMIMS Global University does not run MBBS, BDS or any dental
+    programme…" — the process frame wrapped a denial."""
+    chunk = _chunk(
+        text=(
+            "NMIMS Global University, Dhule · FAQ\n"
+            "SVKM NMIMS Global University does not run MBBS, BDS or any dental "
+            "programme, nursing or AYUSH degrees. There is no entrance route, fee "
+            "or seat count for a clinical medical programme here."
+        ),
+        title="Medical, dental, nursing and allied health programmes are not offered",
+        category="faq",
+        structured={"not_offered": ["MBBS", "BDS / dental", "B.Sc. Nursing"],
+                    "offered_instead": ["Diploma in Pharmacy (D.Pharm)",
+                                        "Bachelor of Pharmacy (B.Pharm)"]},
+        verified=True,
+    )
+    answer = compose(_retrieval(question, chunk), language="en-IN", question=question)
+    assert answer.template == "not_offered"
+    assert not answer.text.startswith("The admission process is")
+    assert not answer.text.startswith("For ")
+    assert "does not run MBBS" in answer.text
+    # the alternatives travel by message, not by voice
+    assert answer.followup and "D.Pharm" in " ".join(answer.followup["items"])
+
+
+# --------------------------------------------------------------------------- #
+# the numbers a live call is actually transferred to
+# --------------------------------------------------------------------------- #
+def test_escalation_targets_are_the_published_school_offices() -> None:
+    """The seeded env shipped placeholder agents (+911412345678) and a US helpline,
+    so a caller who asked for a human was transferred to a line that does not
+    exist. Only numbers published on svkmnmimsgu.ac.in/contact-us may be used."""
+    from app.config import Settings
+
+    defaults = Settings(_env_file=None)
+    published = {"+912562350620", "+912562350600", "+912562350640"}
+    assert set(defaults.escalation_agent_list) <= published
+    assert defaults.twilio_helpline_number in published
+    assert "nims-admissions-queue" != defaults.escalation_queue_name
+    assert "dhule" in defaults.escalation_queue_name
+
+
+def test_no_rejected_or_placeholder_number_survives_in_the_codebase() -> None:
+    """Aggregator research produced a toll-free number (1800 102 5138 /
+    +911800120000) that the university's own site does not publish. It must not
+    come back as a fallback anywhere."""
+    banned = ("+911800120000", "+911412345678", "+919876500000", "+15551234567",
+              "1800 102 5138", "1800120102")
+    root = Path(__file__).resolve().parents[1]
+    for path in sorted(root.glob("app/**/*.py")):
+        text = path.read_text(encoding="utf-8")
+        for needle in banned:
+            assert needle not in text, f"{path.name} still carries {needle}"
+
+
+def test_the_typo_env_var_still_loads_for_existing_deployments() -> None:
+    """`TWILIO_HELLINE_NUMBER` (missing its second "p") is what deployments already
+    have written down, so the rename must not silently drop their number."""
+    from app.config import Settings
+
+    legacy = Settings(_env_file=None, TWILIO_HELLINE_NUMBER="+912562350640")
+    assert legacy.twilio_helpline_number == "+912562350640"
+    current = Settings(_env_file=None, TWILIO_HELPLINE_NUMBER="+912562350600")
+    assert current.twilio_helpline_number == "+912562350600"
+
+
+# --------------------------------------------------------------------------- #
+# the follow-up offer must not describe a short answer as long
+# --------------------------------------------------------------------------- #
+def test_the_followup_offer_line_is_length_neutral_in_every_language() -> None:
+    """It is spoken for every follow-up, including a one-line hostel answer, so
+    "That is a long answer" was simply untrue on most calls."""
+    from app.i18n.languages import LANGUAGES
+
+    for code, lang in LANGUAGES.items():
+        line = lang.scripts.get("followup_offer")
+        if not line:
+            continue
+        lowered = line.lower()
+        for claim in ("long answer", "लंबी", "लांब", "लम्बी"):
+            assert claim not in line and claim not in lowered, f"{code}: {line}"
+        assert "SMS" in line or "एसएमएस" in line, f"{code} offers no channel"
