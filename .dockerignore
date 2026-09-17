@@ -1,0 +1,47 @@
+# Keep the build context small and never ship secrets, local state or PII.
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.coverage
+htmlcov
+
+# Local runtime state: SQLite DB, call audio, vector index
+data/runtime
+data/index
+*.db
+*.db-shm
+*.db-wal
+*.sqlite3
+recordings
+*.mulaw
+*.wav
+*.mp3
+
+# Secrets — configuration must come from env_file / the orchestrator, never baked
+# into an image layer.
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+service-account*.json
+
+# Node
+frontend/node_modules
+frontend/dist
+backend/static/dashboard
+
+# Docs and dev artefacts
+docs
+*.md
+!frontend/README.md
+Makefile
+docker-compose.yml
+Dockerfile
+.dockerignore

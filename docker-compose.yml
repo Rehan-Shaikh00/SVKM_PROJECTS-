@@ -1,0 +1,64 @@
+# NMIMS Global University, Dhule — AI voice assistant, production-ish compose stack.
+#
+#   docker compose up --build
+#
+# App on :8000 (dashboard at /, docs at /api/docs), Postgres+pgvector on :5432.
+# Call history and the vector index live in named volumes, so a redeploy does not
+# discard them.
+#
+# Telephony note: Twilio Media Streams must reach this service over **wss://** on
+# a public hostname. Put a TLS-terminating proxy (nginx/caddy/ALB) in front and
+# set PUBLIC_BASE_URL to that hostname.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nims-voice-assistant:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Compose overrides for the container network. Everything else — provider
+      # keys, languages, guardrails — comes from .env.
+      DATABASE_URL: postgresql://nims:nims@db:5432/nims_voice
+      VECTOR_STORE: pgvector
+      PGVECTOR_ENABLED: "true"
+      ENVIRONMENT: production
+      ADMIN_AUTH_ENABLED: "true"
+    volumes:
+      - kb-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/health/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nims
+      POSTGRES_PASSWORD: nims
+      POSTGRES_DB: nims_voice
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    # Expose only if you need to inspect the DB from the host; remove in prod.
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nims -d nims_voice"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg-data:
+  kb-data:

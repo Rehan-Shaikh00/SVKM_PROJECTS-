@@ -1,0 +1,293 @@
+# ============================================================================
+# THE UNIVERSITY  —  identity, accreditation, contact and assistant policy
+# ============================================================================
+# Source of truth: the university's own website, retrieved 2026-09-18:
+#   https://www.svkmnmimsgu.ac.in/                        (programme list, vision)
+#   https://www.svkmnmimsgu.ac.in/about-svkm-nmims-global-university
+#   https://www.svkmnmimsgu.ac.in/contact-us              (address, phones, how to reach)
+#   https://www.svkmnmimsgu.ac.in/accreditations          (NBA, NAAC)
+# Records sourced from those pages are marked verified: true and carry the URL.
+# The website publishes NO email address and NO fee table, so neither appears
+# here as a fact — see 50_fees_scholarships.yaml.
+
+- slug: university-about
+  category: university
+  subcategory: identity
+  title: "About SVKM NMIMS Global University, Dhule"
+  aliases: ["about the university", "which university is this", "NMIMS Dhule",
+            "SVKM NMIMS Global University", "state private university",
+            "विद्यापीठ माहिती", "युनिव्हर्सिटी बद्दल", "विश्वविद्यालय"]
+  title_localized:
+    hi-IN: "एसवीकेएम एनएमआईएमएस ग्लोबल यूनिवर्सिटी, धुले"
+    mr-IN: "एसव्हीकेएम एनआयएमएस ग्लोबल युनिव्हर्सिटी, धुळे"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [university, identity, about]
+  verified: true
+  verified_by: "svkmnmimsgu.ac.in/about-svkm-nmims-global-university"
+  source: "https://www.svkmnmimsgu.ac.in/about-svkm-nmims-global-university"
+  structured:
+    legal_name: "SVKM NMIMS Global University"
+    city: "Dhule"
+    state: "Maharashtra"
+    type: "State private university"
+    legacy: "An extension of the SVKM NMIMS legacy, run by Shri Vile Parle Kelavani Mandal"
+    schools:
+      - "School of Commerce (started A.Y. 2024-25)"
+      - "School of Technology, Management & Engineering (from A.Y. 2025-26)"
+      - "School of Pharmacy & Technology Management (from A.Y. 2025-26)"
+    website: "https://www.svkmnmimsgu.ac.in"
+    admission_portal: "https://sdcappscs.svkm.ac.in:44300/irj/portal"
+    vision: "To be a world-renowned institution of higher learning, dedicated to fostering excellence in education, research and innovation with social responsibility."
+    medium: "English"
+  body: |
+    SVKM NMIMS Global University is a state private university at Dhule in
+    Maharashtra, and describes itself as Dhule's newest state private university
+    and an extension of the SVKM NMIMS legacy. It is run by Shri Vile Parle
+    Kelavani Mandal, the trust behind the NMIMS institutions. The campus is at
+    Survey Number four ninety nine, Plot Numbers one, two and three, behind the
+    Gurudwara, near the Mumbai to Agra National Highway, Dhule four two four zero
+    zero one. The university has three schools: the School of Commerce, which
+    started in the academic year 2024-25, the School of Technology, Management and
+    Engineering, and the School of Pharmacy and Technology Management, both of
+    which started in the academic year 2025-26. Its stated vision is to be a
+    world renowned institution of higher learning dedicated to excellence in
+    education, research and innovation with social responsibility, and its mission
+    covers an inclusive learning environment for students from diverse
+    backgrounds, state of the art pedagogy with interdisciplinary collaboration,
+    and the values of ethics and community engagement. Admission registration for
+    the academic year 2026-27 runs through the SVKM admission portal linked from
+    the university website.
+
+- slug: university-recognition
+  category: university
+  subcategory: accreditation
+  title: "Accreditation and approvals"
+  aliases: ["accreditation", "NBA", "NAAC", "is it recognised", "approval",
+            "man्यता", "प्रमाणन", "मान्यता", "AICTE", "PCI"]
+  title_localized:
+    hi-IN: "मान्यता और प्रमाणन"
+    mr-IN: "मान्यता आणि प्रमाणन"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [university, accreditation, nba, naac]
+  verified: true
+  verified_by: "svkmnmimsgu.ac.in/accreditations"
+  source: "https://www.svkmnmimsgu.ac.in/accreditations"
+  structured:
+    nba: "Computer Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering and the Diploma Programme (D.Pharm.) at SVKM's Institute of Technology on this campus are accredited by the National Board of Accreditation from AY 2024-25 to AY 2026-27."
+    naac: "SVKM's Institute of Pharmacy on this campus is accredited in its first cycle with an A+ grade, CGPA 3.43, by the National Assessment and Accreditation Council."
+    attribution_note: "Both accreditations are published on the university's own accreditations page and belong to the SVKM institutes operating on this campus, not to the university as a whole."
+    statutory_approvals: "Engineering programmes require AICTE approval, pharmacy programmes require Pharmacy Council of India approval, and the university is established as a state private university in Maharashtra."
+    assistant_instruction: "Attribute the NBA and NAAC status to the named institute and the named programmes exactly as the accreditations page does. Do not say the university itself holds an A+ NAAC grade, and do not claim a programme is accredited unless it appears in that list."
+  body: |
+    The university publishes two accreditations on its own website. The National
+    Board of Accreditation has accredited five programmes of SVKM's Institute of
+    Technology on this campus from the academic year 2024-25 to 2026-27: Computer
+    Engineering, Civil Engineering, Electrical Engineering, Mechanical
+    Engineering, and the Diploma Programme in Pharmacy. Separately, SVKM's
+    Institute of Pharmacy on this campus is accredited by the National Assessment
+    and Accreditation Council in its first cycle with an A plus grade and a CGPA
+    of three point four three. Both accreditations belong to the named SVKM
+    institutes operating on this campus rather than to the university as a whole,
+    and statutory approval for a specific programme and intake year is granted
+    separately: engineering programmes require All India Council for Technical
+    Education approval and pharmacy programmes require Pharmacy Council of India
+    approval. The current approval status of a specific programme and intake year
+    is confirmed by the university, because approvals are granted per programme
+    and per year.
+
+- slug: university-contact
+  category: contact
+  subcategory: admissions
+  title: "Contact details by school"
+  aliases: ["contact", "phone number", "helpline", "how to contact", "admission enquiry",
+            "संपर्क", "फोन नंबर", "क्रमांक", "हेल्पलाइन", "संपर्क क्रमांक",
+            "दूरध्वनी", "टेलीफोन नंबर"]
+  title_localized:
+    hi-IN: "संपर्क विवरण"
+    mr-IN: "संपर्क तपशील"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [contact, admissions, phone]
+  verified: true
+  verified_by: "svkmnmimsgu.ac.in/contact-us"
+  source: "https://www.svkmnmimsgu.ac.in/contact-us"
+  structured:
+    contact_phone: "02562 350620"
+    department: "School of Technology, Management & Engineering office"
+    department_localized:
+      en-IN: "admissions office"
+      hi-IN: "प्रवेश कार्यालय"
+      mr-IN: "प्रवेश कार्यालया"
+      raj-IN: "प्रवेश कार्यालय"
+    school_phones:
+      - "School of Technology, Management & Engineering: 02562 350620, 94256 85966, 97644 05069"
+      - "School of Pharmacy & Technology Management: 02562 350640, 91589 47999, 86685 01496"
+      - "School of Commerce: 02562 350600, 92721 10073, 87887 01642"
+    enquiry_form: "The university website has an Admission Enquiry form covering all three schools."
+    website: "https://www.svkmnmimsgu.ac.in"
+    admission_portal: "https://sdcappscs.svkm.ac.in:44300/irj/portal"
+    email_note: "The website's contact page publishes phone numbers and an enquiry form, not an email address."
+    assistant_instruction: "Give the number for the school that runs the programme the caller asked about, and offer the full list of numbers by SMS. Do not invent an email address or a toll-free number that the website does not publish."
+  body: |
+    The university publishes a separate contact number for each school. For the
+    School of Technology, Management and Engineering the numbers are zero two five
+    six two, three five zero six two zero, nine four two five six, eight five nine
+    six six, and nine seven six four four, zero five zero six nine. For the School
+    of Pharmacy and Technology Management they are zero two five six two, three
+    five zero six four zero, nine one five eight nine, four seven nine nine nine,
+    and eight six six eight five, zero one four nine six. For the School of
+    Commerce they are zero two five six two, three five zero six zero zero, nine
+    two seven two one, one zero zero seven three, and eight seven eight eight
+    seven, zero one six four two. The website also has an admission enquiry form
+    that covers all three schools, and admission registration for the academic
+    year 2026-27 is through the SVKM admission portal. The contact page publishes
+    phone numbers and the enquiry form rather than an email address, so enquiries
+    by email are not available from this page.
+
+- slug: university-address
+  category: contact
+  subcategory: address
+  title: "Campus address"
+  aliases: ["address", "where is the campus", "location", "pin code", "पत्ता",
+            "ठिकाण", "कोठे आहे", "कैंपस कहाँ है", "पता"]
+  title_localized:
+    hi-IN: "कैंपस का पता"
+    mr-IN: "कॅम्पसचा पत्ता"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [contact, address, location]
+  verified: true
+  verified_by: "svkmnmimsgu.ac.in/contact-us"
+  source: "https://www.svkmnmimsgu.ac.in/contact-us"
+  structured:
+    address: "SVKM NMIMS Global University, Survey No. 499, Plot No. 01, 02 & 03, Behind Gurudwara, Mumbai Agra National Highway, Dhule 424001, Maharashtra, India"
+    pin_code: "424001"
+    landmark: "Behind the Gurudwara, on the Mumbai Agra National Highway"
+    website: "https://www.svkmnmimsgu.ac.in"
+  body: |
+    The campus address is SVKM NMIMS Global University, Survey Number four ninety
+    nine, Plot Numbers zero one, zero two and zero three, behind the Gurudwara, on
+    the Mumbai Agra National Highway, Dhule four two four zero zero one,
+    Maharashtra, India. The Gurudwara and the national highway are the two
+    landmarks to ask for locally, and the pin code is four two four zero zero one.
+
+- slug: university-transport
+  category: transport
+  subcategory: reachability
+  title: "How to reach the Dhule campus"
+  aliases: ["how to reach", "directions", "nearest airport", "nearest station",
+            "distance from Mumbai", "कसे पोहोचावे", "वाहतूक", "विमानतळ",
+            "स्टेशन", "कैसे पहुंचें", "दूरी"]
+  title_localized:
+    hi-IN: "धुले कैंपस कैसे पहुंचें"
+    mr-IN: "धुळे कॅम्पसला कसे पोहोचावे"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [transport, directions, travel]
+  verified: true
+  verified_by: "svkmnmimsgu.ac.in/contact-us"
+  source: "https://www.svkmnmimsgu.ac.in/contact-us"
+  structured:
+    nearest_airport: "Aurangabad (Chh. Sambhajinagar) Airport, about 157 km from Dhule, connected to Mumbai, Nagpur and New Delhi"
+    by_air: "Aurangabad is the nearest airport at about 157 km by road; Mumbai is the nearest major international airport at about 330 km."
+    by_rail: "Trains from New Delhi passing through Bhusawal: alight at Bhusawal Railway Station and continue by road via Jalgaon to Dhule, a journey of about 125 km."
+    road_distances:
+      - "Mumbai — 330 km"
+      - "Pune — 355 km"
+      - "Indore — 225 km"
+      - "Surat — 230 km"
+      - "Aurangabad — 157 km"
+    on_highway: "The campus is on the Mumbai Agra National Highway, behind the Gurudwara."
+    assistant_instruction: "These distances are the ones published on the university's contact page. The page does not mention a university bus or shuttle service, so do not claim one exists; the school offices confirm pickup arrangements."
+  body: |
+    The campus is on the Mumbai Agra National Highway at Dhule, behind the
+    Gurudwara. By air, the nearest airport is at Aurangabad, also called Chh.
+    Sambhajinagar, roughly one hundred and fifty seven kilometres from Dhule, and
+    it is well connected to Mumbai, Nagpur and New Delhi. By road, Dhule is about
+    three hundred and thirty kilometres from Mumbai, three hundred and fifty five
+    kilometres from Pune, two hundred and twenty five kilometres from Indore and
+    two hundred and thirty kilometres from Surat. By rail, a traveller coming from
+    New Delhi on a train passing through Bhusawal gets down at Bhusawal Railway
+    Station and continues by road via Jalgaon to Dhule, which is a journey of
+    about one hundred and twenty five kilometres. The university's contact page
+    does not mention a campus bus or shuttle service, so pickup arrangements are
+    confirmed by the school offices.
+
+- slug: faq-global-university-vs-other-svkm-nmims
+  category: faq
+  subcategory: disambiguation
+  title: "SVKM NMIMS Global University Dhule is not the NMIMS School of Commerce Dhule, and not the SVKM institutes on the same campus"
+  aliases: ["which NMIMS Dhule", "same as NMIMS Mumbai", "deemed university",
+            "SVKM Institute of Technology", "SVKM Institute of Pharmacy",
+            "global university vs school of commerce", "कोणते एनआयएमएस"]
+  title_localized:
+    hi-IN: "ग्लोबल यूनिवर्सिटी और एनएमआईएमएस स्कूल ऑफ कॉमर्स में अंतर"
+    mr-IN: "ग्लोबल युनिव्हर्सिटी आणि एनआयएमएस वाणिज्य शाळा यांतील फरक"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, disambiguation, escalate]
+  verified: true
+  verified_by: "svkmnmimsgu.ac.in programme list, handouts and accreditations page"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    question: "Is SVKM NMIMS Global University, Dhule the same as the NMIMS School of Commerce at Dhule, or as SVKM's Institute of Technology and Institute of Pharmacy at Dhule?"
+    answer: "No. Three different SVKM NMIMS operations are associated with Dhule, and only one of them is this university."
+    this_university_offers:
+      - "B.Tech, B.Tech + MBA, M.Tech, MCA and Ph.D. (Technology) in the School of Technology, Management & Engineering"
+      - "D.Pharm, B.Pharm, B.Pharm + MBA, B.Tech Cosmetic Technology, M.Pharm and Ph.D. (Pharmaceutical Science) in the School of Pharmacy & Technology Management"
+      - "BBA and BCA in the School of Commerce"
+    other_entities:
+      - "SVKM's NMIMS (Deemed to be University), Mumbai, and its School of Commerce campus at Dhule, which is where B.Com (Hons) and BBA LL.B. (Hons) belong"
+      - "SVKM's Institute of Technology and SVKM's Institute of Pharmacy at Dhule, whose NBA and NAAC accreditations are published on this university's website"
+    assistant_instruction: "Never quote another entity's programmes, entrance tests or fees as this university's. If the caller wants B.Com, law, or a standalone MBA, say those belong to the deemed university and its Dhule commerce campus, and give this university's number for confirmation."
+  body: |
+    Callers often confuse three separate SVKM NMIMS operations associated with
+    Dhule. The first is this institution, SVKM NMIMS Global University, a state
+    private university whose own programmes are listed on its website: B.Tech and
+    the B.Tech plus MBA dual degree, M.Tech, MCA and a Ph.D. in Technology in the
+    School of Technology, Management and Engineering; D.Pharm, B.Pharm, the
+    B.Pharm plus MBA dual degree, B.Tech in Cosmetic Technology, M.Pharm and a
+    Ph.D. in Pharmaceutical Science in the School of Pharmacy and Technology
+    Management; and BBA and BCA in the School of Commerce. The second is SVKM's
+    NMIMS, the deemed to be university based in Mumbai, whose School of Commerce
+    has a campus at Dhule, and that is where B.Com honours and the integrated
+    BBA LL.B. honours belong, with their own admission authority, entrance tests
+    and fee structure. The third is SVKM's Institute of Technology and SVKM's
+    Institute of Pharmacy at Dhule, whose NBA and NAAC accreditations are
+    published on this university's accreditations page. Only the first entity's
+    programmes, intakes and admission process can be confirmed from this
+    university's office.
+
+- slug: policy-escalation-boundaries
+  category: policy
+  subcategory: assistant_scope
+  title: "What the AI assistant may and may not answer"
+  aliases: ["assistant scope", "escalation policy"]
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [policy, internal]
+  verified: true
+  verified_by: "System policy"
+  source: "Internal assistant policy"
+  structured:
+    assistant_may_answer: "Programmes, intakes, eligibility, entrance tests, the admission process and portal, documents, accreditations, contact numbers, the campus address, directions, and campus facilities where the website publishes them."
+    must_escalate_to_human:
+      - "Any fee question — the university publishes no fee table, so no amount may be quoted"
+      - "Individual fee disputes, refunds and instalment hardship — accounts office"
+      - "Seat confirmation, document verification outcomes and candidature decisions — admissions office"
+      - "Grievances, complaints, harassment, discrimination or any legal matter"
+      - "Scholarship eligibility decisions and disbursement status"
+      - "Hostel availability, charges and room allotment — not published on the website"
+      - "Anything the knowledge base does not cover or that is not marked verified"
+    never_state: "Exact cut offs, seat allotment outcomes, refund amounts, hostel charges, or any fee or date that is not in the knowledge base and marked verified."
+  body: |
+    The assistant answers only from the knowledge base and escalates whenever a
+    question is individual, financial, legal or unverified. Fee disputes, refunds
+    and instalment hardship go to the accounts office. Seat confirmation,
+    document verification outcomes and candidature decisions go to the admissions
+    office. Grievances, complaints, harassment, discrimination and legal matters
+    are handed to a person immediately without the assistant attempting an answer.
+    Exact cut offs, allotment outcomes and refund amounts are never stated by the
+    assistant.

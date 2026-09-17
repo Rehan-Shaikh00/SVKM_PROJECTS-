@@ -1,0 +1,34 @@
+# Ruff configuration for the NMIMS Dhule voice assistant.
+#
+# Deliberately narrow: the ignores below are all idioms this codebase relies on
+# by design, each with the reason recorded so they are not "cleaned up" later.
+target-version = "py311"
+line-length = 100
+extend-exclude = ["frontend", "data", ".venv", "backend/static"]
+
+[lint]
+ignore = [
+    # FastAPI evaluates Depends()/Query()/Form() in default arguments on
+    # purpose; that is the framework's dependency-injection idiom.
+    "B008",
+    # Provider adapters must degrade, never crash a live call. A dead TTS, ASR
+    # or LLM vendor is caught broadly on purpose so the call falls back to the
+    # next provider (or to a human) instead of dropping.
+    "BLE001",
+    # Same reasoning for the best-effort telemetry/audio paths: a failed
+    # metrics write must not take down the voice loop.
+    "S110",
+    # logger.exception() / logger.error(..., exc) both carry the traceback;
+    # forcing one spelling is churn without a behaviour change.
+    "TRY401",
+    # Intent and language pattern tables are written as adjacent string
+    # literals for readability, one clause per line.
+    "ISC004",
+    # int() on a value that is already an int documents the expected type at
+    # the boundary between DB rows and arithmetic.
+    "RUF046",
+]
+
+[lint.per-file-ignores]
+# Test fixtures build objects with unused locals on purpose.
+"tests/**" = ["F841", "RUF059"]

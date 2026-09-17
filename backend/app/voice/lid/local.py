@@ -1,0 +1,353 @@
+"""Lexical + script-based language identification.
+
+This is the **local** LID engine: it needs no credentials and runs in-process in
+under a millisecond. It works on the transcript of the caller's language
+declaration and is also used to *confirm* what an acoustic LID service guessed.
+
+Strategy, in order of confidence:
+1. The caller literally named a language ("Hindi", "हिंदी", "मारवाड़ी") → ~0.99
+2. Non-Latin script present → script decides the language family (~0.9),
+   markers disambiguate within it (Devanagari: Hindi / Marathi / Rajasthani,
+   Bengali script: Bengali / Assamese)
+3. Latin script → English vs romanised-Hindi (Hinglish) vs romanised-Marathi vs
+   romanised-Rajasthani, scored by weighted function-word markers
+
+Acoustic LID (Azure/Deepgram/Google) stays the primary path in production; this
+module is the fallback, the confirmer, and the thing that makes the demo run
+with zero API keys.
+"""
+
+from __future__ import annotations
+
+import re
+import unicodedata
+from dataclasses import dataclass, field
+
+from ...i18n.languages import (
+    HINGLISH_MARATHI_MARKERS,
+    HINGLISH_MARKERS,
+    HINGLISH_RAJASTHANI_MARKERS,
+    LANGUAGES,
+    SCRIPT_BLOCKS,
+    get_language,
+)
+
+# --------------------------------------------------------------------------- #
+# Explicit language names — what a caller actually says in the first turn
+# --------------------------------------------------------------------------- #
+
+NAME_TO_CODE: dict[str, str] = {
+    # English
+    "english": "en-IN", "eng": "en-IN", "angrezi": "en-IN", "angrejee": "en-IN",
+    "अंग्रेजी": "en-IN", "अंग्रेज़ी": "en-IN", "انگریزی": "en-IN", "ஆங்கிலம்": "en-IN",
+    "ইংরেজি": "en-IN", "ఇంగ్లీష్": "en-IN", "ಇಂಗ್ಲಿಷ್": "en-IN", "ഇംഗ്ലീഷ്": "en-IN",
+    "અંગ્રેજી": "en-IN",
+    # Hindi
+    "hindi": "hi-IN", "hindustani": "hi-IN", "hindee": "hi-IN",
+    "हिंदी": "hi-IN", "हिन्दी": "hi-IN", "ہندی": "hi-IN", "ஹிந்தி": "hi-IN",
+    "হিন্দি": "hi-IN", "హిందీ": "hi-IN", "ಹಿಂದಿ": "hi-IN", "ഹിന്ദി": "hi-IN",
+    "હિન્દી": "hi-IN", "हिंदी में": "hi-IN",
+    # Rajasthani / Marwari
+    "rajasthani": "raj-IN", "rajsthani": "raj-IN", "marwari": "raj-IN",
+    "marwadi": "raj-IN", "marvari": "raj-IN", "rajasthani bhasha": "raj-IN",
+    "राजस्थानी": "raj-IN", "मारवाड़ी": "raj-IN", "माड़वाड़ी": "raj-IN",
+    "राजस्थानी भाषा": "raj-IN",
+    # Tamil
+    "tamil": "ta-IN", "tamizh": "ta-IN", "தமிழ்": "ta-IN", "தமிழ": "ta-IN",
+    # Bengali
+    "bengali": "bn-IN", "bangla": "bn-IN", "bangala": "bn-IN", "বাংলা": "bn-IN",
+    "বঙ্গ": "bn-IN",
+    # Marathi
+    "marathi": "mr-IN", "मराठी": "mr-IN", "मराठी भाषा": "mr-IN",
+    # Gujarati
+    "gujarati": "gu-IN", "ગુજરાતી": "gu-IN", "गुजराती": "gu-IN",
+    # Telugu
+    "telugu": "te-IN", "తెలుగు": "te-IN", "तेलुगु": "te-IN",
+    # Kannada
+    "kannada": "kn-IN", "kanada": "kn-IN", "ಕನ್ನಡ": "kn-IN",
+    # Malayalam
+    "malayalam": "ml-IN", "മലയാളം": "ml-IN",
+    # Punjabi
+    "punjabi": "pa-IN", "panjabi": "pa-IN", "ਪੰਜਾਬੀ": "pa-IN", "पंजाबी": "pa-IN",
+    # Urdu
+    "urdu": "ur-IN", "اردو": "ur-IN", "उर्दू": "ur-IN",
+    # Odia
+    "odia": "or-IN", "oriya": "or-IN", "ଓଡ଼ିଆ": "or-IN", "ओडिया": "or-IN",
+    # Assamese
+    "assamese": "as-IN", "অসমীয়া": "as-IN",
+}
+
+_WORD_RE = re.compile(r"[\wऀ-ॿঀ-৿਀-੿઀-૿ୀ-୿஀-௿ఀ-౿ಀ-೿ഀ-ൿ؀-ۿ]+", re.UNICODE)
+
+#: weighted markers — function words beat content words for language ID
+DEVANAGARI_MARKERS: dict[str, dict[str, float]] = {
+    "hi-IN": {
+        "है": 3.0, "हैं": 3.0, "और": 2.0, "का": 2.0, "की": 2.0, "के": 2.0,
+        "मुझे": 3.0, "मैं": 2.5, "आप": 2.0, "क्या": 3.0, "को": 1.5, "में": 1.5,
+        "करना": 2.5, "हूँ": 3.0, "हुन": 2.5, "बताइए": 3.0, "कितनी": 3.0,
+        "कितना": 3.0, "चाहिए": 3.0, "लिए": 2.0, "यह": 1.5, "वह": 1.5, "नहीं": 2.5,
+        "फीस": 1.0, "एडमिशन": 1.0, "पढ़ाई": 2.0, "बताओ": 2.5, "कैसे": 3.0,
+    },
+    "mr-IN": {
+        "आहे": 3.5, "आहेस": 3.5, "आहोत": 3.5, "मी": 2.5, "माझा": 3.0, "माझी": 3.0,
+        "तुमचा": 3.0, "तुमची": 3.0, "आपला": 2.5, "काय": 3.0, "किती": 3.0,
+        "करावे": 3.0, "म्हणून": 3.5, "आणि": 2.5, "नाही": 2.5, "पाहिजे": 3.5,
+        "शिकायचे": 3.0, "ठिकाणी": 3.0, "साठी": 2.5,
+    },
+    "raj-IN": {
+        "म्हो": 3.5, "म्हूँ": 3.5, "म्हाणै": 3.5, "म्हाड़े": 3.5, "म्हारो": 3.5,
+        "थारो": 3.5, "थारू": 3.5, "थानै": 3.5, "कोनी": 3.5, "आवै": 3.5,
+        "करै": 3.0, "है": 1.0, "अठै": 3.5, "बतावो": 3.0, "रयो": 3.5,
+        "काई": 3.0, "म्हारे": 3.5, "आप रो": 3.0, "सा": 1.5, "बातावो": 3.5,
+    },
+}
+
+BENGALI_SCRIPT_MARKERS: dict[str, dict[str, float]] = {
+    "bn-IN": {"আছে": 3.0, "আমি": 2.5, "কি": 2.0, "কত": 2.5, "এবং": 2.5, "না": 1.5,
+              "ভর্তি": 2.0, "টাকা": 2.0, "করতে": 2.5, "চাই": 2.5},
+    "as-IN": {"আছে": 3.0, "মই": 3.5, "কিমান": 3.5, "আৰু": 3.5, "নহয়": 3.0,
+              "ভৰ্তি": 3.0, "টকা": 3.0, "কৰিব": 3.5},
+}
+
+
+@dataclass
+class LIDResult:
+    language: str
+    confidence: float
+    method: str = "lexicon"      # explicit_name | script | lexicon | acoustic | hybrid
+    scores: dict[str, float] = field(default_factory=dict)
+    candidates: tuple[str, ...] = ()
+    detail: str = ""
+
+    @property
+    def is_confident(self) -> bool:
+        from ...config import settings
+
+        return self.confidence >= settings.lid_confidence_threshold
+
+    @property
+    def display(self) -> str:
+        return get_language(self.language).english_name
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "language": self.language,
+            "confidence": round(self.confidence, 3),
+            "method": self.method,
+            "scores": {k: round(v, 3) for k, v in sorted(
+                self.scores.items(), key=lambda kv: -kv[1]
+            )[:5]},
+            "detail": self.detail,
+        }
+
+
+# --------------------------------------------------------------------------- #
+# helpers
+# --------------------------------------------------------------------------- #
+
+
+def tokenize(text: str) -> list[str]:
+    return [t for t in _WORD_RE.findall(text or "") if t]
+
+
+def _script_profile(text: str) -> dict[str, float]:
+    """Fraction of alphabetic characters per script block."""
+    counts: dict[str, int] = {}
+    total = 0
+    for ch in text or "":
+        if not ch.isalpha():
+            continue
+        total += 1
+        cp = ord(ch)
+        for name, low, high, _codes in SCRIPT_BLOCKS:
+            if low <= cp <= high:
+                counts[name] = counts.get(name, 0) + 1
+                break
+        else:
+            if ("A" <= ch <= "Z") or ("a" <= ch <= "z"):
+                counts["Latin"] = counts.get("Latin", 0) + 1
+    if total == 0:
+        return {}
+    return {k: v / total for k, v in counts.items()}
+
+
+def _norm(text: str) -> str:
+    text = unicodedata.normalize("NFC", (text or "").lower())
+    return re.sub(r"[^\w\sऀ-ॿঀ-৿਀-੿઀-૿ୀ-୿஀-௿ఀ-౿ಀ-೿ഀ-ൿ؀-ۿ]", " ", text)
+
+
+def _marker_score(tokens: list[str], raw: str, markers: dict[str, float]) -> float:
+    score = 0.0
+    lowered = [t.lower() for t in tokens]
+    for marker, weight in markers.items():
+        if " " in marker:
+            score += weight * raw.lower().count(marker.lower())
+            continue
+        if marker.lower() in lowered:
+            score += weight * lowered.count(marker.lower())
+        elif len(marker) > 2 and marker.lower() in raw.lower():
+            score += weight * 0.5
+    return score
+
+
+# --------------------------------------------------------------------------- #
+# public API
+# --------------------------------------------------------------------------- #
+
+
+def detect_language_name(text: str, candidates: tuple[str, ...] | None = None) -> LIDResult | None:
+    """High-confidence path: the caller named the language."""
+    raw = _norm(text)
+    if not raw.strip():
+        return None
+    lowered = raw.strip().strip(".!,? ")
+    hits: list[tuple[str, str, int]] = []
+    for name, code in NAME_TO_CODE.items():
+        if candidates and code not in candidates:
+            continue
+        if name in lowered.split() or (len(name) > 3 and name in lowered):
+            hits.append((name, code, len(name)))
+    if not hits:
+        return None
+    # longest name wins ("rajasthani" over "raj")
+    hits.sort(key=lambda h: -h[2])
+    best_name, best_code, _ = hits[0]
+    scores: dict[str, float] = {}
+    for _, code, length in hits:
+        scores[code] = max(scores.get(code, 0.0), length / 10.0)
+    return LIDResult(
+        language=best_code,
+        confidence=0.97,
+        method="explicit_name",
+        scores=scores,
+        candidates=candidates or (),
+        detail=f"caller named '{best_name}'",
+    )
+
+
+def detect_language_text(
+    text: str,
+    candidates: tuple[str, ...] | None = None,
+    prefer_name_match: bool = True,
+) -> LIDResult:
+    """Full lexical detector. Never raises; worst case returns en-IN, conf 0."""
+    allowed = tuple(candidates) if candidates else tuple(LANGUAGES.keys())
+    if not (text or "").strip():
+        return LIDResult(
+            language="en-IN", confidence=0.0, method="empty", candidates=allowed,
+            detail="no speech recognised",
+        )
+
+    if prefer_name_match:
+        named = detect_language_name(text, allowed)
+        if named:
+            return named
+
+    raw = _norm(text)
+    tokens = tokenize(raw)
+    profile = _script_profile(text)
+    scores: dict[str, float] = {code: 0.0 for code in allowed}
+
+    # --- script vote ------------------------------------------------------- #
+    script_codes: list[str] = []
+    script_share = 0.0
+    for script_name, low, high, codes in SCRIPT_BLOCKS:
+        share = profile.get(script_name, 0.0)
+        if share >= 0.25:
+            script_codes.extend(c for c in codes if c in allowed)
+            script_share = max(script_share, share)
+    latin_share = profile.get("Latin", 0.0)
+
+    for code in script_codes:
+        scores[code] = scores.get(code, 0.0) + 6.0 * script_share
+
+    # Assamese vs Bengali: Assamese uses ৰ (U+09F0) / ৱ (U+09F1) which Bengali lacks
+    if profile.get("Bengali", 0) > 0.25:
+        if "\u09f0" in text or "\u09f1" in text:
+            scores["as-IN"] = scores.get("as-IN", 0.0) + 8.0
+            scores["bn-IN"] = max(0.0, scores.get("bn-IN", 0.0) - 4.0)
+        for code, markers in BENGALI_SCRIPT_MARKERS.items():
+            if code in allowed:
+                scores[code] = scores.get(code, 0.0) + _marker_score(tokens, raw, markers)
+
+    # --- Devanagari disambiguation ----------------------------------------- #
+    if profile.get("Devanagari", 0) > 0.25:
+        for code, markers in DEVANAGARI_MARKERS.items():
+            if code in allowed:
+                scores[code] = scores.get(code, 0.0) + _marker_score(tokens, raw, markers)
+
+    # --- other scripts: use each language's marker list -------------------- #
+    for code in allowed:
+        if code in script_codes and code not in DEVANAGARI_MARKERS:
+            markers = {m: 2.5 for m in get_language(code).markers}
+            scores[code] = scores.get(code, 0.0) + _marker_score(tokens, raw, markers)
+
+    # --- Latin script: English vs Hinglish vs Marathi vs Rajasthani --------- #
+    if latin_share >= 0.25 or not script_codes:
+        n = max(len(tokens), 1)
+        hinglish = _marker_score(tokens, raw, {m: 2.0 for m in HINGLISH_MARKERS})
+        marathi = _marker_score(
+            tokens, raw, {m: 3.0 for m in HINGLISH_MARATHI_MARKERS}
+        )
+        rajasthani = _marker_score(
+            tokens, raw, {m: 3.0 for m in HINGLISH_RAJASTHANI_MARKERS}
+        )
+        english_hits = _marker_score(
+            tokens, raw, {m: 2.0 for m in LANGUAGES["en-IN"].markers}
+        )
+        scores["en-IN"] = scores.get("en-IN", 0.0) + english_hits * (1.0 + latin_share)
+        scores["hi-IN"] = scores.get("hi-IN", 0.0) + (hinglish / n) * 12.0
+        # Marathi outranks Hinglish on weight because the marker list is
+        # Marathi-specific ("mala", "aahe", "pahije") while the Hinglish list
+        # contains short words that also occur in romanised Marathi.
+        if "mr-IN" in allowed:
+            scores["mr-IN"] = scores.get("mr-IN", 0.0) + (marathi / n) * 16.0
+        if "raj-IN" in allowed:
+            scores["raj-IN"] = scores.get("raj-IN", 0.0) + (rajasthani / n) * 14.0
+        # long English function words with no Indic markers → clearly English
+        if hinglish == 0 and english_hits > 0:
+            scores["en-IN"] += 6.0
+
+    # --- normalise to a confidence ---------------------------------------- #
+    for code in list(scores.keys()):
+        if code not in allowed:
+            scores.pop(code, None)
+    if not scores:
+        scores = {"en-IN": 1.0}
+    total = sum(max(0.0, v) for v in scores.values())
+    ranked = sorted(scores.items(), key=lambda kv: -kv[1])
+    top_code, top_score = ranked[0]
+    second_score = ranked[1][1] if len(ranked) > 1 else 0.0
+
+    if total <= 0:
+        return LIDResult(
+            language="en-IN", confidence=0.0, method="unknown", scores=scores,
+            candidates=allowed, detail="no signal in transcript",
+        )
+
+    share = top_score / total
+    # margin between the winner and the runner-up drives confidence
+    margin = (top_score - second_score) / total if total else 0.0
+    evidence = min(1.0, (top_score / 12.0))
+    confidence = round(min(0.98, 0.45 * share + 0.4 * margin + 0.35 * evidence), 3)
+
+    method = "script" if script_share >= 0.5 else "lexicon"
+    detail = (
+        f"script_share={script_share:.2f} latin={latin_share:.2f} "
+        f"top={top_code}:{top_score:.1f} runner_up={ranked[1][0] if len(ranked)>1 else '-'}"
+        f":{second_score:.1f} tokens={len(tokens)}"
+    )
+    return LIDResult(
+        language=top_code,
+        confidence=confidence,
+        method=method,
+        scores=scores,
+        candidates=allowed,
+        detail=detail,
+    )
+
+
+def romanised_language_hint(text: str) -> str | None:
+    """Quick check used while the caller is still speaking Latin-script Hinglish."""
+    result = detect_language_text(text)
+    return result.language if result.confidence > 0.5 else None

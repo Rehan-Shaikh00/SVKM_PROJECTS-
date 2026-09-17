@@ -1,0 +1,39 @@
+# --- Core runtime -----------------------------------------------------------
+fastapi>=0.115
+uvicorn[standard]>=0.30
+websockets>=12.0
+pydantic>=2.7
+pydantic-settings>=2.3
+python-multipart>=0.0.9
+httpx>=0.27
+SQLAlchemy>=2.0
+aiosqlite>=0.19            # default DATABASE_URL (SQLite, zero setup)
+asyncpg>=0.29              # Postgres driver. app/db.py rewrites any
+                           # postgresql:// or postgresql+psycopg:// URL to
+                           # postgresql+asyncpg://, so this is the driver that
+                           # is actually loaded (psycopg is not used).
+numpy>=1.26
+PyYAML>=6.0
+python-dateutil>=2.9
+
+# --- Providers --------------------------------------------------------------
+anthropic>=0.40            # Claude (LLM + tool use)
+twilio>=9.0                # TwiML, Media Streams helpers, messaging, taskrouter
+
+# --- Optional: uncomment the providers you actually use ----------------------
+# deepgram-sdk>=3.4        # ASR (also works over plain websockets, no SDK needed)
+# google-cloud-speech>=2.27  # ASR + LID (gRPC)
+# google-cloud-texttospeech>=2.17  # TTS (also works over plain REST, no SDK needed)
+# azure-cognitiveservices-speech>=1.38  # ASR / TTS / LID
+# openai>=1.54             # Whisper ASR + OpenAI embeddings + fallback LLM
+# (Postgres needs only asyncpg above; PgVectorStore issues raw SQL through
+#  sqlalchemy.text and runs CREATE EXTENSION IF NOT EXISTS vector itself, so
+#  neither psycopg nor the pgvector ORM package is required.)
+# qdrant-client>=1.12      # Qdrant vector store
+# cohere>=5.9              # Cohere embed + rerank
+# apscheduler>=3.10        # scheduled KB re-sync
+
+# --- Dev / test -------------------------------------------------------------
+pytest>=8.2
+pytest-asyncio>=0.23
+ruff>=0.6
