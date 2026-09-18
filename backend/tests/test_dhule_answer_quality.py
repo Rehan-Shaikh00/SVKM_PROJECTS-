@@ -18,6 +18,7 @@ Everything here is unit-level: no database, no network, no API keys.
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -1861,3 +1862,191 @@ def test_the_reasons_the_templates_actually_use_are_all_classified() -> None:
         "caller_requested_human", "sensitive_or_legal", "technical_failure",
     }
     assert minted <= known, sorted(minted - known)
+
+
+# --------------------------------------------------------------------------- #
+# a staff edit has to reach the caller
+# --------------------------------------------------------------------------- #
+def _alias_chunk(record_id: str, title: str, aliases: str) -> ChunkDoc:
+    """The "Also known as:" chunk a record's aliases are read back from."""
+    return replace(
+        _doc(f"{record_id}-alias", title, "faq", f"Also known as: {aliases}."),
+        record_id=record_id,
+    )
+
+
+def _campus_siblings() -> list[ChunkDoc]:
+    """Padding so that "campus" is as ordinary here as it is in the seeded KB.
+
+    Distinctiveness is deliberately corpus-relative -- eight of the fifty-four
+    seeded records carry "campus" in their title -- so a two-document fixture
+    would make an everyday word look rare and prove nothing.
+    """
+    return [
+        _doc("sib-1", "Campus address", "contact",
+             "Survey No. 499, Behind Gurudwara, Mumbai Agra National Highway, Dhule."),
+        _doc("sib-2", "Campus life at Dhule", "faq",
+             "Clubs and events run through the academic year."),
+        _doc("sib-3", "How to reach the Dhule campus", "transport",
+             "Aurangabad airport is about 157 km from Dhule."),
+    ]
+
+
+def _rank_with_evidence(
+    docs: list[ChunkDoc],
+    intent,
+    question: str,
+    *,
+    categories: tuple[str, ...],
+    lexical: dict[str, float],
+    dense: dict[str, float],
+    rrf: dict[str, float],
+) -> list[RetrievedChunk]:
+    """Rank documents on the evidence retrieval actually produced.
+
+    Every other ranking test here hands the ranker identical fused scores, which
+    is right for testing a boost in isolation but wrong for these: the whole
+    point is that BM25 scores the record containing the caller's rare word an
+    order of magnitude above a record that merely shares its category, and that
+    this still was not enough. The numbers below are the ones the live system
+    reported for "What about Wi-Fi on campus?": the Wi-Fi chunk topped both
+    candidate lists (rrf 1.0) while the facilities chunk topped the dense list
+    and sat well down the lexical one (rrf 0.95). Fed back through the ranker
+    they reproduce the live scores to within a few thousandths -- facilities
+    1.0592 against 1.0673 -- so what is asserted here is the real margin, not a
+    toy one.
+    """
+    retriever = HybridRetriever()
+    retriever.chunks = {d.chunk_id: d for d in docs}
+    fused = {
+        chunk_id: {
+            "rrf_norm": rrf.get(chunk_id, 0.5),
+            "dense": dense.get(chunk_id, 0.07),
+            "lexical": lexical.get(chunk_id, 1.5),
+        }
+        for chunk_id in retriever.chunks
+    }
+    return retriever._rerank(
+        fused, intent=intent, language="en-IN", categories=categories,
+        course_tokens=intent.course_tokens, query=question,
+    )
+
+
+def test_an_alias_typed_without_punctuation_matches_the_way_callers_say_it() -> None:
+    """Staff type "wifi" into the alias box; callers say "Wi-Fi".
+
+    Matching aliases as literal substrings of the query quietly missed every
+    hyphenated, dotted or spaced variant, so a record written about Wi-Fi lost
+    to a facilities record that never mentioned it and the caller was told
+    about the library instead.
+    """
+    question = "What about Wi-Fi on campus?"
+    intent = detect_intent(question)
+    docs = [
+        replace(_doc("fac", "Campus facilities", "facilities",
+                     "The campus has a library, academic blocks and a virtual tour."),
+                verified=True),
+        _doc("wifi", "Campus Wi-Fi account activation", "faq",
+             "Every admitted student's account is activated within 24 hours of registration."),
+        _alias_chunk("wifi", "Campus Wi-Fi account activation", "wifi, internet, network access"),
+        *_campus_siblings(),
+    ]
+    ranked = _rank_with_evidence(
+        docs, intent, question,
+        categories=intent.categories or ("facilities",),
+        lexical={"fac": 1.668, "wifi": 16.315},
+        dense={"fac": 0.139, "wifi": 0.303},
+        rrf={"fac": 0.95, "wifi": 1.0},
+    )
+    order = [item.chunk_id for item in ranked]
+    assert order.index("wifi") < order.index("fac")
+    prose = next(item for item in ranked if item.chunk_id == "wifi")
+    assert prose.signals.get("alias_record_match") == "wifi"
+
+
+def test_a_rare_word_in_a_title_beats_a_record_that_only_shares_the_category() -> None:
+    """Staff should not have to guess aliases for an accurate title to be found.
+
+    Category affinity is coarse -- there are only a handful of categories -- so
+    it must not outvote a word the caller actually said and this record's own
+    title says back.
+    """
+    question = "What about Wi-Fi on campus?"
+    intent = detect_intent(question)
+    docs = [
+        replace(_doc("fac", "Campus facilities", "facilities",
+                     "The campus has a library, academic blocks and a virtual tour."),
+                verified=True),
+        _doc("wifi", "Campus Wi-Fi account activation", "faq",
+             "Every admitted student's account is activated within 24 hours of registration."),
+        *_campus_siblings(),
+    ]
+    ranked = _rank_with_evidence(
+        docs, intent, question,
+        categories=intent.categories or ("facilities",),
+        lexical={"fac": 1.668, "wifi": 16.315},
+        dense={"fac": 0.139, "wifi": 0.303},
+        rrf={"fac": 0.95, "wifi": 1.0},
+    )
+    order = [item.chunk_id for item in ranked]
+    assert order.index("wifi") < order.index("fac")
+    prose = next(item for item in ranked if item.chunk_id == "wifi")
+    assert "wifi" in str(prose.signals.get("title_term_match") or "")
+    # the facilities record shares only the ordinary word, and earns nothing for it
+    facilities = next(item for item in ranked if item.chunk_id == "fac")
+    assert not facilities.signals.get("title_term_match")
+
+
+def test_a_degree_code_the_intent_already_claimed_earns_no_second_bonus() -> None:
+    """"BBA" is the intent detector's business: course_match and degree_exact
+    already pay for it. Paying a third time lifted the BBA course record above
+    the admission-dates record for "has the merit list come out for BBA?", and a
+    question the knowledge base answers escalated to a human instead.
+    """
+    question = "Has the merit list come out for BBA?"
+    intent = detect_intent(question)
+    docs = [
+        _doc("bba", "Bachelor of Business Administration (BBA)", "course",
+             "BBA is a three year full time programme with sixty seats."),
+        _doc("dates", "Admission dates and how to get the current schedule", "important_dates",
+             "Merit lists for round one and round two are published on the admission page."),
+        _alias_chunk("dates", "Admission dates and how to get the current schedule",
+                     "merit list, merit rounds, selection list"),
+    ]
+    ranked = _rerank(docs, intent, intent.categories or ("important_dates",),
+                     course_tokens=intent.course_tokens, query=question)
+    bba = next(item for item in ranked if item.chunk_id == "bba")
+    assert not bba.signals.get("title_term_match"), "a degree code is already paid for"
+    order = [item.chunk_id for item in ranked]
+    assert order.index("dates") < order.index("bba")
+
+
+def test_cross_script_glosses_added_for_recall_earn_no_title_bonus() -> None:
+    """The ranker sees an augmented query, not the caller's sentence.
+
+    augment_query() appends Latin bridges and course tokens so a Marathi
+    question can reach English records at all -- invaluable for recall, but
+    "Computer Science CSE" in the augmented string is not what the caller said.
+    Crediting "science" from it lifted B.Tech CSE (Data Science) above the
+    B.Tech Computer Engineering record the caller had named in Marathi, and
+    reported 120 seats instead of 180.
+    """
+    question = "बी.टेक संगणक अभियांत्रिकी साठी किती जागा आहेत?"
+    intent = detect_intent(question)
+    augmented = f"{question} B.Tech Engineering Computer Science CSE BTECH"
+    docs = [
+        _doc("ce", "B.Tech Computer Engineering", "course",
+             "Computer Engineering runs four years with one hundred and eighty seats."),
+        _alias_chunk("ce", "B.Tech Computer Engineering", "संगणक अभियांत्रिकी, computer engineering"),
+        _doc("cse", "B.Tech Computer Science & Engineering (Data Science)", "course",
+             "The Data Science specialisation runs four years with one hundred and twenty seats."),
+        _alias_chunk("cse", "B.Tech Computer Science & Engineering (Data Science)", "cse, data science"),
+    ]
+    ranked = _rerank(docs, intent, intent.categories or ("course",),
+                     course_tokens=intent.course_tokens, query=augmented)
+    order = [item.chunk_id for item in ranked]
+    assert order.index("ce") < order.index("cse")
+    glossed = next(item for item in ranked if item.chunk_id == "cse")
+    assert not glossed.signals.get("title_term_match"), "a gloss is not what the caller said"
+    named = next(item for item in ranked if item.chunk_id == "ce")
+    assert named.signals.get("alias_record_match") == "संगणक अभियांत्रिकी"

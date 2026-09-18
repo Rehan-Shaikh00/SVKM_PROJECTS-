@@ -103,6 +103,24 @@ def _token_present(haystack: str, token: str) -> bool:
     return pattern.search(haystack) is not None
 
 
+#: Intra-word punctuation is dropped while word boundaries survive, so an alias
+#: recorded as "wifi" matches a caller who says "Wi-Fi", and "btech" matches both
+#: "B.Tech" and "B Tech". Whatever is left collapses to single spaces.
+_INTRA_WORD_RE = re.compile(r"[.\-_/·'’&+]+")
+_MATCH_TOKEN_RE = re.compile(r"[0-9a-z\u0900-\u097f]{3,}")
+
+
+def _fold_for_match(value: str) -> str:
+    """Lowercase and fold punctuation so spoken variants compare equal.
+
+    Distinct from :func:`_fold_programme`, which also removes spaces: that is
+    right for degree codes but would let a short alias match inside an ordinary
+    word, so alias and title-term matching keeps the boundaries.
+    """
+    folded = _INTRA_WORD_RE.sub("", str(value).lower())
+    return _PROGRAMME_FOLD_RE.sub(" ", folded).strip()
+
+
 @dataclass
 class RetrievedChunk:
     chunk_id: str
@@ -553,6 +571,47 @@ class HybridRetriever:
                     alias.strip() for alias in listing.split(",") if len(alias.strip()) >= 4
                 )
 
+        # Which of the caller's words actually *name* something in this KB?
+        # Document frequency over record titles decides, so the rule keeps
+        # working as the KB grows instead of leaning on a hand-kept word list:
+        # "campus" sits in eight of the fifty-four record titles and says
+        # nothing, "wi-fi" sits in one and says everything. A word that appears
+        # in no title at all ("about", "how") counts zero and drops out, which
+        # is what keeps ordinary stopwords from earning a bonus.
+        query_folded = _fold_for_match(query)
+        # The caller's own words, not the augmented retrieval query. augment_query
+        # appends cross-script bridges and course tokens -- a Marathi question
+        # arrives as "... B.Tech Engineering Computer Science CSE BTECH" -- which
+        # is what lets it reach English records at all, but those glosses are not
+        # what the caller said. Crediting "science" from them lifted B.Tech CSE
+        # (Data Science) above the B.Tech Computer Engineering record the caller
+        # had actually named in Marathi, and reported 120 seats instead of 180.
+        spoken_folded = _fold_for_match((intent.text or "").strip() or query)
+        title_surfaces: dict[str, str] = {}
+        for doc in self.chunks.values():
+            title_surfaces[doc.record_id] = _fold_for_match(doc.title)
+        title_df: dict[str, int] = {}
+        for surface in title_surfaces.values():
+            for token in set(_MATCH_TOKEN_RE.findall(surface)):
+                title_df[token] = title_df.get(token, 0) + 1
+        rare_cap = max(2, round(0.06 * len(title_surfaces)))
+        # Two things this bonus must stay out of. Degree codes are the intent
+        # detector's business: "bba" already earns course_match and degree_exact
+        # below, and paying for it a third time let the BBA course record
+        # outrank the admission-dates record for "has the merit list come out for
+        # BBA?", so a question the KB answers escalated to a human instead. And
+        # titles only -- an abbreviation parked in a record's aliases ("cse") is
+        # weaker evidence than the caller's own words; crediting it let "B.Tech
+        # CSE (Data Science)" beat "B.Tech Computer Engineering" for a Marathi
+        # caller who had said संगणक अभियांत्रिकी and was told 120 seats, not 180.
+        claimed = {_fold_programme(token) for token in course_tokens if token}
+        distinctive_terms = [
+            token
+            for token in dict.fromkeys(_MATCH_TOKEN_RE.findall(spoken_folded))
+            if 1 <= title_df.get(token, 0) <= rare_cap
+            and _fold_programme(token) not in claimed
+        ]
+
         out: list[RetrievedChunk] = []
         for chunk_id, entry in fused.items():
             doc = self.chunks.get(chunk_id)
@@ -726,14 +785,40 @@ class HybridRetriever:
                 # (hostel) is a real match for "हॉस्टल की सुविधा है क्या", while
                 # "सुविधा" alone (facilities) is only a fragment of it. Weighting
                 # by length stops a one-word alias hijacking a specific question.
+                # Folded, so an alias stored as "wifi" still matches a caller who
+                # says "Wi-Fi". The old literal substring test quietly missed
+                # every hyphenated, dotted or spaced variant -- which is how a
+                # brand new "Campus Wi-Fi account activation" record lost to a
+                # facilities record that never mentioned Wi-Fi at all.
                 alias_hit = max(
-                    (a for a in aliases_by_record.get(doc.record_id, ()) if a in query_lower),
+                    (
+                        alias
+                        for alias in aliases_by_record.get(doc.record_id, ())
+                        if len(_fold_for_match(alias)) >= 4
+                        and _fold_for_match(alias) in query_folded
+                    ),
                     key=len, default=None,
                 )
                 if alias_hit:
                     words = len(alias_hit.split())
                     score += min(0.30, 0.12 + 0.06 * (words - 1))
                     signals["alias_record_match"] = alias_hit
+                elif distinctive_terms:
+                    # No alias matched, but the caller used one of the KB's rare
+                    # words and this record's own title says it back. Coarse
+                    # category affinity (+0.10, plus +0.08 for the caller's
+                    # primary category) must not outvote that, or staff cannot
+                    # make a new record reachable simply by titling it accurately.
+                    surface = title_surfaces.get(doc.record_id, "")
+                    term_hits = [t for t in distinctive_terms if _token_present(surface, t)]
+                    if term_hits:
+                        # 0.12 a term, two terms maximum. Sized against the
+                        # boosts it has to overcome: a category match (+0.10),
+                        # the caller's primary category (+0.08) and the
+                        # verified/unverified preference (0.11 the other way),
+                        # less the lexical cap the same rare word already earns.
+                        score += 0.12 * min(2, len(term_hits))
+                        signals["title_term_match"] = ",".join(sorted(term_hits))[:80]
 
             # exact-title substring match is a very strong signal
             if title_lower and len(title_lower) > 4 and title_lower in query_lower:

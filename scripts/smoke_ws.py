@@ -70,7 +70,7 @@ async def main() -> int:
 
         try:
             await asyncio.wait_for(reader_task, timeout=12)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             reader_task.cancel()
 
     kinds = {}
