@@ -205,6 +205,27 @@ back to a local implementation instead of crashing.
 | Database | `DATABASE_URL` | SQLite file | Postgres |
 | Admin auth | `ADMIN_AUTH_ENABLED` | `false` | `true` (+ `ADMIN_USERNAME/PASSWORD`) |
 
+**Two values you must generate yourself.** `.env.example` ships placeholders for
+them, and outside `ENVIRONMENT=development` the service **refuses to start**
+while either is still in use:
+
+- `APP_SECRET` — the key that caller phone numbers, and any Aadhaar or card
+  number a caller dictates mid-call, are pseudonymised with. With the published
+  placeholder those hashes can be recomputed by anyone who has read this
+  repository, so nothing is pseudonymised at all. It is *not* the webhook
+  signature key; Twilio validation uses `TWILIO_AUTH_TOKEN`.
+- `ADMIN_PASSWORD` (with `ADMIN_AUTH_ENABLED=true`) — the dashboard rewrites what
+  the assistant says aloud to callers, so it cannot be open or guessable.
+
+```bash
+python3 -c "import secrets; print(secrets.token_urlsafe(48))"  # APP_SECRET
+python3 -c "import secrets; print(secrets.token_urlsafe(18))"  # ADMIN_PASSWORD
+```
+
+Write them into `.env` on the deployment host — never into the repository. In
+development the app boots anyway, logs what is wrong, and generates an ephemeral
+`APP_SECRET` for the process, so `cp .env.example .env` still works.
+
 Other important settings: `PUBLIC_BASE_URL` (telephony websockets **must** be
 `wss://` and publicly reachable), `SUPPORTED_LANGUAGES`, `GREETING_LANGUAGES`,
 `RECORDING_CONSENT_ANNOUNCE`, `REDACT_PII`, `MAX_CALL_MINUTES`,

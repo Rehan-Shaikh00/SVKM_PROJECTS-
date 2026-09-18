@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import secrets
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -22,7 +23,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api import analytics, assistant, calls, health, kb_admin, simulator, telephony
-from .config import settings
+from .config import INSECURE_APP_SECRETS, settings
 from .db import dispose_db, init_db
 from .dependencies import (
     bootstrap_knowledge_base,
@@ -43,8 +44,46 @@ START_TIME = time.time()
 
 
 @asynccontextmanager
+def _enforce_credential_hygiene() -> None:
+    """Refuse to serve callers with credentials that are printed in the repository.
+
+    Every failure this catches is silent in use: the dashboard logs in, calls are
+    answered, transcripts look right, and the caller pseudonyms in the database
+    look hashed. Nothing would ever complain -- not until somebody recomputed a
+    phone number from one of them. So it is caught at boot or never.
+    """
+    problems = settings.credential_problems()
+    if not problems:
+        return
+    if settings.environment != "development":
+        listed = "\n".join(f"  {i}. {problem}" for i, problem in enumerate(problems, start=1))
+        raise RuntimeError(
+            f"refusing to start in {settings.environment}: insecure credentials\n"
+            f"{listed}\n"
+            "Generate fresh values into .env on the deployment host (never into the\n"
+            "repository, and never into a chat message):\n"
+            '  python3 -c "import secrets; print(secrets.token_urlsafe(48))"  # APP_SECRET\n'
+            '  python3 -c "import secrets; print(secrets.token_urlsafe(18))"  # ADMIN_PASSWORD'
+        )
+    logger.warning(
+        "insecure credentials, tolerated only because ENVIRONMENT=development: %s",
+        " | ".join(problems),
+    )
+    if settings.app_secret in INSECURE_APP_SECRETS:
+        # Keying caller pseudonyms with a published constant is worse than not
+        # hashing at all, because it looks protected. A per-process secret cannot
+        # be recomputed from the repository; the cost is that follow-up SMS dedupe
+        # starts from scratch after a restart, which development can live with.
+        settings.app_secret = secrets.token_urlsafe(48)
+        logger.warning(
+            "generated an ephemeral APP_SECRET for this process; set APP_SECRET in "
+            ".env to keep caller pseudonyms stable across restarts"
+        )
+
+
 async def lifespan(app: FastAPI):
     configure_logging(settings.log_level)
+    _enforce_credential_hygiene()
     logger.info(
         "starting NMIMS Dhule voice assistant (env=%s, telephony=%s, asr=%s, tts=%s, llm=%s)",
         settings.environment,

@@ -34,6 +34,19 @@ def ist_today() -> date:
     return datetime.now(IST).date()
 
 
+#: Placeholders shipped in `.env.example` and as field defaults below. The
+#: repository is public, so a deployment still carrying one of these is
+#: protected by a credential every attacker has already read.
+INSECURE_APP_SECRETS = frozenset({
+    "", "change-me-in-production", "change-me", "changeme", "secret",
+})
+INSECURE_ADMIN_PASSWORDS = frozenset({
+    "", "change-me", "change-me-in-production", "changeme", "password", "admin",
+})
+MIN_APP_SECRET_LENGTH = 32
+MIN_ADMIN_PASSWORD_LENGTH = 12
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(REPO_ROOT / ".env", BACKEND_DIR / ".env"),
@@ -243,6 +256,46 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.environment == "production"
+
+    def credential_problems(self) -> list[str]:
+        """Everything that makes these credentials unsafe to serve callers with.
+
+        Returns a list rather than raising, because development copies
+        `.env.example` verbatim and still has to boot: the caller decides what
+        the answer means. `main.lifespan` refuses to start outside development.
+        """
+        problems: list[str] = []
+        if self.app_secret in INSECURE_APP_SECRETS:
+            problems.append(
+                "APP_SECRET is the placeholder from .env.example. It is the key that "
+                "pseudonymises caller phone numbers, and any Aadhaar or card number a "
+                "caller dictates mid-call, so with the published value every one of "
+                "those hashes can be recomputed by anyone who has read the repository"
+            )
+        elif len(self.app_secret) < MIN_APP_SECRET_LENGTH:
+            problems.append(
+                f"APP_SECRET is {len(self.app_secret)} characters; use at least "
+                f"{MIN_APP_SECRET_LENGTH} (openssl rand -hex 32)"
+            )
+        if not self.admin_auth_enabled:
+            problems.append(
+                "ADMIN_AUTH_ENABLED is false, so the knowledge-base admin API is open "
+                "to anyone who can reach it — and that API rewrites what the assistant "
+                "says aloud to callers"
+            )
+        else:
+            # With auth off, the password is not the problem worth naming.
+            if self.admin_password in INSECURE_ADMIN_PASSWORDS:
+                problems.append(
+                    "ADMIN_PASSWORD is the placeholder from .env.example, in a public "
+                    "repository"
+                )
+            elif len(self.admin_password) < MIN_ADMIN_PASSWORD_LENGTH:
+                problems.append(
+                    f"ADMIN_PASSWORD is {len(self.admin_password)} characters; use at "
+                    f"least {MIN_ADMIN_PASSWORD_LENGTH}"
+                )
+        return problems
 
     def provider_status(self) -> dict[str, dict[str, object]]:
         """Diagnostics for the dashboard / `/health` endpoint."""

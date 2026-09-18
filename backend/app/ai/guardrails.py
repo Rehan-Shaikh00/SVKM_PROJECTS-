@@ -84,8 +84,19 @@ def redact_pii(text: str) -> tuple[str, dict[str, list[str]]]:
 
 
 def hash_secret(value: str) -> str:
-    """Keyed hash so the same number maps to the same pseudonym across calls
-    (needed for follow-up SMS dedupe) without storing the number itself."""
+    """Keyed pseudonym for a caller's phone number, Aadhaar or card digits.
+
+    Keyed rather than a plain digest so the same number maps to the same
+    pseudonym across calls -- follow-up SMS dedupe depends on that -- without
+    the number itself ever being stored.
+
+    The key is APP_SECRET, which is why a deployment left on the published
+    placeholder has not pseudonymised anything. Indian mobile numbers are a
+    small enough space to enumerate, so anyone who has read this repository can
+    compute the digest of a number they suspect and confirm it against a stored
+    `hash:` value. `main._enforce_credential_hygiene` refuses to boot outside
+    development while the key is the placeholder.
+    """
     digest = hashlib.sha256(f"{settings.app_secret}:{value.strip()}".encode())
     return digest.hexdigest()[:16]
 

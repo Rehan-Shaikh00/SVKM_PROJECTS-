@@ -122,6 +122,18 @@ The university is the **Data Fiduciary**; callers are **Data Principals**.
 ### 3.6 Security
 - Secrets only via environment (`APP_SECRET`, provider keys); `.env` is
   git-ignored, `.env.example` ships with no real values.
+- `APP_SECRET` is the key the caller pseudonyms of §3.2 are hashed with — **not**
+  a webhook-signing secret; Twilio signature validation uses `TWILIO_AUTH_TOKEN`.
+  Left at the published placeholder, every stored `hash:` value can be recomputed
+  by anyone who has read this repository, so the pseudonymisation protects
+  nothing while looking as though it does.
+- **Enforced at boot, not only documented.** Outside `ENVIRONMENT=development`
+  the service refuses to start if `APP_SECRET` or `ADMIN_PASSWORD` is a shipped
+  placeholder, if either is shorter than 32 / 12 characters, or if
+  `ADMIN_AUTH_ENABLED` is false. In development it starts, logs every problem,
+  and generates an ephemeral `APP_SECRET` for the process so local pseudonyms are
+  not keyed by a public constant. See `Settings.credential_problems()` and
+  `main._enforce_credential_hygiene()`.
 - Admin/dashboard endpoints sit behind `require_admin`; disable auth only for
   local development.
 - Telephony webhooks should be signature-verified and reachable only over HTTPS;
