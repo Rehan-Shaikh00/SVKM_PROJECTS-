@@ -30,7 +30,9 @@
   language: en-IN
   tags: [hostel, campus-life, escalate]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in publishes no hostel information"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in publishes no hostel information"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     hostel_status: "not_published"
@@ -73,7 +75,9 @@
   language: en-IN
   tags: [facilities, campus-life, library]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in site structure: Facilities section, library page, virtual tour"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in site structure: Facilities section, library page, virtual tour"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     # Spoken aloud by the facilities frame, so these are nouns, not sentences:

@@ -75,6 +75,7 @@ class VerifyRequest(BaseModel):
 class BulkVerifyRequest(BaseModel):
     record_ids: list[str] = Field(default_factory=list)
     verified_by: str = ""
+    change_note: str = ""
 
 
 async def _chunk_counts(
@@ -285,14 +286,26 @@ async def verify_record(
     admin: str = Depends(require_admin),
 ) -> dict[str, Any]:
     verified_by = (body.verified_by if body else "") or ""
+    change_note = (body.change_note if body else "") or ""
     retriever = await get_retriever()
     record = await repository.get_record(session, record_id)
     if record is None:
         raise HTTPException(status_code=404, detail="record not found")
+    # Verification is the act that decides what the assistant may say aloud, so
+    # the audit trail has to carry who signed it off, when, against what -- and
+    # the state it changed. This endpoint was bumping `revision` and writing no
+    # revision row at all, and discarding the note the dashboard sent with it, so
+    # a record showed "revision 2" with an empty history behind it.
+    before = repository.audit_snapshot(record)
+    actor = verified_by or admin
     record.verified = True
-    record.verified_by = verified_by or admin
+    record.verified_by = actor
     record.verified_at = datetime.now(UTC)
     record.revision += 1
+    await repository.note_revision(
+        session, record, changed_by=actor,
+        change_note=change_note.strip() or "verified", snapshot=before,
+    )
     await session.flush()
     await ingest.index_record(session, retriever, record)
     await session.commit()
@@ -527,14 +540,22 @@ async def bulk_verify(
     retriever = await get_retriever()
     updated = 0
     now = datetime.now(UTC)
+    change_note = (body.change_note or "").strip() or "verified in bulk"
     for record_id in ids:
         record = await repository.get_record(session, record_id)
         if record is None:
             continue
+        # Same trail as a single verification: a bulk sign-off is still a
+        # sign-off, and is the one most likely to be waved through quickly.
+        before = repository.audit_snapshot(record)
+        actor = verified_by or admin
         record.verified = True
-        record.verified_by = verified_by or admin
+        record.verified_by = actor
         record.verified_at = now
         record.revision += 1
+        await repository.note_revision(
+            session, record, changed_by=actor, change_note=change_note, snapshot=before
+        )
         await session.flush()
         await ingest.index_record(session, retriever, record)
         updated += 1

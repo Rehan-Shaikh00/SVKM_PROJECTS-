@@ -21,10 +21,11 @@ const BLANK = {
   language: 'en-IN',
   tags: '',
   aliases: '',
-  academic_year: '2025-26',
+  academic_year: '2026-27',
   source: '',
   source_uri: '',
   verified: false,
+  change_note: '',
 }
 
 type FormState = typeof BLANK
@@ -120,6 +121,7 @@ export default function KnowledgeBase() {
         source: record.source || '',
         source_uri: record.source_uri || '',
         verified: record.verified,
+        change_note: '',
       })
       try {
         setDetail(await api.kbRecord(record.id))
@@ -160,7 +162,8 @@ export default function KnowledgeBase() {
       source: editing.source.trim(),
       source_uri: editing.source_uri.trim() || null,
       verified: editing.verified,
-      change_note: editingId ? 'dashboard update' : 'dashboard create',
+      change_note:
+        editing.change_note.trim() || (editingId ? 'dashboard update' : 'dashboard create'),
     }
     if (!payload.slug || !payload.title) {
       setError('A slug and a title are required.')
@@ -185,7 +188,7 @@ export default function KnowledgeBase() {
         if (record.verified) {
           await api.kbUpdate(record.id, { ...record, verified: false, change_note: 'unverified from dashboard' })
         } else {
-          await api.kbVerify(record.id)
+          await api.kbVerify(record.id, undefined, 'signed off from the dashboard')
         }
         flash(record.verified ? `Unverified “${record.title}”.` : `Verified “${record.title}”.`)
         await Promise.all([loadRecords(), loadStats()])
@@ -213,7 +216,7 @@ export default function KnowledgeBase() {
   const bulkVerify = useCallback(async () => {
     if (selected.size === 0) return
     try {
-      const res = await api.kbBulkVerify([...selected])
+      const res = await api.kbBulkVerify([...selected], undefined, 'signed off in bulk from the dashboard')
       flash(`Verified ${res.updated ?? selected.size} records.`)
       setSelected(new Set())
       await Promise.all([loadRecords(), loadStats()])
@@ -261,6 +264,15 @@ export default function KnowledgeBase() {
             {stats?.records.verified ?? '—'}
           </div>
           <div className="delta">{stats?.records.unverified ?? 0} still unverified</div>
+          {(stats?.records.awaiting_signoff ?? 0) > 0 ? (
+            <div
+              className="delta"
+              style={{ color: 'var(--warn)' }}
+              title="Compiled from the university's website at ingest and grounded enough to speak from, but no person has signed them off. Worth a read before an admission cycle."
+            >
+              {stats?.records.awaiting_signoff} awaiting sign-off
+            </div>
+          ) : null}
         </div>
         <div className="card stat">
           <div className="label">Stale</div>
@@ -512,9 +524,28 @@ export default function KnowledgeBase() {
                 </td>
                 <td className="mono">{r.language}</td>
                 <td>
-                  {r.verified ? <span className="pill ok">verified</span> : <span className="pill warn">unverified</span>}
+                  {r.verified ? (
+                    r.verified_by?.startsWith('seed:') ? (
+                      <span
+                        className="pill ok"
+                        title="Compiled from the university's website at ingest. Grounded, but nobody has signed it off."
+                      >
+                        verified at ingest
+                      </span>
+                    ) : (
+                      <span className="pill ok">verified</span>
+                    )
+                  ) : (
+                    <span className="pill warn">unverified</span>
+                  )}
                   {r.stale ? <span className="pill bad" style={{ marginLeft: 5 }}>stale</span> : null}
                   <div className="small muted">rev {r.revision}</div>
+                  {r.verified && r.verified_by ? (
+                    <div className="small muted" title={r.verified_at ? `checked ${r.verified_at}` : undefined}>
+                      {r.verified_by}
+                      {r.verified_at ? ` · ${r.verified_at.slice(0, 10)}` : ''}
+                    </div>
+                  ) : null}
                 </td>
                 <td style={{ textAlign: 'right' }}>{r.chunk_count ?? '—'}</td>
                 <td style={{ textAlign: 'right' }}>
@@ -619,6 +650,14 @@ export default function KnowledgeBase() {
                 style={{ minHeight: 150 }}
                 value={editing.body}
                 onChange={(e) => setEditing({ ...editing, body: e.target.value })}
+              />
+            </label>
+            <label className="field">
+              <span>Why the change? (kept in the audit trail — say what you checked it against)</span>
+              <input
+                value={editing.change_note}
+                placeholder={editingId ? 'dashboard update' : 'dashboard create'}
+                onChange={(e) => setEditing({ ...editing, change_note: e.target.value })}
               />
             </label>
             <label className="field">

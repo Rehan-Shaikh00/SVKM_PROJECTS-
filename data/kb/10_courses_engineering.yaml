@@ -26,7 +26,9 @@
   language: en-IN
   tags: [ug, pg, doctoral, engineering, overview, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     school: "School of Technology, Management & Engineering"
@@ -83,7 +85,9 @@
   language: en-IN
   tags: [ug, engineering, btech, computer, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "B.Tech"
@@ -128,7 +132,9 @@
   language: en-IN
   tags: [ug, engineering, btech, ai, ml, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "B.Tech"
@@ -170,7 +176,9 @@
   language: en-IN
   tags: [ug, engineering, btech, data-science, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "B.Tech"
@@ -210,7 +218,9 @@
   language: en-IN
   tags: [ug, engineering, btech, civil, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "B.Tech"
@@ -254,7 +264,9 @@
   language: en-IN
   tags: [ug, engineering, btech, electrical, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "B.Tech"
@@ -297,7 +309,9 @@
   language: en-IN
   tags: [ug, engineering, btech, mechanical, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "B.Tech"
@@ -378,7 +392,9 @@
   language: en-IN
   tags: [ug, dual-degree, management, engineering, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "B.Tech + MBA"
@@ -420,7 +436,9 @@
   language: en-IN
   tags: [pg, engineering, mtech, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "M.Tech"
@@ -462,7 +480,9 @@
   language: en-IN
   tags: [pg, mca, computers, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "MCA"
@@ -503,7 +523,9 @@
   language: en-IN
   tags: [doctoral, phd, research, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/technology-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     degree: "Ph.D."
@@ -546,7 +568,9 @@
   language: en-IN
   tags: [lateral-entry, diploma, engineering, stme]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in admission announcements and published DSY schedules/merit lists"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission announcements and published DSY schedules/merit lists"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     programme: "Direct Second Year B.Tech / B.Tech + MBA"

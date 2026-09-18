@@ -8,7 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, time
 from typing import Any
 
 from sqlalchemy import func, or_, select
@@ -174,6 +174,8 @@ def record_payload_from_row(row: dict[str, Any]) -> dict[str, Any]:
     verified_at = row.get("verified_at")
     if verified_at:
         payload["verified_at"] = _parse_dt(verified_at)
+    if row.get("verification_note"):
+        payload["verification_note"] = str(row["verification_note"]).strip()
     for key in ("effective_from", "effective_to"):
         if row.get(key):
             payload[key] = _parse_dt(row[key])
@@ -183,6 +185,12 @@ def record_payload_from_row(row: dict[str, Any]) -> dict[str, Any]:
 def _parse_dt(value: Any) -> datetime | None:
     if isinstance(value, datetime):
         return value if value.tzinfo else value.replace(tzinfo=UTC)
+    if isinstance(value, date):
+        # PyYAML resolves an unquoted `verified_at: 2026-09-17` to a date, not a
+        # string. Falling through to None here dropped it silently, which is how
+        # the whole seed KB ended up verified with no date attached -- and a
+        # member of staff editing YAML by hand would write it unquoted.
+        return datetime.combine(value, time.min, tzinfo=UTC)
     if isinstance(value, str):
         from dateutil import parser as date_parser
 
@@ -259,12 +267,33 @@ async def upsert_record(
     change_note: str = "",
 ) -> tuple[KBRecord, bool]:
     """Insert or update by slug. Returns (record, created)."""
+    payload = dict(payload)
+    # A seed row may carry the evidence its verification rests on -- "the handouts
+    # publish no fee column", "the site publishes no hostel information". That is
+    # an audit note about how the record was checked, not a column on it.
+    verification_note = str(payload.pop("verification_note", "") or "").strip()
     slug = payload["slug"]
     existing = await get_record_by_slug(session, slug)
     created = existing is None
     if created:
         record = KBRecord(id=new_id(), **payload, created_by=changed_by, revision=1)
         session.add(record)
+        await session.flush()
+        # Creation is audited as well. Without this row a seeded record showed
+        # `revision: 1` against an empty history, so nobody could tell what it had
+        # been compiled from, or when -- and the audit trail began at the first
+        # edit, which is exactly backwards for a knowledge base whose whole
+        # purpose is answering only from checked sources.
+        session.add(
+            KBRevision(
+                id=new_id(),
+                record_id=record.id,
+                revision=record.revision,
+                changed_by=changed_by,
+                change_note=verification_note or change_note or "created",
+                snapshot=_snapshot(record),
+            )
+        )
         await session.flush()
     elif content_fingerprint(existing) == content_fingerprint(payload):
         # Nothing actually changed. Leave revision/updated_at untouched so the
@@ -359,6 +388,35 @@ def _snapshot(record: KBRecord) -> dict[str, Any]:
     }
 
 
+def audit_snapshot(record: KBRecord) -> dict[str, Any]:
+    """The record's values *before* a change, for the revision row about to be
+    written. Callers outside :func:`upsert_record` -- verification, say -- take
+    this first, then mutate, then hand it to :func:`note_revision`."""
+    return _snapshot(record)
+
+
+async def note_revision(
+    session: AsyncSession,
+    record: KBRecord,
+    *,
+    changed_by: str | None,
+    change_note: str,
+    snapshot: dict[str, Any] | None = None,
+) -> None:
+    """Append an audit row for a change this module did not make itself."""
+    session.add(
+        KBRevision(
+            id=new_id(),
+            record_id=record.id,
+            revision=record.revision,
+            changed_by=changed_by,
+            change_note=change_note,
+            snapshot=snapshot or _snapshot(record),
+        )
+    )
+    await session.flush()
+
+
 async def delete_record(session: AsyncSession, record_id: str) -> bool:
     record = await session.get(KBRecord, record_id)
     if not record:
@@ -390,11 +448,25 @@ async def kb_stats(session: AsyncSession) -> dict[str, Any]:
         )
     ).scalars().all()
     stale = sum(1 for row in stale_rows if row.is_stale)
+    # Grounded at ingest from the university's own website, but never signed off
+    # by a person. The assistant may speak from these -- that is what verified
+    # means here -- yet a registrar should confirm them before an admission
+    # cycle, and this count is what tells staff how much of the KB is in that
+    # state. Anything still carrying a "seed:" actor has not been looked at.
+    awaiting_signoff = (
+        await session.execute(
+            select(func.count(KBRecord.id)).where(
+                KBRecord.verified.is_(True),
+                KBRecord.verified_by.like("seed:%"),
+            )
+        )
+    ).scalar_one()
     return {
         "records": int(total),
         "chunks": int(chunks),
         "verified": int(verified),
         "unverified": int(total) - int(verified),
+        "awaiting_signoff": int(awaiting_signoff),
         "stale": int(stale),
         "by_category": {str(c): int(n) for c, n in by_category_rows},
         "by_status": {str(s): int(n) for s, n in by_status_rows},

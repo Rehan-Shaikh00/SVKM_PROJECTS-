@@ -24,7 +24,9 @@
   language: en-IN
   tags: [admission, process, apply, portal]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in admission handouts and homepage admission announcements"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission handouts and homepage admission announcements"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     application_mode: "Online, through the SVKM admission portal"
@@ -72,7 +74,9 @@
   language: en-IN
   tags: [admission, entrance-exam, tests]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in admission handouts"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission handouts"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     tests:
@@ -116,7 +120,9 @@
   language: en-IN
   tags: [admission, eligibility, marks]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in admission handouts"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission handouts"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     undergraduate: "B.Tech and B.Tech + MBA: 10+2 with English, Physics and Mathematics plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics, with at least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, EWS and Persons with Disability candidates. BBA and BCA: 10+2 in Arts, Commerce or Science from a recognised board with at least 50% in aggregate, Mathematics not compulsory."
@@ -219,7 +225,9 @@
   language: en-IN
   tags: [admission, dates, schedule, escalate]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in homepage admission announcements"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in homepage admission announcements"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     how_it_works: "Every date for AY 2026-27 is published as a per-programme PDF schedule on the university website, under Admission Announcements for each school, and a separate schedule is issued for each round."

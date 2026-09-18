@@ -25,7 +25,9 @@
   language: en-IN
   tags: [placements, jobs, escalate]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in homepage, Why Choose Us section"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in homepage, Why Choose Us section"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     website_claim: "The university's homepage states '100% job placement. Students gain hands-on experience.'"
@@ -62,7 +64,9 @@
   language: en-IN
   tags: [faq, catalogue, courses]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in programme list and admission enquiry form"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in programme list and admission enquiry form"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     schools:
@@ -103,7 +107,9 @@
   language: en-IN
   tags: [faq, modes, online, distance]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in handouts list semester or annual patterns only, with no online or distance mode"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in handouts list semester or annual patterns only, with no online or distance mode"
   source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
   structured:
     modes_published:
@@ -172,7 +178,9 @@
   language: en-IN
   tags: [faq, visit, contact]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in contact page, enquiry form and homepage virtual tour"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in contact page, enquiry form and homepage virtual tour"
   source: "https://www.svkmnmimsgu.ac.in/contact-us"
   structured:
     how_to_arrange: "Call the school office for the programme of interest, or submit the Admission Enquiry form on the university website."
@@ -217,7 +225,9 @@
   language: en-IN
   tags: [faq, apply, portal, admissions]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in admission registration link for AY 2026-2027"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission registration link for AY 2026-2027"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     apply_url: "https://sdcappscs.svkm.ac.in:44300/irj/portal"

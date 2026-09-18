@@ -24,7 +24,9 @@
   language: en-IN
   tags: [ug, pg, diploma, doctoral, pharmacy, overview, sptm]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
   structured:
     school: "School of Pharmacy & Technology Management"
@@ -69,7 +71,9 @@
   language: en-IN
   tags: [diploma, pharmacy, sptm]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
   structured:
     degree: "D.Pharm"
@@ -111,7 +115,9 @@
   language: en-IN
   tags: [ug, pharmacy, sptm]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
   structured:
     degree: "B.Pharm"
@@ -153,7 +159,9 @@
   language: en-IN
   tags: [ug, dual-degree, pharmacy, management, sptm]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
   structured:
     degree: "B.Pharm + MBA"
@@ -194,7 +202,9 @@
   language: en-IN
   tags: [ug, pharmacy, cosmetic, sptm]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
   structured:
     degree: "B.Tech"
@@ -233,7 +243,9 @@
   language: en-IN
   tags: [pg, pharmacy, mpharm, sptm]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
   structured:
     degree: "M.Pharm"
@@ -281,7 +293,9 @@
   language: en-IN
   tags: [doctoral, phd, pharmacy, research, sptm]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
   structured:
     degree: "Ph.D."
@@ -322,7 +336,9 @@
   language: en-IN
   tags: [faq, medical, not-offered, escalate]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in programme list and admission handouts"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in programme list and admission handouts"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     not_offered:

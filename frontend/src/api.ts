@@ -95,6 +95,8 @@ export interface KBStats {
     chunks: number
     verified: number
     unverified: number
+    /** verified from the university website at ingest, never signed off by a person */
+    awaiting_signoff: number
     stale: number
     by_category: Record<string, number>
     by_status: Record<string, number>
@@ -190,15 +192,20 @@ export const api = {
   kbUpdate: (id: string, body: Record<string, unknown>) =>
     http<{ record: KBRecord }>(`/api/kb/records/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
   kbDelete: (id: string) => http<{ deleted: string }>(`/api/kb/records/${id}`, { method: 'DELETE' }),
-  kbVerify: (id: string, verifiedBy?: string) =>
+  /** `changeNote` is what the sign-off is kept against in the audit trail. */
+  kbVerify: (id: string, verifiedBy?: string, changeNote?: string) =>
     http<{ record: KBRecord }>(`/api/kb/records/${id}/verify`, {
       method: 'POST',
-      body: JSON.stringify({ verified_by: verifiedBy ?? '' }),
+      body: JSON.stringify({ verified_by: verifiedBy ?? '', change_note: changeNote ?? '' }),
     }),
-  kbBulkVerify: (ids: string[], verifiedBy?: string) =>
+  kbBulkVerify: (ids: string[], verifiedBy?: string, changeNote?: string) =>
     http<Record<string, any>>('/api/kb/bulk-verify', {
       method: 'POST',
-      body: JSON.stringify({ record_ids: ids, verified_by: verifiedBy ?? '' }),
+      body: JSON.stringify({
+        record_ids: ids,
+        verified_by: verifiedBy ?? '',
+        change_note: changeNote ?? '',
+      }),
     }),
   kbReindex: () => http<Record<string, any>>('/api/kb/reindex', { method: 'POST' }),
   /** These two take form-encoded bodies, not JSON. */

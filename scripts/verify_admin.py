@@ -203,8 +203,10 @@ def main() -> int:
     check("an edit changes what the caller hears, with no redeploy", failures)
 
     # ---------------------------------------------------------------- #
+    signoff_note = f"checked against the AY 2026-27 handout, reference {marker}"
     status, verified = client.post(
-        f"/api/kb/records/{record_id}/verify", body={"verified_by": "registrar"}
+        f"/api/kb/records/{record_id}/verify",
+        body={"verified_by": "registrar", "change_note": signoff_note},
     )
     failures = []
     if status != 200:
@@ -213,7 +215,67 @@ def main() -> int:
         record = (verified or {}).get("record") or {}
         if not record.get("verified"):
             failures.append(f"record is not marked verified: {record}")
+        if record.get("verified_by") != "registrar":
+            failures.append(f"verified_by is {record.get('verified_by')!r}, not the registrar")
+        if not record.get("verified_at"):
+            failures.append("verified with no verified_at — nobody can say when it was checked")
     check("a registrar can mark the record verified", failures)
+
+    # ---------------------------------------------------------------- #
+    # Verification is the act that decides what the assistant may say aloud, so
+    # it has to leave the same trail an edit does: who, when, against what.
+    status, audit = client.get(f"/api/kb/records/{record_id}")
+    failures = []
+    if status != 200:
+        failures.append(f"GET record -> {status}")
+    else:
+        payload = audit if "revisions" in (audit or {}) else (audit or {}).get("record") or {}
+        revisions = (audit or {}).get("revisions") or payload.get("revisions") or []
+        signoffs = [r for r in revisions if (r or {}).get("changed_by") == "registrar"]
+        if not signoffs:
+            failures.append(
+                f"the sign-off left no audit row (revisions={len(revisions)}) — "
+                "the record says it is verified and nobody can say by whom"
+            )
+        elif signoff_note not in str(signoffs[-1].get("change_note") or ""):
+            failures.append(
+                f"the note the registrar wrote was dropped: {signoffs[-1].get('change_note')!r}"
+            )
+        if not any((r or {}).get("revision") == 1 for r in revisions):
+            failures.append("creation itself is not in the trail, so it begins at the first edit")
+    check("a sign-off records who, when and against what", failures)
+
+    # ---------------------------------------------------------------- #
+    # The seeded KB is grounded in the university's website, but no person has
+    # read it. That has to be visible, or a "verified" pill implies an approval
+    # nobody gave.
+    status, listing = client.get("/api/kb/records?limit=500")
+    failures = []
+    seeded = []
+    if status != 200:
+        failures.append(f"GET /api/kb/records -> {status}")
+    else:
+        items = (listing or {}).get("items") or []
+        seeded = [i for i in items if str((i or {}).get("verified_by") or "").startswith("seed:")]
+        if not seeded:
+            failures.append("no record names the actor that compiled it")
+        for item in seeded[:5]:
+            if not item.get("verified_at"):
+                failures.append(f"{item.get('slug')}: verified with no date")
+        odd = [i.get("slug") for i in items
+               if i.get("verified")
+               and not str(i.get("verified_by") or "").startswith(("seed:", "registrar"))]
+        if odd:
+            failures.append(f"verified_by holds something that is not an actor: {odd[:3]}")
+    status, stats_now = client.get("/api/kb/stats")
+    if status == 200:
+        counts = (stats_now or {}).get("records") or {}
+        backlog = counts.get("awaiting_signoff")
+        if backlog is None:
+            failures.append("stats does not report how many records await a person's sign-off")
+        elif backlog != len(seeded):
+            failures.append(f"awaiting_signoff={backlog} but {len(seeded)} records carry a seed actor")
+    check("the dashboard can tell grounded-at-ingest from signed-off", failures)
 
     # ---------------------------------------------------------------- #
     status, listing = client.get(f"/api/kb/records?q={urllib.parse.quote(marker)}")

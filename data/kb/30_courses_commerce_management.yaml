@@ -25,7 +25,9 @@
   language: en-IN
   tags: [ug, commerce, management, overview, soc]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/commerce-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/commerce-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/commerce-admission-handout"
   structured:
     school: "School of Commerce"
@@ -63,7 +65,9 @@
   language: en-IN
   tags: [ug, commerce, management, bba, soc]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/commerce-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/commerce-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/commerce-admission-handout"
   structured:
     degree: "BBA"
@@ -106,7 +110,9 @@
   language: en-IN
   tags: [ug, commerce, computers, bca, soc]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/commerce-admission-handout"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/commerce-admission-handout"
   source: "https://www.svkmnmimsgu.ac.in/commerce-admission-handout"
   structured:
     degree: "BCA"
@@ -149,7 +155,9 @@
   language: en-IN
   tags: [faq, not-offered, commerce, law, management, escalate]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in programme list, admission enquiry form and handouts"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in programme list, admission enquiry form and handouts"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     not_offered:

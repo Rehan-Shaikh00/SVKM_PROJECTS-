@@ -27,7 +27,9 @@
   language: en-IN
   tags: [academic-calendar, dates, semester, examinations, verified]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/academic-calendar — Academic Calendar (2026-27) PDF, signed by the Vice-Chancellor"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/academic-calendar — Academic Calendar (2026-27) PDF, signed by the Vice-Chancellor"
   source: "https://www.svkmnmimsgu.ac.in/images/2026-27_SNGU_Academic_Calendar.pdf"
   structured:
     # Spoken first, in this order: what a caller most often asks, then the rest

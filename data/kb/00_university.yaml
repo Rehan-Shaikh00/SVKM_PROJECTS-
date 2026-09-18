@@ -6,7 +6,14 @@
 #   https://www.svkmnmimsgu.ac.in/about-svkm-nmims-global-university
 #   https://www.svkmnmimsgu.ac.in/contact-us              (address, phones, how to reach)
 #   https://www.svkmnmimsgu.ac.in/accreditations          (NBA, NAAC)
-# Records sourced from those pages are marked verified: true and carry the URL.
+# Records sourced from those pages are marked verified: true. verified_by names
+# the actor that checked them: "seed:svkmnmimsgu.ac.in" means compiled from the
+# website at ingest and NOT signed off by a person -- a registrar who verifies a
+# record in the dashboard replaces it with their own name, and the dashboard
+# counts anything still carrying a seed: actor as awaiting sign-off. verified_at
+# is when the source was last checked (an unquoted date works too), and
+# verification_note records the evidence, including what the site does not
+# publish. The URL itself lives in source.
 # The website publishes NO email address and NO fee table, so neither appears
 # here as a fact — see 50_fees_scholarships.yaml.
 
@@ -24,7 +31,9 @@
   language: en-IN
   tags: [university, identity, about]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/about-svkm-nmims-global-university"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/about-svkm-nmims-global-university"
   source: "https://www.svkmnmimsgu.ac.in/about-svkm-nmims-global-university"
   structured:
     legal_name: "SVKM NMIMS Global University"
@@ -72,7 +81,9 @@
   language: en-IN
   tags: [university, accreditation, nba, naac]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/accreditations"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/accreditations"
   source: "https://www.svkmnmimsgu.ac.in/accreditations"
   structured:
     nba: "Computer Engineering, Civil Engineering, Electrical Engineering, Mechanical Engineering and the Diploma Programme (D.Pharm.) at SVKM's Institute of Technology on this campus are accredited by the National Board of Accreditation from AY 2024-25 to AY 2026-27."
@@ -111,7 +122,9 @@
   language: en-IN
   tags: [contact, admissions, phone]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/contact-us"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/contact-us"
   source: "https://www.svkmnmimsgu.ac.in/contact-us"
   structured:
     contact_phone: "02562 350620"
@@ -159,7 +172,9 @@
   language: en-IN
   tags: [contact, address, location]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/contact-us"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/contact-us"
   source: "https://www.svkmnmimsgu.ac.in/contact-us"
   structured:
     address: "SVKM NMIMS Global University, Survey No. 499, Plot No. 01, 02 & 03, Behind Gurudwara, Mumbai Agra National Highway, Dhule 424001, Maharashtra, India"
@@ -198,7 +213,9 @@
   language: en-IN
   tags: [transport, directions, travel]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/contact-us"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/contact-us"
   source: "https://www.svkmnmimsgu.ac.in/contact-us"
   structured:
     nearest_airport: "Aurangabad (Chh. Sambhajinagar) Airport, about 157 km from Dhule, connected to Mumbai, Nagpur and New Delhi"
@@ -240,7 +257,9 @@
   language: en-IN
   tags: [faq, disambiguation, escalate]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in programme list, handouts and accreditations page"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in programme list, handouts and accreditations page"
   source: "https://www.svkmnmimsgu.ac.in/"
   structured:
     question: "Is SVKM NMIMS Global University, Dhule the same as the NMIMS School of Commerce at Dhule, or as SVKM's Institute of Technology and Institute of Pharmacy at Dhule?"
@@ -280,7 +299,9 @@
   language: en-IN
   tags: [policy, internal]
   verified: true
-  verified_by: "System policy"
+  verified_by: "seed:system-policy"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "System policy"
   source: "Internal assistant policy"
   structured:
     assistant_may_answer: "Programmes, intakes, eligibility, entrance tests, the admission process and portal, documents, accreditations, contact numbers, the campus address, directions, and campus facilities where the website publishes them."
@@ -318,7 +339,9 @@
   language: en-IN
   tags: [university, collaborations, nptel, swayam]
   verified: true
-  verified_by: "svkmnmimsgu.ac.in/collaborations"
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/collaborations"
   source: "https://www.svkmnmimsgu.ac.in/collaborations"
   structured:
     collaborations:
