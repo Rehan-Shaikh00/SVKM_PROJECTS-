@@ -1,0 +1,221 @@
+# Every check that has caught a real defect in this project, run on every push and
+# pull request.
+#
+# The unit suite alone is not enough here. The bugs that mattered were only
+# visible by driving the running system the way its two kinds of user do: a
+# caller on the phone, and a registrar editing the knowledge base. A ranking
+# change that kept 337 tests green told a Marathi caller there were 120 seats in
+# B.Tech Computer Engineering instead of 180; only the live battery caught it. So
+# CI boots the server and asks it questions.
+#
+# Nothing here needs an API key, a database server or a telephone account: the
+# local fallbacks and the simulator are the point.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "22"
+
+jobs:
+  # ------------------------------------------------------------------------- #
+  # Lint, unit tests, dashboard build, then the live harnesses.
+  # ------------------------------------------------------------------------- #
+  verify:
+    name: Tests, lint, and what a caller actually hears
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ENVIRONMENT: development
+      # The harnesses drive the admin API the way the dashboard does. Switching
+      # auth off is the documented local-development posture; the `guard` job
+      # below is what proves it cannot reach a real deployment.
+      ADMIN_AUTH_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          make install
+
+      - name: Lint the whole repository
+        # `ruff check .`, not just backend/: the scripts that verify the system
+        # are part of it, and lint debt there is how a harness stops being run.
+        run: .venv/bin/ruff check .
+
+      - name: Unit tests
+        run: make test
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build the dashboard
+        # `npm run build` is `tsc -b && vite build`, so this is the typecheck too.
+        run: |
+          cd frontend && npm ci
+          cd .. && make build
+
+      - name: Boot the assistant
+        run: |
+          make run > /tmp/server.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8000/health/ready > /dev/null 2>&1; then
+              echo "ready after ${attempt} attempt(s)"
+              curl -fsS http://127.0.0.1:8000/api/kb/stats | head -c 300; echo
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "server never became ready"; tail -80 /tmp/server.log; exit 1
+
+      - name: What a caller hears (59 questions in English, Hindi and Marathi)
+        run: make verify
+
+      - name: The staff knowledge-base workflow (19 checks)
+        # Create a record and hear it on the next call, edit it and hear the
+        # change, sign it off, audit it, bulk-import a CSV, export, reindex,
+        # delete — then assert the KB is left exactly as it was found.
+        # Called directly rather than through a `verify-admin` make target, so
+        # this workflow is one new file that needs nothing else in the PR to
+        # pass — same reason the lint step calls ruff instead of `make lint`.
+        run: .venv/bin/python scripts/verify_admin.py
+
+      - name: A multi-turn call
+        # Context carry-over across turns, a bare "मराठी" mid-call treated as a
+        # language choice rather than a question, and barge-in.
+        run: make multiturn
+
+      - name: A full call over the WebSocket media path
+        run: make smoke
+
+      - name: Server log
+        if: always()
+        run: tail -120 /tmp/server.log
+
+  # ------------------------------------------------------------------------- #
+  # The credential guard, end to end rather than only in unit tests.
+  # ------------------------------------------------------------------------- #
+  guard:
+    name: Refuses to boot on credentials the repository publishes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          make install
+
+      - name: A production boot on .env.example's placeholders must fail
+        run: |
+          set +e
+          ENVIRONMENT=production \
+          APP_SECRET=change-me-in-production \
+          ADMIN_PASSWORD=change-me \
+          ADMIN_AUTH_ENABLED=true \
+            timeout 120 .venv/bin/python -m uvicorn app.main:app \
+              --app-dir backend --host 127.0.0.1 --port 8099 > /tmp/guard.log 2>&1
+          status=$?
+          set -e
+          cat /tmp/guard.log
+          test "$status" -ne 0 || {
+            echo "::error::production booted on published credentials"
+            exit 1
+          }
+          grep -q "refusing to start in production" /tmp/guard.log
+          # The message has to carry the fix, not just the complaint.
+          grep -q "secrets.token_urlsafe" /tmp/guard.log
+          echo "refused with exit ${status}"
+
+      - name: And it left nothing listening
+        run: |
+          if curl -fsS --max-time 5 http://127.0.0.1:8099/health > /dev/null 2>&1; then
+            echo "::error::something is serving on 8099 after a refused boot"
+            exit 1
+          fi
+          echo "port 8099 closed"
+
+      - name: An open admin API is refused too
+        run: |
+          set +e
+          ENVIRONMENT=production \
+          APP_SECRET="$(.venv/bin/python -c 'import secrets;print(secrets.token_urlsafe(48))')" \
+          ADMIN_PASSWORD="$(.venv/bin/python -c 'import secrets;print(secrets.token_urlsafe(18))')" \
+          ADMIN_AUTH_ENABLED=false \
+            timeout 120 .venv/bin/python -m uvicorn app.main:app \
+              --app-dir backend --host 127.0.0.1 --port 8098 > /tmp/guard2.log 2>&1
+          status=$?
+          set -e
+          test "$status" -ne 0 || {
+            echo "::error::production booted with the admin API open"
+            exit 1
+          }
+          grep -q "ADMIN_AUTH_ENABLED" /tmp/guard2.log
+          # Pin the complaint, not just the variable name: the message has to say
+          # what is exposed, because that is what an operator acts on.
+          grep -q "admin API is open to anyone who can reach it" /tmp/guard2.log
+          echo "strong secrets are not a pass on their own"
+
+      # Without this step the three above could all pass because the guard
+      # refuses production unconditionally, which would be a worse bug than the
+      # one it catches.
+      - name: And production still boots once the credentials are real
+        run: |
+          set -uo pipefail
+          export ENVIRONMENT=production
+          export ADMIN_AUTH_ENABLED=true
+          export APP_SECRET="$(.venv/bin/python -c 'import secrets;print(secrets.token_urlsafe(48))')"
+          export ADMIN_PASSWORD="$(.venv/bin/python -c 'import secrets;print(secrets.token_urlsafe(18))')"
+          .venv/bin/python -m uvicorn app.main:app --app-dir backend \
+            --host 127.0.0.1 --port 8097 > /tmp/guard3.log 2>&1 &
+          server=$!
+          # A cold runner also seeds the knowledge base, so allow for that.
+          for _ in $(seq 1 45); do
+            sleep 2
+            curl -fsS --max-time 3 http://127.0.0.1:8097/health/ready > /dev/null 2>&1 && break
+          done
+          if curl -fsS --max-time 5 http://127.0.0.1:8097/health/ready > /dev/null; then
+            echo "production serves callers once the secrets are real"
+          else
+            echo "::error::the credential guard now refuses production outright"
+            cat /tmp/guard3.log
+            kill "$server" 2>/dev/null || true
+            exit 1
+          fi
+          # Kill the captured PID, never `pkill -f`: this step's own command line
+          # contains "uvicorn app.main" from the launch above, so a pattern kill
+          # matches the shell running it and SIGTERMs the step after it passed.
+          kill "$server" 2>/dev/null || true
+          wait "$server" 2>/dev/null || true
