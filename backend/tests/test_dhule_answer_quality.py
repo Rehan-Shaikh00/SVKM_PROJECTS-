@@ -1824,3 +1824,40 @@ def test_a_follow_up_inherits_the_record_not_just_the_degree_token() -> None:
     for question in ("How do I reach the campus?", "What is the contact number?",
                      "What is the highest package?"):
         assert _inherit_programme_context(detect_intent(question), request) is None, question
+
+
+def test_every_not_published_escalation_reaches_the_unanswered_backlog() -> None:
+    """The dashboard's backlog is how staff learn what to publish next.
+
+    It used to count only `kb_no_answer` and `low_confidence`, so a helpline that
+    escalated every fee, hostel and placement question — the loudest gaps in this
+    knowledge base, because the university publishes none of it — showed an empty
+    backlog and looked like it was answering everything.
+    """
+    from app.ai.templates import KNOWLEDGE_GAP_REASONS
+
+    # Every reason the templates mint for missing published data.
+    assert {
+        "fee_not_in_kb", "not_published", "hostel_not_published", "kb_no_answer",
+        "low_confidence",
+    } <= KNOWLEDGE_GAP_REASONS
+    # Reasons that are policy or a fault are not gaps in the knowledge base: no
+    # amount of publishing stops a caller asking for a person.
+    assert not KNOWLEDGE_GAP_REASONS & {
+        "caller_requested_human", "sensitive_or_legal", "technical_failure",
+    }
+
+
+def test_the_reasons_the_templates_actually_use_are_all_classified() -> None:
+    """A new escalation reason must be decided about, not left out by accident."""
+    import re as _re
+    from pathlib import Path
+
+    from app.ai.templates import KNOWLEDGE_GAP_REASONS
+
+    source = Path("app/ai/templates.py").read_text(encoding="utf-8")
+    minted = set(_re.findall(r'escalation_reason\s*=\s*"([a-z_]+)"', source))
+    known = KNOWLEDGE_GAP_REASONS | {
+        "caller_requested_human", "sensitive_or_legal", "technical_failure",
+    }
+    assert minted <= known, sorted(minted - known)

@@ -27,6 +27,7 @@ from ..ai.intents import IntentResult, detect_intent, extract_entities, is_contr
 from ..ai.llm.base import LLM, Message
 from ..ai.rag import AnswerEngine, AnswerRequest, AssistantAnswer
 from ..ai.summarizer import summarise, whisper_twiml_text
+from ..ai.templates import KNOWLEDGE_GAP_REASONS
 from ..config import settings
 from ..db import SessionLocal
 from ..i18n.languages import (
@@ -40,6 +41,7 @@ from ..voice.asr.base import StreamingASR, TranscriptSegment
 from ..voice.asr.client import ClientASR, WhisperChunkASR
 from ..voice.audio import FRAME_MS, EnergyVAD, mulaw_to_pcm16
 from ..voice.lid.detector import LanguageIdentifier
+from ..voice.lid.local import named_language_only
 from ..voice.tts.base import TTS
 from .call_logger import CallLogger, redacted_caller
 from .channel import MediaChannel
@@ -921,6 +923,18 @@ class CallSession:
         intent = detect_intent(text)
         self.intents_seen.append(intent.intent)
 
+        named_only = named_language_only(text, tuple(settings.supported_language_list))
+        if named_only:
+            # The caller named a language and said nothing else. That is a
+            # choice, not a question: answering it as one gave "मराठी" the
+            # academic calendar, because that record carries Marathi aliases.
+            # Explicit beats inferred, so unlike a script-based detection this
+            # does not wait for a second turn to agree.
+            await self._adopt_language(
+                named_only, method="explicit_name", confidence=0.97
+            )
+            return
+
         await self._maybe_switch_language(text)
 
         if control_intent == "human_request" or intent.intent == "human_request":
@@ -1166,9 +1180,7 @@ class CallSession:
                 "intents_json": self.intents_seen[-20:],
             }
         )
-        if answer.needs_escalation and answer.escalation_reason in {
-            "kb_no_answer", "low_confidence"
-        }:
+        if answer.needs_escalation and answer.escalation_reason in KNOWLEDGE_GAP_REASONS:
             question = self.transcript[-2]["text"] if len(self.transcript) >= 2 else text
             self.ctx.unresolved_questions.append(question)
             self.deps.logger.log_unanswered(

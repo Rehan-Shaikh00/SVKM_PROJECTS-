@@ -285,6 +285,22 @@ DEPARTMENT_FALLBACK = {
 }
 
 
+#: Escalation reasons that mean "the knowledge base could not satisfy this", as
+#: opposed to reasons that are policy ("caller asked for a person", "sensitive
+#: topic") or a fault ("technical failure"). These are the questions that belong
+#: in the dashboard's unanswered backlog, because they are the ones a member of
+#: staff can fix by publishing something: the fee table, the hostel position, a
+#: placement report. Only `kb_no_answer` and `low_confidence` used to be counted,
+#: so a helpline that escalated every fee question showed an empty backlog — the
+#: loudest gap in the knowledge base looked like no gap at all.
+KNOWLEDGE_GAP_REASONS = frozenset({
+    "kb_no_answer",
+    "low_confidence",
+    "fee_not_in_kb",
+    "not_published",
+    "hostel_not_published",
+})
+
 #: Categories whose record title is the name of a programme.
 PROGRAMME_CATEGORIES = frozenset({"course", "specialisation"})
 

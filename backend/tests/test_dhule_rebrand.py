@@ -250,6 +250,60 @@ def test_an_english_question_never_comes_back_with_zero_confidence(utterance: st
     )
 
 
+@pytest.mark.parametrize(
+    ("utterance", "expected"),
+    [
+        # A language choice, in each script and with the politeness a caller adds
+        ("English", "en-IN"),
+        ("english please", "en-IN"),
+        ("मराठी", "mr-IN"),
+        ("Marathi please", "mr-IN"),
+        ("मराठीत बोला", "mr-IN"),          # inflected: "speak in Marathi"
+        ("मराठी भाषा हवी", "mr-IN"),        # "I want the Marathi language"
+        ("मुझे हिंदी में बात करनी है", "hi-IN"),
+        ("हिंदी में बोलिए", "hi-IN"),
+        # Questions that merely mention a language must stay questions
+        ("English medium?", None),
+        ("Do you teach in English?", None),
+        ("Is the B.Tech taught in English?", None),
+        ("What is the fee for B.Tech?", None),
+        ("हिंदी में प्रॉस्पेक्टस मिलेगा का", None),
+    ],
+)
+def test_a_bare_language_name_is_not_a_question(utterance: str, expected: str | None) -> None:
+    """Choosing a language and asking about one are different acts.
+
+    A caller who said "मराठी" mid-call used to be answered with the academic
+    calendar, because that record carries Marathi aliases — and the same words
+    reached the admissions team as a topic the caller had asked about.
+    """
+    from app.voice.lid.local import named_language_only
+
+    assert named_language_only(utterance, ALLOWED) == expected, utterance
+
+
+def test_the_handoff_summary_does_not_report_a_language_choice_as_a_topic() -> None:
+    """"english" and "hindi" are also subject specialisations.
+
+    The summary is what an admissions officer reads before picking up a
+    transferred call, so a language choice must not appear in it as something
+    the caller asked about.
+    """
+    from app.ai.summarizer import extractive_summary
+
+    summary = extractive_summary(
+        [
+            {"role": "caller", "text": "English"},
+            {"role": "assistant", "text": "Great, I will continue in English."},
+            {"role": "caller", "text": "What is the eligibility for B.Tech?"},
+            {"role": "assistant", "text": "For B.Tech, the eligibility is Class 10+2."},
+        ],
+        language="en-IN",
+    )
+    assert "Asked about English" not in summary.text, summary.text
+    assert summary.programmes == ["BTECH"]
+
+
 def test_romanised_marathi_marker_list_is_marathi_specific() -> None:
     """Guards against adding a word that is really English or Hindi.
 

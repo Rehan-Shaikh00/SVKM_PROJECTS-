@@ -267,6 +267,56 @@ def detect_language_name(text: str, candidates: tuple[str, ...] | None = None) -
     )
 
 
+#: Words a caller may wrap around a language name without turning it into a
+#: question. Deliberately excludes "medium": "English medium?" mid-call is more
+#: likely asking whether teaching is in English than choosing a language.
+_LANGUAGE_FILLERS = frozenset({
+    "in", "please", "plz", "i", "want", "would", "like", "to", "speak", "talk",
+    "language", "only", "just", "the", "for", "switch", "change", "bolna",
+    "bolnaa", "baat", "karni", "karna", "hai", "chahiye", "kripya", "krpya",
+    "bhasha", "boliye", "bataye", "मुझे", "मे", "में", "बोलना", "बोलनी", "है",
+    "चाहिए", "कृपया", "भाषा", "बोलिए", "बात", "करनी", "मला", "पाहिजे",
+    "बोलायचे", "सांगा", "मी", "भाषेत", "बोलू", "बोला", "बोल", "bola",
+    "bolo", "saanga", "sanga", "हवी", "हवा", "हवे", "havi",
+    "hava",
+})
+
+
+def named_language_only(text: str, candidates: tuple[str, ...] | None = None) -> str | None:
+    """The language code when the utterance is nothing but a language name.
+
+    "Marathi", "मराठी" and "मुझे हिंदी में बात करनी है" are language choices.
+    "Do you teach in English?" is a question that happens to contain one. Telling
+    them apart matters twice over: a bare language name spoken mid-call used to be
+    answered as a question — "मराठी" came back with the academic calendar, because
+    the calendar record carries Marathi aliases — and it was also read as a topic,
+    so the handoff summary told the admissions team the caller had "asked about
+    English".
+    """
+    named = detect_language_name(text, candidates)
+    if named is None:
+        return None
+    lowered = _norm(text).strip().strip(".!,?; ").lower()
+    words = lowered.split()
+    best_name = ""
+    for name, code in NAME_TO_CODE.items():
+        if candidates and code not in candidates:
+            continue
+        if len(name) <= len(best_name):
+            continue
+        if name in words or (len(name) > 3 and name in lowered):
+            best_name = name
+    if not best_name:
+        return None
+    remainder = lowered.replace(best_name, " ")
+    # Single characters are what an inflection leaves behind: "मराठीत बोला"
+    # ("speak in Marathi") loses the name and keeps "त". They carry no topic.
+    words = {w for w in re.split(r"[^0-9a-z\u0900-\u097f]+", remainder) if len(w) > 1}
+    if words - _LANGUAGE_FILLERS:
+        return None  # something else was said too — that is a question
+    return named.language
+
+
 def detect_language_text(
     text: str,
     candidates: tuple[str, ...] | None = None,

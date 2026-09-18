@@ -20,7 +20,11 @@ TURNS = [
     (3.0, {"type": "text", "text": "And what about the fees?"}),
     (3.0, {"type": "text", "text": "How many seats are there?"}),
     (3.0, {"type": "text", "text": "What about the pharmacy one?"}),
-    # A caller switching language mid-call: two turns in the new language, since
+    # Naming a language outright is a choice, not a question: this must switch
+    # the call, and must not be answered. It used to come back with the academic
+    # calendar, because that record carries Marathi aliases.
+    (3.0, {"type": "text", "text": "मराठी"}),
+    # A caller who simply starts speaking another language needs two turns, since
     # one high-confidence detection is not enough to flip the whole call.
     (3.0, {"type": "text", "text": "सेमेस्टर कधी सुरू होईल?"}),
     (3.0, {"type": "text", "text": "त्याची पात्रता काय आहे?"}),

@@ -17,6 +17,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
+from ..voice.lid.local import named_language_only
 from .intents import detect_intent
 from .llm.base import LLM, Message
 
@@ -100,7 +101,13 @@ def extractive_summary(
     intents: list[str] = []
     unanswered: list[str] = []
     for turn in caller_turns:
-        intent = detect_intent(str(turn.get("text") or ""))
+        text = str(turn.get("text") or "")
+        if named_language_only(text):
+            # "English" and "hindi" are also subject specialisations, so a
+            # caller's language choice used to reach the admissions team as
+            # "Asked about English, BTECH".
+            continue
+        intent = detect_intent(text)
         intents.append(intent.intent)
         programmes.extend(intent.course_tokens)
         programmes.extend(s.title() for s in intent.specialisations)

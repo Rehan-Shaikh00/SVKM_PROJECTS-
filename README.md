@@ -223,7 +223,7 @@ older misspelt `TWILIO_HELLINE_NUMBER` is still accepted as an alias.
 ## Development
 
 ```bash
-# backend tests (321 tests, ~7s, no DB/network/keys)
+# backend tests (337 tests, ~7s, no DB/network/keys)
 cd backend && ../.venv/bin/pytest -q
 
 # lint (ruff config in .ruff.toml; ignores are documented with reasons)
