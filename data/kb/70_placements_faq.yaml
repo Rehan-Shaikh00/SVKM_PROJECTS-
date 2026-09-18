@@ -1,0 +1,245 @@
+# ============================================================================
+# PLACEMENTS AND FREQUENTLY ASKED QUESTIONS
+# ============================================================================
+# The university website publishes no placement report, no recruiter list, no
+# package figure and no description of a training and placement cell. What it does
+# publish, under "Why Choose Us?" on the homepage, is the claim "100% job
+# placement. Students gain hands-on experience." That is recorded below as a
+# website claim to be attributed, not as an outcome to be asserted.
+#
+# The earlier draft of this file described a placement cell, pre-placement
+# training, mock interviews and recruiter drives. None of that is on the
+# university's website, so it has been removed rather than left in as plausible
+# filler.
+
+- slug: placements-overview
+  category: placements
+  subcategory: overview
+  title: "Placements"
+  aliases: ["placement", "placements", "job", "package", "recruiter", "campus drive",
+            "इंटर्नशिप", "नोकरी", "प्लेसमेंट", "पैकेज", "रोजगार", "नौकरी"]
+  title_localized:
+    hi-IN: "प्लेसमेंट की जानकारी"
+    mr-IN: "प्लेसमेंटची माहिती"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [placements, jobs, escalate]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in homepage, Why Choose Us section"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    website_claim: "The university's homepage states '100% job placement. Students gain hands-on experience.'"
+    published_detail: false
+    not_published:
+      - "A placement report, placement percentage or number of offers"
+      - "Highest, average or median package"
+      - "A recruiter list or the names of visiting companies"
+      - "A description of a training and placement cell and its activities"
+      - "Internship policy or stipend details"
+    assistant_instruction: "Attribute the 100% placement line to the university's website rather than stating it as an outcome, and never quote a percentage, a package, a recruiter name or a number of offers of your own. Say what is not published, and offer to connect the caller to the school office, which handles placement questions for its programmes."
+  body: |
+    The university's homepage states, under its reasons to choose the university,
+    that there is one hundred per cent job placement and that students gain hands
+    on experience. That is a claim published on the university's own website, and
+    it is the only placement statement the website makes. No placement report,
+    placement percentage, number of offers, highest or average package, recruiter
+    list or description of a training and placement cell and its activities is
+    published there, so none of those figures can be given. Placement questions
+    about a specific programme, including internships and how recruitment is
+    coordinated, are answered by the school office for that programme, on the
+    numbers published on the university's contact page.
+
+- slug: faq-programmes-offered
+  category: faq
+  subcategory: catalogue
+  title: "Programmes offered, at a glance"
+  aliases: ["which courses", "courses offered", "programmes", "what can I study",
+            "कोणते अभ्यासक्रम", "कोर्स", "अभ्यासक्रम", "कौन से कोर्स", "पढाई"]
+  title_localized:
+    hi-IN: "उपलब्ध पाठ्यक्रम"
+    mr-IN: "उपलब्ध अभ्यासक्रम"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, catalogue, courses]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in programme list and admission enquiry form"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    schools:
+      - "School of Commerce: BBA and BCA, three years each, sixty seats each"
+      - "School of Technology, Management & Engineering: B.Tech in six branches, B.Tech + MBA in three branches, M.Tech in four branches, MCA and Ph.D."
+      - "School of Pharmacy & Technology Management: D.Pharm, B.Pharm, B.Pharm + MBA, B.Tech Cosmetic Technology, M.Pharm in four specialisations and Ph.D."
+    programme_count: "Twenty-six programmes are listed across the three schools, including the doctoral programmes in technology and pharmaceutical science."
+    assistant_instruction: "Give the school and the programmes relevant to what the caller asked about, and offer the intake and eligibility for a named programme. Do not add B.Com, law, a standalone MBA or any medical programme; see the record on programmes this university does not run."
+  body: |
+    The university runs three schools. The School of Commerce offers the three
+    year BBA and the three year BCA, with sixty seats each. The School of
+    Technology, Management and Engineering offers four year B.Tech programmes in
+    Computer Engineering, Computer Science and Engineering in Artificial
+    Intelligence and Machine Learning, Computer Science and Engineering in Data
+    Science, Civil Engineering, Electrical Engineering and Mechanical
+    Engineering, a five year B.Tech plus MBA in Technology Management in three of
+    those branches, two year M.Tech programmes in Civil, Computer, Electrical and
+    Mechanical Engineering, a two year MCA and a Ph.D. in Technology and
+    Engineering, and it also lists Information Technology at undergraduate, dual
+    degree and M.Tech level. The School of Pharmacy and Technology Management
+    offers the two year Diploma in Pharmacy, the four year Bachelor of Pharmacy,
+    the five year B.Pharm plus MBA in Pharma Tech, the four year B.Tech in
+    Cosmetic Technology, the two year M.Pharm in Pharmaceutics, Pharmaceutical
+    Quality Assurance, Pharmacology and Pharmaceutical Chemistry, and a Ph.D. in
+    Pharmaceutical Science. All of them are full time on campus and taught in
+    English.
+
+- slug: faq-study-modes
+  category: faq
+  subcategory: modes
+  title: "Study modes — full time on campus, no online or distance programmes"
+  aliases: ["online course", "distance learning", "part time", "weekend classes",
+            "online degree", "ऑनलाइन", "डिस्टन्स", "पार्ट टाइम", "दूरस्थ शिक्षण"]
+  title_localized:
+    hi-IN: "ऑनलाइन या दूरस्थ पढ़ाई"
+    mr-IN: "ऑनलाइन किंवा दूरस्थ शिक्षण"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, modes, online, distance]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in handouts list semester or annual patterns only, with no online or distance mode"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    modes_published:
+      - "B.Tech, B.Tech + MBA, M.Tech, MCA, B.Pharm, B.Pharm + MBA, B.Tech Cosmetic Technology, M.Pharm, BBA and BCA: semester pattern, full time on campus"
+      - "D.Pharm: annual pattern, full time on campus"
+      - "Ph.D. programmes: minimum three years, as per availability of supervisors"
+    not_published: ["Online degrees", "Distance mode programmes", "Part time taught programmes", "Weekend or evening batches"]
+    assistant_instruction: "Do not tell a caller that a programme is available online, by distance or part time. Where flexibility is needed, ask what constraint they are working around and connect them to the school office, because some NMIMS group programmes at other campuses run in other modes under a different approval."
+  body: |
+    Every programme the university publishes is full time on campus at Dhule. The
+    handouts describe a semester pattern for B.Tech, B.Tech plus MBA, M.Tech, MCA,
+    B.Pharm, B.Pharm plus MBA, B.Tech in Cosmetic Technology, M.Pharm, BBA and
+    BCA, and an annual pattern for the Diploma in Pharmacy. The doctoral
+    programmes run for a minimum of three years, with intake as per the
+    availability of supervisors. No online degree, distance mode programme, part
+    time taught programme or weekend batch is published, so none of them should be
+    described as available here. Some programmes run by other NMIMS group
+    campuses are delivered in other modes, but those are a different campus with a
+    different approval, and nothing about them can be confirmed from this
+    university's office.
+
+- slug: faq-transfer-and-programme-change
+  category: faq
+  subcategory: transfers
+  title: "Changing programme, transferring campus, deferring admission"
+  aliases: ["branch change", "transfer", "change of programme", "defer admission",
+            "campus transfer", "शाखा बदल", "प्रवेश बदल", "ट्रांसफर", "branch बदल"]
+  title_localized:
+    hi-IN: "शाखा बदलना या ट्रांसफर"
+    mr-IN: "शाखा बदलणे किंवा स्थानांतर"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, transfer, escalate]
+  verified: false
+  verified_by: null
+  source: "The university website publishes no branch change, transfer, deferral or migration policy."
+  structured:
+    published: false
+    decided_by: "The school office and the admissions function of the university, case by case."
+    cross_entity_note: "A move to SVKM's NMIMS in Mumbai or to its School of Commerce campus at Dhule is not an internal transfer, because those are separate legal entities with their own admission authorities."
+    assistant_instruction: "Never promise a branch change, a campus transfer, a deferral or a refund. Capture what the caller wants and why, record it in the escalation brief, and connect them to the school office."
+  body: |
+    The university website publishes no policy on changing programme after
+    admission, on transferring between branches or schools, on deferring admission
+    to a later year, or on migrating to another university, so none of those can
+    be promised on a call. Each is decided case by case by the school office and
+    the university's admissions function, against seat availability, eligibility
+    for the programme wanted and the applicable ordinance, and a deferral may
+    involve the fee already paid. A move to SVKM's NMIMS in Mumbai or to its
+    School of Commerce campus at Dhule is not an internal transfer at all, because
+    those are separate legal entities with their own admission authorities, and it
+    would need a fresh admission with each of them. Migration to a different
+    university mid programme is governed by that university's rules and normally
+    involves a migration certificate and a no objection process. Tell the school office what you want and why, and they take it from there.
+
+- slug: faq-campus-visit
+  category: faq
+  subcategory: visit
+  title: "Visiting the campus"
+  aliases: ["campus visit", "visit the campus", "can I come and see", "appointment",
+            "virtual tour", "कॅम्पस भेट", "भेट देणे", "कैंपस विजिट", "दर्शन"]
+  title_localized:
+    hi-IN: "कैंपस का दौरा"
+    mr-IN: "कॅम्पसला भेट"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, visit, contact]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in contact page, enquiry form and homepage virtual tour"
+  source: "https://www.svkmnmimsgu.ac.in/contact-us"
+  structured:
+    how_to_arrange: "Call the school office for the programme of interest, or submit the Admission Enquiry form on the university website."
+    school_phones:
+      - "School of Technology, Management & Engineering: 02562 350620, 94256 85966, 97644 05069"
+      - "School of Pharmacy & Technology Management: 02562 350640, 91589 47999, 86685 01496"
+      - "School of Commerce: 02562 350600, 92721 10073, 87887 01642"
+    virtual_tour: "A video virtual tour of the campus is published on the university's homepage."
+    what_to_bring: "A government photo identity proof for the campus gate, and questions about the specific programme so the right school can be involved."
+    not_published: "Visiting hours, whether an appointment is required, and which blocks are open to visitors."
+    assistant_instruction: "Give the number for the relevant school and offer the virtual tour link by SMS. Do not state visiting hours or say that no appointment is needed, because the website does not publish either."
+  body: |
+    Prospective students and their families can arrange a campus visit by calling
+    the school office for the programme they are interested in, or by submitting
+    the admission enquiry form on the university website. For the School of
+    Technology, Management and Engineering the numbers are zero two five six two,
+    three five zero six two zero, nine four two five six, eight five nine six six,
+    and nine seven six four four, zero five zero six nine. For the School of
+    Pharmacy and Technology Management they are zero two five six two, three five
+    zero six four zero, nine one five eight nine, four seven nine nine nine, and
+    eight six six eight five, zero one four nine six. For the School of Commerce
+    they are zero two five six two, three five zero six zero zero, nine two seven
+    two one, one zero zero seven three, and eight seven eight eight seven, zero one
+    six four two. Visitors should carry a government photo identity proof for the
+    campus gate, and should bring questions about the specific programme so the
+    right school can be involved. Visiting hours, whether an appointment is
+    required and which blocks are open to visitors are not published on the
+    website, so they are confirmed by the school office when the visit is
+    arranged. A video virtual tour of the campus is also published on the
+    homepage, and the link can be sent by message.
+
+- slug: faq-application-portal
+  category: faq
+  subcategory: apply
+  title: "Where and how to register an application"
+  aliases: ["apply now", "registration link", "application portal", "where to apply",
+            "अर्ज कुठे करावा", "रजिस्ट्रेशन", "अप्लाई", "आवेदन कहां करें"]
+  title_localized:
+    hi-IN: "आवेदन कहां और कैसे करें"
+    mr-IN: "अर्ज कुठे आणि कसा करावा"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, apply, portal, admissions]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission registration link for AY 2026-2027"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    apply_url: "https://sdcappscs.svkm.ac.in:44300/irj/portal"
+    labelled_as: "Admission Registration Link for A.Y. 2026-2027"
+    also_available: "An Admission Enquiry form on the university website, which routes an enquiry to the school selected."
+    website: "https://www.svkmnmimsgu.ac.in"
+    assistant_instruction: "Offer to send the registration link by SMS rather than reading the URL aloud character by character, and mention the enquiry form for callers who only want to ask a question."
+  body: |
+    Registration for admission to the academic year 2026-27 is through the SVKM
+    admission portal, which the university website links as its Admission
+    Registration Link for the academic year 2026-2027. The same website also has
+    an admission enquiry form that routes a question to the school selected, if you want to ask something before registering. The link is long, so it
+    is easier sent as a message than read aloud, and the school office numbers are
+    published on the contact page for anyone who would rather speak to a person
+    while filling it in.

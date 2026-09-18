@@ -1,0 +1,96 @@
+# Academic calendar for AY 2026-27.
+#
+# Source: https://www.svkmnmimsgu.ac.in/academic-calendar, which publishes
+# "Academic Calendar (2026-27)" as a PDF signed by the Vice-Chancellor
+# (https://www.svkmnmimsgu.ac.in/images/2026-27_SNGU_Academic_Calendar.pdf).
+#
+# Every date below is transcribed from that PDF. The calendar differs between
+# the three schools and between semesters, so dates always carry the school or
+# semester they belong to — a date quoted without its scope would be wrong for
+# most callers. Nothing here is extrapolated.
+
+- slug: academic-calendar-ay-2026-27
+  category: important_dates
+  subcategory: academic_calendar
+  title: "Academic calendar for AY 2026-27"
+  aliases: ["academic calendar", "academic calendar 2026-27", "semester dates",
+            "when do classes start", "commencement of classes", "term end exam",
+            "exam dates", "semester break", "winter vacation", "diwali break",
+            "sports day", "cultural events", "re-exam", "dissertation viva",
+            "शैक्षणिक दिनदर्शिका", "शैक्षणिक कैलेंडर", "सेमेस्टर कभी शुरू",
+            "क्लास कब शुरू", "परीक्षा की तारीख", "परीक्षा कब होगी", "छुट्टियां",
+            "सेमेस्टर कधी सुरू", "वर्ग कधी सुरू", "परीक्षेच्या तारखा", "सुट्ट्या"]
+  title_localized:
+    hi-IN: "शैक्षणिक कैलेंडर 2026-27"
+    mr-IN: "शैक्षणिक दिनदर्शिका 2026-27"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [academic-calendar, dates, semester, examinations, verified]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/academic-calendar — Academic Calendar (2026-27) PDF, signed by the Vice-Chancellor"
+  source: "https://www.svkmnmimsgu.ac.in/images/2026-27_SNGU_Academic_Calendar.pdf"
+  structured:
+    # Spoken first, in this order: what a caller most often asks, then the rest
+    # by SMS. The dates branch reads this key and speaks the first three lines.
+    important_dates:
+      - "Classes for the first semester begin on 13 July 2026 for Pharmacy, 27 July 2026 for Engineering and 29 July 2026 for Commerce"
+      - "Term end theory and practical examinations run from 01 December to 24 December 2026"
+      - "The semester break is 26 December 2026 to 02 January 2027, and re-examinations run from 12 January to 28 February 2027"
+      - "Semester II, IV and VI classes begin on 04 January 2027, with instruction running to 12 May 2027"
+      - "Even semester term end examinations run from 15 May to 10 June 2027"
+      - "The next academic year commences on 12 July 2027"
+
+    # Odd semester (I, and III/V where noted)
+    registration: "Semester I from 01 July to 27 July 2026; Semester III and V from 23 July to 27 July 2026"
+    academic_instruction_duration: "Semester I from 13 July to 05 December 2026; Semester III and V from 27 July to 05 December 2026"
+    orientation_programme: "20 July to 28 July 2026, and 28 July to 01 August 2026 for Commerce"
+    commencement_of_classes: "Semester I: 13 July 2026 for Pharmacy, 27 July 2026 for Engineering, 29 July 2026 for Commerce. Semester III and V: 13 July 2026 for Pharmacy and Commerce, 27 July 2026 for Engineering"
+    term_test_1: "12 September to 28 September 2026; 31 August to 05 September 2026; 05 October to 07 October 2026 for fourth year Engineering; Commerce 12 September to 28 September 2026 and 17 August to 20 August 2026"
+    sessional_practical_exam_2: "02 November to 06 November 2026 for Pharmacy"
+    diwali_break: "07 November to 14 November 2026"
+    term_test_2: "16 November to 21 November 2026; Commerce 01 October to 09 October 2026"
+    sessional_theory_exam_3: "16 November to 22 November 2026 for Commerce"
+    assignments_and_projects: "23 November to 30 November 2026; Semester III and V from 26 November to 28 November 2026"
+    preparation_leave: "23 November to 30 December 2026 for Pharmacy; 01 December to 06 December 2026 and 06 December to 10 December 2026 for Commerce; Semester III and V from 23 November to 30 December 2026 for Pharmacy and 29 November to 06 December 2026 for Commerce"
+    term_end_exam: "01 December to 24 December 2026"
+    semester_break: "26 December 2026 to 02 January 2027"
+    re_exam_odd_semester: "12 January to 28 February 2027"
+
+    # Even semester (II, IV and VI)
+    even_semester_instruction: "04 January to 12 May 2027, with classes commencing on 04 January 2027"
+    improvement_sessional_exam: "18 January to 23 January 2027 for Pharmacy"
+    sports_day: "07 January to 09 January 2027"
+    cultural_events: "14 January to 16 January 2027"
+    even_semester_term_test_1: "25 February to 27 February 2027 for Semester II; 18 February to 25 February 2027 for Semester IV and VI and for Commerce"
+    even_semester_term_test_2: "22 April to 08 May 2027; Commerce 22 March to 25 March 2027"
+    sessional_practical_exam_even: "04 May to 08 May 2027 for Pharmacy; Semester I practicals 15 February to 21 February 2027 for Pharmacy"
+    even_semester_assignments: "05 May to 11 May 2027"
+    even_semester_preparation_leave: "04 May to 17 May 2027"
+    even_semester_term_end_exam: "15 May to 10 June 2027"
+    dissertation_submission: "08 May to 31 May 2027"
+    dissertation_viva_voce: "12 May to 10 July 2027"
+    summer_internship_vacation: "Slot I in May to June 2027 and Slot II in June to July 2027, of 42 days"
+    re_exam_even_semester: "01 July 2027 onward"
+    next_academic_year_commences: "12 July 2027"
+
+    calendar_caveat: "The published calendar notes that detailed school-wise schedules are communicated by the Examination Department, and that preparation leave varies as per the school schedule."
+    document: "https://www.svkmnmimsgu.ac.in/images/2026-27_SNGU_Academic_Calendar.pdf"
+    assistant_instruction: "Quote only the dates recorded here, and always name the semester and the school they belong to, because the calendar differs between Pharmacy, Engineering and Commerce. Never extrapolate a date for a school that is not listed, and never convert these teaching dates into admission deadlines, which are published separately per round. Offer the calendar PDF by SMS, and connect the caller to the school office or the Examination Department for a school-wise schedule."
+  body: |
+    The university publishes an academic calendar for 2026-27, signed by the
+    Vice-Chancellor. Classes for the first semester begin on 13 July 2026 for
+    Pharmacy, 27 July 2026 for Engineering and 29 July 2026 for Commerce. Term
+    end examinations run from 01 December to 24 December 2026, and the semester
+    break follows from 26 December 2026 to 02 January 2027. The even semester
+    begins on 04 January 2027, its term end examinations run from 15 May to 10
+    June 2027, and the next academic year commences on 12 July 2027. Between the
+    semesters there is a Diwali break from 07 November to 14 November 2026, a
+    sports day from 07 January to 09 January 2027 and cultural events from 14
+    January to 16 January 2027. The calendar also notes that detailed school-wise
+    schedules are communicated by the Examination Department and that preparation
+    leave varies by school, so if you need the exact dates for your own school and
+    semester, the calendar can be sent to you and the school office confirms them.
+    These are teaching dates. Admission deadlines are published separately, per
+    programme and per round, and are not part of this calendar.

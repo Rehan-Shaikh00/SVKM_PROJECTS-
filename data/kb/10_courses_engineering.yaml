@@ -1,0 +1,594 @@
+# ============================================================================
+# SCHOOL OF TECHNOLOGY, MANAGEMENT & ENGINEERING (STME)  —  from A.Y. 2025-26
+# ============================================================================
+# Source of truth: the university's own admission handout for this school,
+#   https://www.svkmnmimsgu.ac.in/technology-admission-handout
+# plus the programme list on https://www.svkmnmimsgu.ac.in/ (retrieved 2026-09-18).
+# Intakes, durations, eligibility and qualifying tests below are quoted from that
+# handout for A.Y. 2026-27 and are marked verified.
+#
+# FEES ARE DELIBERATELY ABSENT. The university website publishes no fee table, and
+# the numbers circulating on aggregator sites belong to *other* institutes on the
+# same campus (SVKM's Institute of Technology, SVKM's Institute of Pharmacy) or to
+# NMIMS Mumbai. Quoting one on a live admissions line would be a hallucination, so
+# every fee question escalates instead.
+
+- slug: school-stme-overview
+  category: course
+  subcategory: engineering
+  title: "School of Technology, Management & Engineering — programmes overview"
+  aliases: ["engineering", "B.Tech", "M.Tech", "MCA", "technology programmes",
+            "बीटेक", "इंजीनियरिंग", "अभियांत्रिकी", "एमटेक", "एमसीए"]
+  title_localized:
+    hi-IN: "प्रौद्योगिकी, प्रबंधन एवं अभियांत्रिकी स्कूल"
+    mr-IN: "तंत्रज्ञान, व्यवस्थापन आणि अभियांत्रिकी शाळा"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, pg, doctoral, engineering, overview, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    school: "School of Technology, Management & Engineering"
+    levels: ["UG (B.Tech, B.Tech + MBA)", "PG (M.Tech, MCA)", "Doctoral (Ph.D.)"]
+    btech_duration_years: 4
+    btech_mba_duration_years: 5
+    mtech_duration_years: 2
+    mca_duration_years: 2
+    btech_branches:
+      - "Computer Engineering (intake 180)"
+      - "Computer Science & Engineering (AI & ML) (intake 120)"
+      - "Computer Science & Engineering (Data Science) (intake 120)"
+      - "Civil Engineering (intake 60)"
+      - "Electrical Engineering (intake 60)"
+      - "Mechanical Engineering (intake 60)"
+    mtech_branches:
+      - "Civil Engineering (intake 12)"
+      - "Computer Engineering (intake 12)"
+      - "Electrical Engineering (intake 12)"
+      - "Mechanical Engineering (intake 12)"
+    entrance_exam: "B.Tech and B.Tech + MBA: MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM). M.Tech: GATE or PERA TEST. MCA: MAH-MCA-CET or PERA TEST (MCA)."
+    medium: "English"
+    mode: "Full time, on campus"
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The School of Technology, Management and Engineering started in the academic
+    year 2025-26. It runs four year B.Tech programmes in Computer Engineering
+    with an intake of one hundred and eighty, Computer Science and Engineering in
+    Artificial Intelligence and Machine Learning with one hundred and twenty,
+    Computer Science and Engineering in Data Science with one hundred and twenty,
+    and Civil, Electrical and Mechanical Engineering with sixty seats each. There
+    is a five year B.Tech plus MBA in Technology Management in Computer
+    Engineering, in Artificial Intelligence and Machine Learning and in Data
+    Science, with sixty seats each. At postgraduate level there is a two year
+    M.Tech in Civil, Computer, Electrical and Mechanical Engineering with twelve
+    seats each, and a two year MCA with one hundred and twenty seats. Doctoral
+    research is offered as a Ph.D. in Technology and Engineering. Information
+    Technology appears in the university's programme list at undergraduate,
+    postgraduate and dual degree level, but the admission handout for this cycle
+    does not publish an intake for it. Teaching is in English and every programme
+    is full time on campus.
+
+- slug: course-btech-computer-engineering
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech Computer Engineering"
+  aliases: ["computer engineering", "B.Tech computer", "BE computer", "सीएस",
+            "computer branch", "संगणक अभियांत्रिकी"]
+  title_localized:
+    hi-IN: "बी.टेक कंप्यूटर इंजीनियरिंग"
+    mr-IN: "बी.टेक संगणक अभियांत्रिकी"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, engineering, btech, computer, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech Computer Engineering"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 4
+    seats: 180
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 or equivalent with English as a compulsory subject, Physics and Mathematics, plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics. At least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27. The school office and the admission portal confirm the fee at the time of the offer."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The four year Bachelor of Technology in Computer Engineering runs on the
+    semester pattern with an intake of one hundred and eighty students for the
+    academic year 2026-27. A candidate must have passed the ten plus two
+    examination or its equivalent with English as a compulsory subject, Physics
+    and Mathematics, and one of Chemistry, a technical vocational subject,
+    Computer Science, Information Technology, Informatics Practices or
+    Engineering Graphics. At least forty five per cent is required in Physics,
+    Mathematics and Chemistry or the vocational subject, and forty per cent for
+    Backward Class Categories, Economically Weaker Section and Persons with
+    Disability candidates. Selection is based on the score in MHT-CET for PCM,
+    JEE Main, JEE Advanced, NCET which is the NMIMS-CET, SAT, or the PERA test for
+    PCM, followed by the university's round-wise merit list.
+
+- slug: course-btech-cse-ai-ml
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech Computer Science & Engineering (AI & ML)"
+  aliases: ["CSE AI ML", "artificial intelligence", "machine learning", "AI ML",
+            "एआई", "आर्टिफिशियल इंटेलिजेंस"]
+  title_localized:
+    hi-IN: "बी.टेक कंप्यूटर साइंस और इंजीनियरिंग (एआई और एमएल)"
+    mr-IN: "बी.टेक संगणक शास्त्र आणि अभियांत्रिकी (एआय आणि एमएल)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, engineering, btech, ai, ml, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech Computer Science & Engineering (AI & ML)"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 4
+    seats: 120
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 or equivalent with English as a compulsory subject, Physics and Mathematics, plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics. At least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27. The school office and the admission portal confirm the fee at the time of the offer."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The four year Bachelor of Technology in Computer Science and Engineering with
+    specialisation in Artificial Intelligence and Machine Learning runs on the
+    semester pattern with an intake of one hundred and twenty students for the
+    academic year 2026-27. Eligibility is the same as for the other engineering
+    branches, ten plus two with English, Physics and Mathematics and one of
+    Chemistry or a technical vocational or computing subject, with at least forty
+    five per cent, or forty per cent for Backward Class Categories, Economically
+    Weaker Section and Persons with Disability candidates. Selection is based on
+    MHT-CET for PCM, JEE Main, JEE Advanced, NCET, SAT or the PERA test.
+
+- slug: course-btech-cse-data-science
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech Computer Science & Engineering (Data Science)"
+  aliases: ["CSE data science", "data science", "B.Tech data science",
+            "डेटा सायन्स", "डाटा साइंस"]
+  title_localized:
+    hi-IN: "बी.टेक कंप्यूटर साइंस और इंजीनियरिंग (डेटा साइंस)"
+    mr-IN: "बी.टेक संगणक शास्त्र आणि अभियांत्रिकी (डेटा सायन्स)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, engineering, btech, data-science, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech Computer Science & Engineering (Data Science)"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 4
+    seats: 120
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 or equivalent with English as a compulsory subject, Physics and Mathematics, plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics. At least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27. The school office and the admission portal confirm the fee at the time of the offer."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The four year Bachelor of Technology in Computer Science and Engineering with
+    specialisation in Data Science runs on the semester pattern with an intake of
+    one hundred and twenty students for the academic year 2026-27. Eligibility is
+    ten plus two with English, Physics and Mathematics and one of Chemistry or a
+    technical vocational or computing subject, with at least forty five per cent,
+    or forty per cent for Backward Class Categories, Economically Weaker Section
+    and Persons with Disability candidates. Selection is based on MHT-CET for PCM,
+    JEE Main, JEE Advanced, NCET, SAT or the PERA test.
+
+- slug: course-btech-civil-engineering
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech Civil Engineering"
+  aliases: ["civil engineering", "B.Tech civil", "सिविल", "बांधकाम अभियांत्रिकी"]
+  title_localized:
+    hi-IN: "बी.टेक सिविल इंजीनियरिंग"
+    mr-IN: "बी.टेक स्थापत्य अभियांत्रिकी"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, engineering, btech, civil, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech Civil Engineering"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 4
+    seats: 60
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    accreditation: "Civil Engineering at SVKM's Institute of Technology on this campus holds National Board of Accreditation (NBA) accreditation from AY 2024-25 to 2026-27."
+    eligibility: "Class 10+2 or equivalent with English as a compulsory subject, Physics and Mathematics, plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics. At least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27. The school office and the admission portal confirm the fee at the time of the offer."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The four year Bachelor of Technology in Civil Engineering runs on the semester
+    pattern with an intake of sixty students for the academic year 2026-27.
+    Eligibility is ten plus two with English, Physics and Mathematics and one of
+    Chemistry or a technical vocational or computing subject, with at least forty
+    five per cent, or forty per cent for Backward Class Categories, Economically
+    Weaker Section and Persons with Disability candidates. Selection is based on
+    MHT-CET for PCM, JEE Main, JEE Advanced, NCET, SAT or the PERA test. On this
+    campus Civil Engineering at SVKM's Institute of Technology holds National
+    Board of Accreditation accreditation from the academic year 2024-25 to
+    2026-27.
+
+- slug: course-btech-electrical-engineering
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech Electrical Engineering"
+  aliases: ["electrical engineering", "B.Tech electrical", "इलेक्ट्रिकल",
+            "विद्युत अभियांत्रिकी"]
+  title_localized:
+    hi-IN: "बी.टेक इलेक्ट्रिकल इंजीनियरिंग"
+    mr-IN: "बी.टेक विद्युत अभियांत्रिकी"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, engineering, btech, electrical, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech Electrical Engineering"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 4
+    seats: 60
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    accreditation: "Electrical Engineering at SVKM's Institute of Technology on this campus holds National Board of Accreditation (NBA) accreditation from AY 2024-25 to 2026-27."
+    eligibility: "Class 10+2 or equivalent with English as a compulsory subject, Physics and Mathematics, plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics. At least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27. The school office and the admission portal confirm the fee at the time of the offer."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The four year Bachelor of Technology in Electrical Engineering runs on the
+    semester pattern with an intake of sixty students for the academic year
+    2026-27. Eligibility is ten plus two with English, Physics and Mathematics and
+    one of Chemistry or a technical vocational or computing subject, with at least
+    forty five per cent, or forty per cent for Backward Class Categories,
+    Economically Weaker Section and Persons with Disability candidates. Selection
+    is based on MHT-CET for PCM, JEE Main, JEE Advanced, NCET, SAT or the PERA
+    test. The university lists this branch as Electrical Engineering, not
+    Electrical and Electronics Engineering.
+
+- slug: course-btech-mechanical-engineering
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech Mechanical Engineering"
+  aliases: ["mechanical engineering", "B.Tech mechanical", "मेकॅनिकल",
+            "यांत्रिकी अभियांत्रिकी"]
+  title_localized:
+    hi-IN: "बी.टेक मैकेनिकल इंजीनियरिंग"
+    mr-IN: "बी.टेक यांत्रिकी अभियांत्रिकी"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, engineering, btech, mechanical, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech Mechanical Engineering"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 4
+    seats: 60
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    accreditation: "Mechanical Engineering at SVKM's Institute of Technology on this campus holds National Board of Accreditation (NBA) accreditation from AY 2024-25 to 2026-27."
+    eligibility: "Class 10+2 or equivalent with English as a compulsory subject, Physics and Mathematics, plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics. At least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27. The school office and the admission portal confirm the fee at the time of the offer."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The four year Bachelor of Technology in Mechanical Engineering runs on the
+    semester pattern with an intake of sixty students for the academic year
+    2026-27. Eligibility is ten plus two with English, Physics and Mathematics and
+    one of Chemistry or a technical vocational or computing subject, with at least
+    forty five per cent, or forty per cent for Backward Class Categories,
+    Economically Weaker Section and Persons with Disability candidates. Selection
+    is based on MHT-CET for PCM, JEE Main, JEE Advanced, NCET, SAT or the PERA
+    test.
+
+- slug: course-btech-information-technology
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech Information Technology"
+  aliases: ["information technology", "B.Tech IT", "IT branch", "आयटी",
+            "माहिती तंत्रज्ञान"]
+  title_localized:
+    hi-IN: "बी.टेक इनफॉर्मेशन टेक्नोलॉजी"
+    mr-IN: "बी.टेक माहिती तंत्रज्ञान"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, engineering, btech, it, stme]
+  verified: false
+  verified_by: null
+  source: "https://www.svkmnmimsgu.ac.in/ (programme list and admission enquiry form; the AY 2026-27 handout publishes no intake for this branch)"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech Information Technology"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 4
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Published eligibility for B.Tech at this school is Class 10+2 with English, Physics and Mathematics plus one of Chemistry or a technical vocational or computing subject, with at least 45% (40% for Backward Class Categories, EWS and Persons with Disability candidates)."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    assistant_instruction: "The branch appears in the university's own programme list and enquiry form, but the AY 2026-27 handout publishes no intake for it. Say that it is listed by the university, do not state a seat count, and offer the school office number for the current position."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    Information Technology is listed among the undergraduate programmes of the
+    School of Technology, Management and Engineering on the university website and
+    in its admission enquiry form, and the school also lists a B.Tech plus MBA and
+    an M.Tech in Information Technology. The admission handout for the academic
+    year 2026-27 does not publish an intake for the Information Technology branch,
+    so the seat position and whether admissions are open for it this cycle are
+    confirmed by the school office on zero two five six two, three five zero six
+    two zero.
+
+- slug: course-btech-mba-dual-degree
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "B.Tech + MBA (Technology Management) — five year dual degree"
+  aliases: ["B.Tech MBA", "dual degree", "five year programme", "tech management",
+            "बीटेक एमबीए", "ड्युअल डिग्री"]
+  title_localized:
+    hi-IN: "बी.टेक + एमबीए (पांच वर्षीय डुअल डिग्री)"
+    mr-IN: "बी.टेक + एमबीए (पाच वर्षांची दुहेरी पदवी)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, dual-degree, management, engineering, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "B.Tech + MBA"
+    programme: "B.Tech + MBA (Technology Management)"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 5
+    seats: 180
+    seat_note: "Sixty seats each in Computer Engineering, Computer Science & Engineering (AI & ML) and Computer Science & Engineering (Data Science)"
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 or equivalent with English as a compulsory subject, Physics and Mathematics, plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics. At least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT or PERA TEST (PCM)"
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The five year B.Tech plus MBA in Technology Management is a dual degree that
+    combines an engineering branch with management study. For the academic year
+    2026-27 it is offered in Computer Engineering, in Computer Science and
+    Engineering with Artificial Intelligence and Machine Learning, and in Computer
+    Science and Engineering with Data Science, with sixty seats in each, so one
+    hundred and eighty seats in total. The university also lists a B.Tech plus MBA
+    in Information Technology. Eligibility and the qualifying tests are the same
+    as for the four year B.Tech, and admission follows the university's round-wise
+    merit lists.
+
+- slug: course-mtech
+  category: course
+  subcategory: engineering
+  school: "School of Technology, Management & Engineering"
+  title: "M.Tech — Civil, Computer, Electrical, Mechanical and Information Technology"
+  aliases: ["M.Tech", "masters in engineering", "postgraduate engineering",
+            "एमटेक", "gate"]
+  title_localized:
+    hi-IN: "एम.टेक"
+    mr-IN: "एम.टेक"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [pg, engineering, mtech, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "M.Tech"
+    programme: "M.Tech"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 2
+    seats: 48
+    seat_note: "Twelve seats each in Civil, Computer, Electrical and Mechanical Engineering; the university also lists M.Tech in Information Technology"
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "A bachelor's degree in the relevant field of Engineering and Technology from an institution approved by AICTE or by the Central or State Government, with at least 55% in aggregate, or 45% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "GATE or PERA TEST"
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The two year Master of Technology runs on the semester pattern in Civil
+    Engineering, Computer Engineering, Electrical Engineering and Mechanical
+    Engineering, with twelve seats in each for the academic year 2026-27. The
+    university also lists an M.Tech in Information Technology. A candidate must
+    have passed a bachelor's degree in the relevant field of Engineering and
+    Technology from an institution approved by the All India Council for Technical
+    Education or by the Central or State Government, with at least fifty five per
+    cent in aggregate, or forty five per cent for Backward Class Categories,
+    Economically Weaker Section and Persons with Disability candidates. Selection
+    is based on the GATE score or the PERA test.
+
+- slug: course-mca
+  category: course
+  subcategory: technology
+  school: "School of Technology, Management & Engineering"
+  title: "Master of Computer Applications (MCA)"
+  aliases: ["MCA", "master of computer applications", "एमसीए", "computer applications"]
+  title_localized:
+    hi-IN: "मास्टर ऑफ कंप्यूटर एप्लीकेशन (एमसीए)"
+    mr-IN: "संगणक अनुप्रयोग पदव्युत्तर (एमसीए)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [pg, mca, computers, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "MCA"
+    programme: "Master of Computer Applications (MCA)"
+    school: "School of Technology, Management & Engineering"
+    duration_years: 2
+    seats: 120
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "A bachelor's degree in a relevant field such as Computer Applications (BCA) or Computer Science or a related field, or a B.Sc., B.Com. or B.A. with Mathematics at the 10+2 level or at graduation level, with at least 50% in aggregate, or 45% for Backward Class Categories, Economically Weaker Section and Persons with Disability candidates."
+    entrance_exam: "MAH-MCA-CET or PERA TEST (MCA)"
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The two year Master of Computer Applications has an intake of one hundred and
+    twenty students for the academic year 2026-27 and runs on the semester
+    pattern. A candidate must have passed a bachelor's degree in a relevant field
+    such as Computer Applications or Computer Science or a related field, or a
+    Bachelor of Science, Commerce or Arts with Mathematics at the ten plus two
+    level or at graduation level. At least fifty per cent is required in
+    aggregate, or forty five per cent for Backward Class Categories, Economically
+    Weaker Section and Persons with Disability candidates. Selection is based on
+    the MAH-MCA-CET score or the PERA test for MCA, and the university publishes
+    round-wise merit lists for this programme.
+
+- slug: course-phd-technology
+  category: course
+  subcategory: doctoral
+  school: "School of Technology, Management & Engineering"
+  title: "Ph.D. in Technology and Engineering"
+  aliases: ["PhD", "doctoral", "research programme", "पीएचडी", "doctorate"]
+  title_localized:
+    hi-IN: "पीएचडी (तकनीक और इंजीनियरिंग)"
+    mr-IN: "पीएच.डी. (तंत्रज्ञान आणि अभियांत्रिकी)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [doctoral, phd, research, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/technology-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    degree: "Ph.D."
+    programme: "Ph.D. (Technology / Engineering)"
+    school: "School of Technology, Management & Engineering"
+    duration: "Minimum 3 years"
+    seats: "As per availability of supervisors"
+    mode: "Full time on campus; part time only as notified by the university"
+    medium: "English"
+    eligibility: "A master's degree, or a professional degree declared equivalent to a master's degree by the corresponding statutory regulatory body, with at least 55% in aggregate or the equivalent grade B in the UGC 10-point scale. The candidate must have qualified NET or GATE, or the entrance test conducted by SVKM NMIMS Global University."
+    entrance_exam: "NET, GATE or the university's Ph.D. entrance test (PET), followed by a personal interview"
+    selection_process: "Selection is based on performance in the personal interview conducted by the university. Research mentors and the vacant seat matrix are published on the website."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    The doctoral programme in Technology and Engineering runs for a minimum of
+    three years, and intake depends on the availability of supervisors. A
+    candidate must hold a master's degree, or a professional degree declared
+    equivalent to a master's degree by the corresponding statutory regulatory
+    body, with at least fifty five per cent in aggregate or the equivalent grade B
+    in the UGC ten point scale. The candidate must also have qualified NET or
+    GATE, or the entrance test conducted by SVKM NMIMS Global University.
+    Selection is based on performance in a personal interview conducted by the
+    university, and the list of research mentors and the vacant seat matrix are
+    published on the website along with the Ph.D. admission notice for the fall
+    session of the academic year 2026-27.
+
+- slug: course-btech-direct-second-year
+  category: admission_process
+  subcategory: lateral-entry
+  school: "School of Technology, Management & Engineering"
+  title: "Direct Second Year (lateral entry) B.Tech admission"
+  aliases: ["lateral entry", "direct second year", "DSY", "diploma holders",
+            "डायरेक्ट सेकंड ईयर", "लॅटरल एंट्री", "डिप्लोमा"]
+  title_localized:
+    hi-IN: "डायरेक्ट सेकंड ईयर (लैटरल एंट्री) बी.टेक प्रवेश"
+    mr-IN: "थेट दुसऱ्या वर्षाला (लॅटरल एंट्री) बी.टेक प्रवेश"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [lateral-entry, diploma, engineering, stme]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission announcements and published DSY schedules/merit lists"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    programme: "Direct Second Year B.Tech / B.Tech + MBA"
+    school: "School of Technology, Management & Engineering"
+    mode: "Full time, on campus"
+    eligibility: "A diploma holder can seek direct second year entry. The university publishes a separate Direct Second Year admission schedule and a separate document list for first year and DSY candidates, and runs round-wise merit lists for AY 2026-27."
+    selection_process: "Round-wise schedules and merit lists are published on the university website for AY 2026-27, with registration through the SVKM admission portal."
+    assistant_instruction: "The handout does not publish the qualifying diploma percentage or the seat matrix for DSY this cycle. Give the mechanism and the school office number, and do not state a percentage or a seat count."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350620, 94256 85966, 97644 05069"
+  body: |
+    Diploma holders can seek direct second year entry to the B.Tech and B.Tech
+    plus MBA programmes. For the academic year 2026-27 the university published a
+    separate Direct Second Year admission schedule, a separate document list
+    covering first year and direct second year candidates, and round-wise merit
+    lists, with extended schedules issued for round one and further rounds after
+    that. Registration is through the SVKM admission portal, and the qualifying
+    diploma percentage and the seat position for this cycle are confirmed by the
+    school office on zero two five six two, three five zero six two zero, or on
+    nine four two five six, eight five nine six six.

@@ -1,0 +1,142 @@
+# ============================================================================
+# CAMPUS LIFE  —  hostel, facilities, safety
+# ============================================================================
+# The university website (retrieved 2026-09-18) publishes an About page, a
+# contact page with a "How to reach" section, an accreditations page, an academic
+# calendar, a library page under Facilities, a virtual tour and an admission
+# enquiry form. It publishes NOTHING about hostel accommodation, hostel charges,
+# hostel rules or mess.
+#
+# Earlier drafts of this file asserted that hostel accommodation is available with
+# separate boys' and girls' blocks. That came from aggregator listings for other
+# institutes at Dhule, not from the university, and on a live admissions line it
+# is a promise this office cannot keep. The hostel record below therefore states
+# the position honestly: not published, confirmed by the school office. The
+# transport record that used to live here has moved to 00_university.yaml, where
+# it is sourced from the university's own "How to reach" section.
+
+- slug: hostel-availability
+  category: hostel
+  subcategory: accommodation
+  title: "Hostel accommodation, charges and rules"
+  aliases: ["hostel", "hostel available", "accommodation", "mess", "room",
+            "hostel fees", "hostel rules", "हॉस्टेल", "वसतिगृह", "होस्टल",
+            "खाना", "राहण्याची सोय", "हॉस्टल की सुविधा", "हॉस्टेल ची सोय",
+            "वसतिगृह सुविधा", "hostel ki suvidha", "hostel rules"]
+  title_localized:
+    hi-IN: "हॉस्टल की सुविधा"
+    mr-IN: "वसतिगृह सोय"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [hostel, campus-life, escalate]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in publishes no hostel information"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    hostel_status: "not_published"
+    published_on_website: false
+    what_is_not_published:
+      - "Whether hostel accommodation is available to students of this university"
+      - "Separate blocks for male and female students"
+      - "Hostel and mess charges"
+      - "Room types and allotment procedure"
+      - "The hostel rulebook, curfew and visitor rules"
+    who_confirms: "The school office for the programme, on the numbers published on the university's contact page."
+    school_phones:
+      - "School of Technology, Management & Engineering: 02562 350620, 94256 85966, 97644 05069"
+      - "School of Pharmacy & Technology Management: 02562 350640, 91589 47999, 86685 01496"
+      - "School of Commerce: 02562 350600, 92721 10073, 87887 01642"
+    assistant_instruction: "Do not confirm that hostel accommodation exists, and do not quote a charge, a room type or a rule. Say the university website does not publish hostel details, offer to send the school office numbers by SMS, and offer to connect the caller. If the caller is already a student with a hostel grievance, escalate."
+  body: |
+    The university website does not publish any information about hostel
+    accommodation. There is no hostel page, no statement about separate blocks for
+    male and female students, no hostel or mess charges, no room types and no
+    allotment procedure, and no hostel rulebook covering curfew, visitors or
+    discipline. Whether accommodation is available to a student of this
+    university, what it costs and how a room is allotted are therefore confirmed
+    by the school office for the programme concerned, on the numbers published on
+    the contact page, rather than stated here. If you have already been offered a seat and need accommodation sorted,
+    that office handles it directly, and a hostel grievance goes to a
+    person without delay.
+
+- slug: campus-facilities
+  category: facilities
+  subcategory: overview
+  title: "Campus facilities"
+  aliases: ["facilities", "library", "labs", "infrastructure", "campus facilities",
+            "virtual tour", "सुविधा", "लायब्ररी", "प्रयोगशाळा", "कॅम्पस मधील सुविधा",
+            "कैंपस सुविधाएं", "क्या सुविधाएं हैं"]
+  title_localized:
+    hi-IN: "कैंपस की सुविधाएं"
+    mr-IN: "कॅम्पसमधील सुविधा"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [facilities, campus-life, library]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in site structure: Facilities section, library page, virtual tour"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    # Spoken aloud by the facilities frame, so these are nouns, not sentences:
+    # "The campus has Library — the university website's Facilities section leads
+    # to its library page, …" was unreadable. The explanation lives in the body.
+    facilities:
+      - "the library"
+      - "a virtual tour of the campus"
+      - "academic blocks for all three schools"
+    published_detail: false
+    virtual_tour: "The homepage offers a See Virtual Tour link with video walkthroughs of the campus."
+    library_page: "The Facilities link opens a gallery of library photographs only; no holdings, timings or capacity are published."
+    website: "https://www.svkmnmimsgu.ac.in"
+    assistant_instruction: "Say what the website does publish — a library section, a virtual tour and the three schools on one campus — and do not list laboratories, sports facilities, a canteen, a medical room or transport as confirmed. Offer to send the virtual tour link and the school numbers by SMS, and connect the caller for specifics."
+  body: |
+    The campus is at Survey Number four ninety nine behind the Gurudwara on the
+    Mumbai Agra National Highway at Dhule, and holds all three schools of the
+    university: Commerce, Technology Management and Engineering, and Pharmacy
+    and Technology Management. What the university's own website publishes about
+    facilities is a Facilities link that opens a gallery of library photographs,
+    with no text on holdings, timings or capacity, a virtual tour with video
+    walkthroughs of the campus, and programme level information for each school.
+    A detailed list of laboratories, sports facilities, canteen, medical room or
+    transport is not published on the website, so those cannot be confirmed
+    here. If you would like to see the campus, the virtual tour link can be sent
+    to you by message, and the school office confirms a specific facility and
+    arranges a visit.
+- slug: anti-ragging-policy
+  category: policy
+  subcategory: safety
+  title: "Anti-ragging policy and how to report"
+  aliases: ["ragging", "ragging complaint", "bullying", "harassment", "safety",
+            "रॅगिंग", "रैगिंग", "शेगाई", "परेशान", "तक्रार"]
+  title_localized:
+    hi-IN: "रैगिंग विरोधी नीति"
+    mr-IN: "रॅगिंग विरोधी धोरण"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [policy, safety, ragging, escalate]
+  verified: false
+  verified_by: null
+  source: "No anti-ragging committee contact or policy document is published on the university website. The statutory framework is the UGC Regulations on Curbing the Menace of Ragging in Higher Educational Institutions."
+  structured:
+    statutory_framework: "Ragging is prohibited in Indian higher education under the UGC Regulations on Curbing the Menace of Ragging in Higher Educational Institutions, which require every institution to constitute an anti-ragging committee and an anti-ragging squad, and to publish undertaking and affidavit requirements for students and parents."
+    how_to_report:
+      - "Tell a person at the university immediately — the school office or the hostel and student affairs function"
+      - "The national anti-ragging helpline and the online complaint portal operated under the UGC framework"
+      - "The local police, in an emergency"
+    assistant_instruction: "A report of ragging is passed straight to a person, with the details of the call handed over at the same time. Do not attempt to resolve it on the call, do not ask the caller to wait, and do not minimise what has been reported. The university's own committee contacts are not published on the website, so never invent a name, a number or an email for them."
+  body: |
+    Ragging is prohibited in Indian higher education under the UGC regulations on
+    curbing the menace of ragging, which require an institution to constitute an
+    anti ragging committee and an anti ragging squad and to collect undertakings
+    from students and parents. The university website does not publish its
+    committee membership or a complaint contact, so no name, number or email
+    address for them can be given here. A student or parent who has experienced or
+    witnessed ragging should tell a person at the university immediately, use the
+    national anti ragging helpline and online complaint portal operated under the
+    UGC framework, or contact the local police in an emergency. A report of
+    ragging made on this line is passed straight to a person, with the details of
+    the call handed over at the same time, and it is not something to settle on
+    the phone or to wait on.

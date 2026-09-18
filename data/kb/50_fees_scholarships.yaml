@@ -1,0 +1,187 @@
+# ============================================================================
+# FEES, SCHOLARSHIPS AND LOANS
+# ============================================================================
+# THE UNIVERSITY WEBSITE PUBLISHES NO FEE TABLE. The three school-wise admission
+# handouts at svkmnmimsgu.ac.in list programme, intake, duration, pattern,
+# eligibility and qualifying tests — and no fee column. The only statement about
+# cost on the site is qualitative: the homepage says the fee structure is
+# "competitively moderate … compared to other private colleges of engineering in
+# India".
+#
+# The numbers that circulate on aggregator sites (BBA ₹2.75L / ₹4.44L, B.Tech
+# ₹3.5L / ₹3.93L, M.Pharm ₹5.08L, and so on) describe *other* institutions:
+# SVKM's Institute of Technology and SVKM's Institute of Pharmacy at Dhule, which
+# are AICTE/PCI institutes, and SVKM's NMIMS Mumbai, the deemed university. They
+# also contradict each other. They have all been REMOVED from this knowledge base,
+# because a fee quoted on a live admissions line is the single most damaging thing
+# this assistant could invent. Every fee question now escalates, and offers the
+# portal, the school office and an SMS instead.
+
+- slug: fees-structure-policy
+  category: fees
+  subcategory: policy
+  title: "Fees are not published on the university website"
+  aliases: ["fees", "fee structure", "how much does it cost", "tuition",
+            "फीस", "शुल्क", "किती फी", "खर्च", "fee kitni", "shulk"]
+  title_localized:
+    hi-IN: "शुल्क की जानकारी"
+    mr-IN: "शुल्काची माहिती"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [fees, policy, escalate]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in handouts publish no fee column; homepage states the fee structure is competitively moderate"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    published_fee_table: false
+    website_claim: "The university's homepage describes its fee structure as competitively moderate compared to other private colleges of engineering in India."
+    where_the_fee_is_confirmed:
+      - "The SVKM admission portal at the time of registration and offer, https://sdcappscs.svkm.ac.in:44300/irj/portal"
+      - "The school office for the programme asked about"
+      - "The admission offer letter and the fee schedule issued with it"
+    aggregator_warning: "Fee figures on third-party college listing sites refer to SVKM's Institute of Technology, SVKM's Institute of Pharmacy or SVKM's NMIMS Mumbai, and they disagree with each other. None of them is a fee for this university."
+    assistant_instruction: "Never quote an amount, an annual figure, a total, an instalment plan or a comparison with another college. Say the fee is not published on the website, give the portal and the school office number, and offer to connect the caller or send the contact details by SMS. Escalate the call as fee_not_in_kb."
+  body: |
+    The university does not publish a fee table on its website. The admission
+    handouts for the School of Technology, Management and Engineering, the School
+    of Pharmacy and Technology Management and the School of Commerce list the
+    programme, the intake, the duration, the pattern, the eligibility and the
+    qualifying tests, but no fee. The only statement about cost on the website is
+    on the homepage, which describes the fee structure as competitively moderate
+    compared with other private colleges of engineering in India. The fee for a
+    specific programme and academic year is confirmed at the time of registration
+    and offer through the SVKM admission portal, by the school office, and in the
+    offer letter with the fee schedule attached to it. Fee figures published on
+    third party college listing sites describe other SVKM institutions at Dhule or
+    the NMIMS deemed university in Mumbai, they disagree with one another, and
+    none of them is a fee for this university.
+
+- slug: fees-payment-modes
+  category: fees
+  subcategory: payment
+  title: "Paying fees and the payment modes"
+  aliases: ["how to pay", "payment mode", "installment", "online payment", "upi",
+            "neft", "फीस कैसे भरें", "भुगतान", "शुल्क भरायचे", "हप्ता"]
+  title_localized:
+    hi-IN: "शुल्क भुगतान की जानकारी"
+    mr-IN: "शुल्क भरण्याची माहिती"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [fees, payment, escalate]
+  verified: false
+  verified_by: null
+  source: "The university website does not publish payment modes, instalment options or a payment calendar."
+  structured:
+    published: false
+    known_mechanism: "Registration and admission for AY 2026-27 run through the SVKM admission portal, which is where any fee collection is initiated."
+    assistant_instruction: "Do not name a payment gateway, an instalment plan, a deadline or a late fee. Say that payment is initiated through the SVKM admission portal and that the modes, instalments and calendar are confirmed by the school office or the accounts office, and connect the caller."
+  body: |
+    Registration and admission for the academic year 2026-27 run through the SVKM
+    admission portal, and that is where any fee collection is initiated. The
+    university website does not publish the accepted payment modes, whether an
+    instalment option exists, the payment calendar or the consequences of a late
+    payment, so none of that can be stated here. The school office for the
+    programme, or the accounts office once an offer has been made, confirms the
+    modes and the schedule. If you have already paid and the payment is not
+    showing against your application, the accounts office handles that
+    directly.
+
+- slug: fees-refund-withdrawal
+  category: loan_payment
+  subcategory: refund
+  title: "Fee refund and withdrawal from a programme"
+  aliases: ["refund", "withdrawal", "cancel admission", "money back", "रिफंड",
+            "पैसे परत", "प्रवेश रद्द", "शुल्क परत"]
+  title_localized:
+    hi-IN: "शुल्क वापसी और प्रवेश रद्द करना"
+    mr-IN: "शुल्क परत आणि प्रवेश रद्द करणे"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [fees, refund, withdrawal, escalate]
+  verified: false
+  verified_by: null
+  source: "No refund or withdrawal policy is published on the university website."
+  structured:
+    published: false
+    decided_by: "The accounts office, against whatever refund schedule the university notifies for that cycle."
+    assistant_instruction: "Never state a refund amount, a percentage or a refund deadline. Record the caller's situation in the escalation brief and connect them to the accounts office."
+  body: |
+    The university website does not publish a refund or withdrawal policy, so no
+    refund amount, percentage or deadline can be stated. A refund depends on when
+    the withdrawal is made against the cut off dates the university notifies for
+    that cycle, on whether a seat has already been allotted and confirmed, and on
+    the components already paid, and the accounts office decides each case. If you want to withdraw, if you have been offered a seat elsewhere, or if
+    you are disputing a charge, the accounts office handles it, and it
+    helps to have the payment details and the offer letter to hand.
+
+- slug: scholarships-available
+  category: scholarships
+  subcategory: schemes
+  title: "Scholarships and fee concessions"
+  aliases: ["scholarship", "concession", "fee waiver", "post matric", "शिष्यवृत्ती",
+            "छात्रवृत्ति", "स्कॉलरशिप", "सवलत", "शुल्क सवलत"]
+  title_localized:
+    hi-IN: "छात्रवृत्ति की जानकारी"
+    mr-IN: "शिष्यवृत्तीची माहिती"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [scholarships, financial-aid, escalate]
+  verified: false
+  verified_by: null
+  source: "The university website publishes no scholarship list; these are the government schemes a Maharashtra student would normally apply through."
+  structured:
+    scholarship_types:
+      - "Government of Maharashtra post-matric scholarship schemes for reserved categories and economically weaker sections"
+      - "National Scholarship Portal central schemes"
+      - "Merit based concessions, where the university notifies them for a cycle"
+      - "Minority, defence ward and disability schemes run by the respective authorities"
+    how_they_work: "Government schemes are applied for on the state scholarship portal or the National Scholarship Portal, and the institute verifies and forwards the application. A caste or category certificate, an income certificate and, where applicable, a non-creamy layer certificate are normally required."
+    published_by_university: false
+    assistant_instruction: "Explain the categories and where to apply, say that the university website publishes no scholarship list for this cycle, and never confirm that a particular student is eligible for or will receive a specific scholarship or amount. Connect the caller to the school office for an individual assessment."
+  body: |
+    The university website does not publish a list of scholarships or fee
+    concessions for this cycle, so what follows is the general position for a
+    student studying in Maharashtra rather than a promise from this university.
+    Government of Maharashtra post matric schemes support students from reserved
+    categories and economically weaker sections, and central government merit and
+    means based schemes run through the National Scholarship Portal. Both are
+    applied for on the relevant portal, with the institute verifying and
+    forwarding the application, and both normally require a caste or category
+    certificate, an income certificate and, where applicable, a non creamy layer
+    certificate. Merit based concessions and any scheme run by the trust or the
+    NMIMS group depend on what the university notifies for the cycle. Minority,
+    defence ward and disability schemes are run by their own authorities. Whether
+    a particular student qualifies, and how much is payable, is decided by the
+    scheme authority and confirmed by the school office, not on a phone call.
+
+- slug: education-loans
+  category: loan_payment
+  subcategory: loans
+  title: "Education loans"
+  aliases: ["education loan", "student loan", "bank loan", "शिक्षण कर्ज",
+            "लोन", "कर्ज", "बँक कर्ज"]
+  title_localized:
+    hi-IN: "शिक्षण ऋण"
+    mr-IN: "शैक्षणिक कर्ज"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [loans, finance, escalate]
+  verified: false
+  verified_by: null
+  source: "The university website publishes no loan tie-up, interest rate or bonafide procedure."
+  structured:
+    published_by_university: false
+    what_the_university_can_issue: "A bonafide certificate and the fee structure for the programme, which lenders normally require, are issued by the school or accounts office."
+    assistant_instruction: "Never quote an interest rate, an eligible loan amount, a repayment term or an approval outcome. Explain that the lender decides, suggest the borrower approach their own bank first, and connect the caller to the school office for the bonafide certificate and fee structure a lender asks for."
+  body: |
+    The university website does not publish a loan tie-up, an interest rate or a
+    procedure for education loans, so none of those can be stated. An education
+    loan is the lender's decision, and the interest rate, the eligible amount, the
+    repayment term and the approval all depend on the bank and on the borrower.
+    Approaching the borrower's own bank first is usually the quickest route, and
+    the National Credit Portal lists the schemes a lender can use. What the
+    university side can provide is the documentation a lender asks for, namely a
+    bonafide certificate and the fee structure for the programme, which are issued
+    by the school office or the accounts office once admission is confirmed.

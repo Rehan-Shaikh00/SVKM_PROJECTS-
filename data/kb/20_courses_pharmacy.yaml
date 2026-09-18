@@ -1,0 +1,369 @@
+# ============================================================================
+# SCHOOL OF PHARMACY & TECHNOLOGY MANAGEMENT (SPTM)  —  from A.Y. 2025-26
+# ============================================================================
+# Source of truth: https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout
+# plus https://www.svkmnmimsgu.ac.in/accreditations (retrieved 2026-09-18).
+#
+# This university's health-science provision is PHARMACY ONLY. It does not run
+# MBBS, BDS, nursing, physiotherapy or any clinical medical degree, and that is
+# stated explicitly below so the assistant answers a medical-programme question
+# with the truth instead of an invented route.
+#
+# FEES ARE DELIBERATELY ABSENT — see the note in 10_courses_engineering.yaml.
+
+- slug: school-sptm-overview
+  category: course
+  subcategory: pharmacy
+  title: "School of Pharmacy & Technology Management — programmes overview"
+  aliases: ["pharmacy", "B.Pharm", "D.Pharm", "M.Pharm", "pharma", "औषधनिर्माण",
+            "फार्मसी", "औषध शास्त्र", "cosmetic technology"]
+  title_localized:
+    hi-IN: "फार्मेसी एवं प्रौद्योगिकी प्रबंधन स्कूल"
+    mr-IN: "औषधनिर्माणशास्त्र आणि तंत्रज्ञान व्यवस्थापन शाळा"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, pg, diploma, doctoral, pharmacy, overview, sptm]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  structured:
+    school: "School of Pharmacy & Technology Management"
+    levels: ["Diploma (D.Pharm)", "UG (B.Pharm, B.Pharm + MBA, B.Tech Cosmetic Technology)", "PG (M.Pharm)", "Doctoral (Ph.D.)"]
+    programmes:
+      - "Diploma in Pharmacy (D.Pharm) — 2 years, annual pattern, intake 60"
+      - "Bachelor of Pharmacy (B.Pharm) — 4 years, semester, intake 60"
+      - "B.Pharm + MBA (Pharma Tech) — 5 years, semester, intake 40"
+      - "B.Tech (Cosmetic Technology) — 4 years, semester, intake 60"
+      - "M.Pharm — 2 years, semester, intake 48 across four specialisations"
+      - "Ph.D. (Pharmaceutical Science) — minimum 3 years"
+    entrance_exam: "B.Pharm, B.Pharm + MBA and B.Tech Cosmetic Technology: MHT-CET (PCM/PCB), NEET (PCB), NCET (NMIMS-CET), SAT or PERA TEST. D.Pharm: merit on 10+2 marks, no entrance test. M.Pharm: GPAT or PERA TEST. Ph.D.: NET, GPAT or the university test, then an interview."
+    medium: "English"
+    mode: "Full time, on campus"
+    school_phone: "02562 350640, 91589 47999, 86685 01496"
+  body: |
+    The School of Pharmacy and Technology Management started in the academic year
+    2025-26. It offers a two year Diploma in Pharmacy on the annual pattern with
+    an intake of sixty, a four year Bachelor of Pharmacy with an intake of sixty,
+    a five year B.Pharm plus MBA in Pharma Tech with an intake of forty, and a
+    four year B.Tech in Cosmetic Technology with an intake of sixty. At
+    postgraduate level the two year M.Pharm has forty eight seats across four
+    specialisations, and there is a doctoral programme in Pharmaceutical Science
+    running a minimum of three years. Teaching is in English and every programme
+    is full time on campus. On this campus SVKM's Institute of Pharmacy holds an
+    A plus grade in its first NAAC cycle with a CGPA of three point four three,
+    and the Diploma in Pharmacy programme at SVKM's Institute of Technology holds
+    National Board of Accreditation accreditation from the academic year 2024-25
+    to 2026-27.
+
+- slug: course-d-pharm
+  category: course
+  subcategory: pharmacy
+  school: "School of Pharmacy & Technology Management"
+  title: "Diploma in Pharmacy (D.Pharm)"
+  aliases: ["D.Pharm", "diploma in pharmacy", "pharmacy diploma", "डी फार्म",
+            "डिप्लोमा इन फार्मेसी", "फार्मसी डिप्लोमा"]
+  title_localized:
+    hi-IN: "डिप्लोमा इन फार्मेसी (डी.फार्म)"
+    mr-IN: "औषधनिर्माणशास्त्र डिप्लोमा (डी.फार्म)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [diploma, pharmacy, sptm]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  structured:
+    degree: "D.Pharm"
+    programme: "Diploma in Pharmacy (D.Pharm)"
+    school: "School of Pharmacy & Technology Management"
+    duration_years: 2
+    seats: 60
+    pattern: "Annual"
+    mode: "Full time, on campus"
+    medium: "English"
+    accreditation: "The Diploma in Pharmacy programme at SVKM's Institute of Technology on this campus holds National Board of Accreditation (NBA) accreditation from AY 2024-25 to 2026-27."
+    eligibility: "Class 10+2 or equivalent with Physics and Chemistry, and either Mathematics or Biology or both as major subjects. No minimum percentage is published in the AY 2026-27 handout."
+    entrance_exam: "No entrance test. Selection is based on the percentage of marks obtained in Physics, Chemistry and the higher of Mathematics or Biology at 10+2."
+    selection_process: "Merit on the qualifying examination marks, followed by round-wise merit lists published by the university."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350640, 91589 47999, 86685 01496"
+  body: |
+    The two year Diploma in Pharmacy runs on the annual pattern with an intake of
+    sixty students for the academic year 2026-27. A candidate must have passed the
+    ten plus two examination or its equivalent with Physics and Chemistry, and
+    either Mathematics or Biology or both as major subjects. There is no entrance
+    test for this programme: selection is based on the percentage of marks
+    obtained in Physics, Chemistry and the higher of Mathematics or Biology, and
+    the university publishes round-wise merit lists. The handout for this cycle
+    does not publish a minimum percentage.
+
+- slug: course-b-pharm
+  category: course
+  subcategory: pharmacy
+  school: "School of Pharmacy & Technology Management"
+  title: "Bachelor of Pharmacy (B.Pharm)"
+  aliases: ["B.Pharm", "bachelor of pharmacy", "pharmacy degree", "बी फार्म",
+            "बॅचलर ऑफ फार्मेसी", "फार्मसी"]
+  title_localized:
+    hi-IN: "बैचलर ऑफ फार्मेसी (बी.फार्म)"
+    mr-IN: "औषधनिर्माणशास्त्र पदवी (बी.फार्म)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, pharmacy, sptm]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  structured:
+    degree: "B.Pharm"
+    programme: "Bachelor of Pharmacy (B.Pharm)"
+    school: "School of Pharmacy & Technology Management"
+    duration_years: 4
+    seats: 60
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 or equivalent with English as one of the subjects and Physics, Chemistry, Mathematics or Biology as optional subjects individually. No minimum percentage is published in the AY 2026-27 handout."
+    entrance_exam: "MHT-CET (PCM/PCB), NEET (PCB), NCET (NMIMS-CET), SAT or PERA TEST (PCM/PCB)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by round-wise merit lists. Direct second year B.Pharm admission also runs, with its own schedules and merit lists."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350640, 91589 47999, 86685 01496"
+  body: |
+    The four year Bachelor of Pharmacy runs on the semester pattern with an intake
+    of sixty students for the academic year 2026-27. A candidate must have passed
+    the ten plus two examination or its equivalent with English as one of the
+    subjects and Physics, Chemistry, Mathematics or Biology as optional subjects
+    individually. Selection is based on the score in MHT-CET for PCM or PCB, NEET
+    for PCB, NCET which is the NMIMS-CET, SAT, or the PERA test, followed by the
+    university's round-wise merit lists. A direct second year route also runs for
+    this programme, with its own published schedules and merit lists. The handout
+    for this cycle does not publish a minimum percentage.
+
+- slug: course-b-pharm-mba-pharma-tech
+  category: course
+  subcategory: pharmacy
+  school: "School of Pharmacy & Technology Management"
+  title: "B.Pharm + MBA (Pharma Tech) — five year dual degree"
+  aliases: ["B.Pharm MBA", "pharma tech", "pharma management", "बी फार्म एमबीए",
+            "फार्मा टेक"]
+  title_localized:
+    hi-IN: "बी.फार्म + एमबीए (फार्मा टेक) — पांच वर्षीय डुअल डिग्री"
+    mr-IN: "बी.फार्म + एमबीए (फार्मा टेक) — पाच वर्षांची दुहेरी पदवी"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, dual-degree, pharmacy, management, sptm]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  structured:
+    degree: "B.Pharm + MBA"
+    programme: "B.Pharm + MBA (Pharma Tech)"
+    school: "School of Pharmacy & Technology Management"
+    duration_years: 5
+    seats: 40
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 or equivalent with English as one of the subjects and Physics, Chemistry, Mathematics or Biology as optional subjects individually."
+    entrance_exam: "MHT-CET (PCM/PCB), NEET (PCB), NCET (NMIMS-CET), SAT or PERA TEST (PCM/PCB)"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by round-wise merit lists. A direct second year route also runs for this programme."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350640, 91589 47999, 86685 01496"
+  body: |
+    The five year B.Pharm plus MBA in Pharma Tech is a dual degree that combines
+    pharmacy with management study, and has an intake of forty students for the
+    academic year 2026-27 on the semester pattern. Eligibility is the same as for
+    the Bachelor of Pharmacy, ten plus two with English and Physics, Chemistry,
+    Mathematics or Biology as optional subjects individually. Selection is based
+    on MHT-CET for PCM or PCB, NEET for PCB, NCET, SAT or the PERA test, followed
+    by round-wise merit lists, and a direct second year route also runs with its
+    own published schedules.
+
+- slug: course-btech-cosmetic-technology
+  category: course
+  subcategory: pharmacy
+  school: "School of Pharmacy & Technology Management"
+  title: "B.Tech (Cosmetic Technology)"
+  aliases: ["cosmetic technology", "cosmetics", "B.Tech cosmetic", "कॉस्मेटिक",
+            "सौंदर्य प्रसाधन तंत्रज्ञान"]
+  title_localized:
+    hi-IN: "बी.टेक (कॉस्मेटिक टेक्नोलॉजी)"
+    mr-IN: "बी.टेक (कॉस्मेटिक तंत्रज्ञान)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, pharmacy, cosmetic, sptm]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  structured:
+    degree: "B.Tech"
+    programme: "B.Tech (Cosmetic Technology)"
+    school: "School of Pharmacy & Technology Management"
+    duration_years: 4
+    seats: 60
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 or equivalent with Physics and Chemistry, and either Mathematics or Biology or both as major subjects."
+    entrance_exam: "MHT-CET (PCM/PCB), NEET (PCB), NCET (NMIMS-CET), SAT or PERA TEST (PCM/PCB)"
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350640, 91589 47999, 86685 01496"
+  body: |
+    The four year Bachelor of Technology in Cosmetic Technology runs in the School
+    of Pharmacy and Technology Management on the semester pattern with an intake
+    of sixty students for the academic year 2026-27. A candidate must have passed
+    the ten plus two examination or its equivalent with Physics and Chemistry and
+    either Mathematics or Biology or both as major subjects. Selection is based on
+    MHT-CET for PCM or PCB, NEET for PCB, NCET, SAT or the PERA test, followed by
+    the university's round-wise merit lists.
+
+- slug: course-m-pharm
+  category: course
+  subcategory: pharmacy
+  school: "School of Pharmacy & Technology Management"
+  title: "Master of Pharmacy (M.Pharm) — Pharmaceutics, Quality Assurance, Pharmacology, Pharmaceutical Chemistry"
+  aliases: ["M.Pharm", "master of pharmacy", "pharmaceutics", "pharmacology",
+            "quality assurance", "pharmaceutical chemistry", "एम फार्म", "gpat"]
+  title_localized:
+    hi-IN: "मास्टर ऑफ फार्मेसी (एम.फार्म)"
+    mr-IN: "औषधनिर्माणशास्त्र पदव्युत्तर (एम.फार्म)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [pg, pharmacy, mpharm, sptm]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  structured:
+    degree: "M.Pharm"
+    programme: "Master of Pharmacy (M.Pharm)"
+    school: "School of Pharmacy & Technology Management"
+    duration_years: 2
+    seats: 48
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    specialisations:
+      - "Pharmaceutics — intake 15"
+      - "Pharmaceutical Quality Assurance — intake 15"
+      - "Pharmacology — intake 9"
+      - "Pharmaceutical Chemistry — intake 9"
+    eligibility: "A bachelor's degree in Pharmacy from an Indian university established by law, from an institution approved by the Pharmacy Council of India, with not less than 55% of the maximum marks in aggregate over the four years of B.Pharm. The candidate must hold registration with the State Pharmacy Council, or obtain it within one month of admission, failing which the admission is cancelled."
+    entrance_exam: "GPAT (Graduate Pharmacy Aptitude Test) or PERA TEST"
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350640, 91589 47999, 86685 01496"
+  body: |
+    The two year Master of Pharmacy runs on the semester pattern in four
+    specialisations for the academic year 2026-27: Pharmaceutics with fifteen
+    seats, Pharmaceutical Quality Assurance with fifteen seats, Pharmacology with
+    nine seats and Pharmaceutical Chemistry with nine seats. A candidate must have
+    passed a bachelor's degree in Pharmacy from an Indian university established
+    by law, from an institution approved by the Pharmacy Council of India, and
+    must have scored not less than fifty five per cent of the maximum marks in
+    aggregate over the four years of B.Pharm. The candidate must also hold
+    registration with the State Pharmacy Council, or obtain it within one month of
+    the date of admission, failing which the admission is cancelled. Selection is
+    based on the GPAT score or the PERA test.
+
+- slug: course-phd-pharmacy
+  category: course
+  subcategory: doctoral
+  school: "School of Pharmacy & Technology Management"
+  title: "Ph.D. in Pharmaceutical Science"
+  aliases: ["PhD pharmacy", "doctoral pharmacy", "pharmaceutical science",
+            "पीएचडी फार्मेसी"]
+  title_localized:
+    hi-IN: "पीएचडी (फार्मास्युटिकल साइंस)"
+    mr-IN: "पीएच.डी. (औषधनिर्माणशास्त्र)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [doctoral, phd, pharmacy, research, sptm]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/pharmacy-admission-handout"
+  structured:
+    degree: "Ph.D."
+    programme: "Ph.D. (Pharmaceutical Science)"
+    school: "School of Pharmacy & Technology Management"
+    duration: "Minimum 3 years"
+    seats: "As per availability of supervisors"
+    mode: "Full time on campus; part time only as notified by the university"
+    medium: "English"
+    eligibility: "A master's degree, or a professional degree declared equivalent to a master's degree by the corresponding statutory regulatory body, with at least 55% in aggregate or the equivalent grade B in the UGC 10-point scale. The candidate must have qualified NET or GPAT, or the test conducted by SVKM NMIMS Global University."
+    entrance_exam: "NET, GPAT or the university's Ph.D. entrance test (PET), followed by a personal interview"
+    selection_process: "Selection is based on performance in the personal interview conducted by the university. The list of research mentors and the list of qualified candidates for the fall session are published on the website."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350640, 91589 47999, 86685 01496"
+  body: |
+    The doctoral programme in Pharmaceutical Science runs for a minimum of three
+    years and intake depends on the availability of supervisors. A candidate must
+    hold a master's degree, or a professional degree declared equivalent to a
+    master's degree by the corresponding statutory regulatory body, with at least
+    fifty five per cent in aggregate or the equivalent grade B in the UGC ten
+    point scale, and must have qualified NET or GPAT or the test conducted by SVKM
+    NMIMS Global University. Selection is based on performance in a personal
+    interview conducted by the university. The Ph.D. entrance test notice, the
+    list of research mentors and the list of candidates qualified for the fall
+    session of the academic year 2026-27 are published on the website.
+
+- slug: faq-no-medical-programmes
+  category: faq
+  subcategory: programmes
+  title: "Medical, dental, nursing and allied health programmes are not offered"
+  aliases: ["MBBS", "BDS", "nursing", "physiotherapy", "medical college",
+            "एमबीबीएस", "बीडीएस", "नर्सिंग", "मेडिकल", "doctor course", "आयुष"]
+  title_localized:
+    hi-IN: "एमबीबीएस, बीडीएस या नर्सिंग की सुविधा नहीं"
+    mr-IN: "एमबीबीएस, बीडीएस किंवा नर्सिंग अभ्यासक्रम उपलब्ध नाही"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, medical, not-offered, escalate]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in programme list and admission handouts"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    not_offered:
+      - "MBBS"
+      - "BDS / dental"
+      - "B.Sc. Nursing"
+      - "Physiotherapy (BPT)"
+      - "Ayurveda, Homeopathy and other AYUSH degrees"
+      - "Paramedical and allied health science degrees"
+    offered_instead:
+      - "Diploma in Pharmacy (D.Pharm)"
+      - "Bachelor of Pharmacy (B.Pharm)"
+      - "B.Pharm + MBA (Pharma Tech)"
+      - "B.Tech (Cosmetic Technology)"
+      - "M.Pharm and Ph.D. in Pharmaceutical Science"
+    assistant_instruction: "Say clearly that these programmes are not offered, name the pharmacy alternatives, and never invent an entrance route, fee or seat count for a programme the university does not run."
+  body: |
+    SVKM NMIMS Global University does not run MBBS, BDS or any dental programme,
+    nursing, physiotherapy, ayurveda, homeopathy or other AYUSH degrees, or
+    paramedical and allied health science degrees. The university's health
+    science provision is pharmacy and cosmetic technology, namely the two year
+    Diploma in Pharmacy, the four year Bachelor of Pharmacy, the five year
+    B.Pharm plus MBA in Pharma Tech, the four year B.Tech in Cosmetic Technology,
+    the two year M.Pharm in four specialisations, and a doctoral programme in
+    Pharmaceutical Science. There is no entrance route, fee or seat count for a
+    clinical medical programme here. Anyone looking for a medical or dental
+    college needs an institution holding the relevant National Medical Commission
+    or Dental Council of India approval.

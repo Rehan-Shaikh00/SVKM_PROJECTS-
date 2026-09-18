@@ -1,0 +1,188 @@
+# ============================================================================
+# SCHOOL OF COMMERCE (SOC)  —  started A.Y. 2024-25
+# ============================================================================
+# Source of truth: https://www.svkmnmimsgu.ac.in/commerce-admission-handout
+# plus the programme list on https://www.svkmnmimsgu.ac.in/ (retrieved 2026-09-18).
+#
+# This school offers exactly TWO programmes: BBA and BCA. Earlier drafts of this
+# knowledge base carried B.Com (Hons), BBA LL.B. (Hons), M.Com, MBA and B.Sc
+# records sourced from aggregators. Those belong to SVKM's NMIMS (Deemed to be
+# University) Mumbai and its School of Commerce campus at Dhule — a DIFFERENT
+# legal entity on a different campus — and have been removed, because quoting
+# another institution's programmes on this university's admissions line is
+# exactly the hallucination this system exists to prevent.
+
+- slug: school-soc-overview
+  category: course
+  subcategory: commerce
+  title: "School of Commerce — programmes overview"
+  aliases: ["commerce", "business school", "management programmes", "वाणिज्य",
+            "कॉमर्स", "व्यवस्थापन", "बीबीए", "बीसीए"]
+  title_localized:
+    hi-IN: "वाणिज्य स्कूल"
+    mr-IN: "वाणिज्य शाळा"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, commerce, management, overview, soc]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/commerce-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/commerce-admission-handout"
+  structured:
+    school: "School of Commerce"
+    levels: ["UG (BBA, BCA)"]
+    programmes:
+      - "Bachelor of Business Administration (BBA) — 3 years, semester, intake 60"
+      - "Bachelor in Computer Applications (BCA) — 3 years, semester, intake 60"
+    entrance_exam: "MAH-CET (BBA/BCA/BMS), NPAT or PERA TEST"
+    medium: "English"
+    mode: "Full time, on campus"
+    school_phone: "02562 350600, 92721 10073, 87887 01642"
+  body: |
+    The School of Commerce started in the academic year 2024-25 and offers two
+    three year undergraduate programmes on the semester pattern for the academic
+    year 2026-27: the Bachelor of Business Administration with an intake of sixty,
+    and the Bachelor in Computer Applications with an intake of sixty. Both ask
+    for ten plus two from a recognised board in Arts, Commerce or Science with at
+    least fifty per cent in aggregate, and Mathematics is not compulsory for
+    either. Selection is based on the MAH-CET score for BBA, BCA and BMS, the NPAT
+    score, or the PERA test, and the university publishes round-wise merit lists
+    for both programmes. Teaching is in English and both programmes are full time
+    on campus.
+
+- slug: course-bba
+  category: course
+  subcategory: management
+  school: "School of Commerce"
+  title: "Bachelor of Business Administration (BBA)"
+  aliases: ["BBA", "business administration", "management degree", "बीबीए",
+            "बिझनेस एडमिनिस्ट्रेशन", "व्यवस्थापन पदवी"]
+  title_localized:
+    hi-IN: "बैचलर ऑफ बिजनेस एडमिनिस्ट्रेशन (बीबीए)"
+    mr-IN: "व्यवस्थापन तत्त्वज्ञान पदवी (बीबीए)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, commerce, management, bba, soc]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/commerce-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/commerce-admission-handout"
+  structured:
+    degree: "BBA"
+    programme: "Bachelor of Business Administration (BBA)"
+    school: "School of Commerce"
+    duration_years: 3
+    seats: 60
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 (Arts, Commerce or Science) or equivalent from a recognised board, with at least 50% marks in aggregate. Mathematics is not compulsory."
+    entrance_exam: "MAH-CET (BBA/BCA/BMS), NPAT or PERA TEST"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list. First, second and third round merit lists for AY 2026-27 are published on the website."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27. The School of Commerce office and the admission portal confirm the fee at the time of the offer."
+    school_phone: "02562 350600, 92721 10073, 87887 01642"
+  body: |
+    The three year Bachelor of Business Administration runs on the semester
+    pattern in the School of Commerce with an intake of sixty students for the
+    academic year 2026-27. A candidate must have passed ten plus two in Arts,
+    Commerce or Science or an equivalent examination from a recognised board, with
+    at least fifty per cent marks in aggregate, and Mathematics is not
+    compulsory. Selection is based on the MAH-CET score for BBA, BCA and BMS, the
+    NPAT score, or the PERA test, and the university has published first, second
+    and third round merit lists for this programme for the academic year 2026-27.
+    This is the BBA of SVKM NMIMS Global University at Dhule, and it is not the
+    BBA LL.B. honours programme or the B.Com honours programme run by SVKM's
+    NMIMS School of Commerce at Dhule, which is a separate institution.
+
+- slug: course-bca
+  category: course
+  subcategory: computers
+  school: "School of Commerce"
+  title: "Bachelor in Computer Applications (BCA)"
+  aliases: ["BCA", "computer applications", "बीसीए", "कॉम्प्युटर अप्लिकेशन"]
+  title_localized:
+    hi-IN: "बैचलर इन कंप्यूटर एप्लीकेशन (बीसीए)"
+    mr-IN: "संगणक अनुप्रयोग पदवी (बीसीए)"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [ug, commerce, computers, bca, soc]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in/commerce-admission-handout"
+  source: "https://www.svkmnmimsgu.ac.in/commerce-admission-handout"
+  structured:
+    degree: "BCA"
+    programme: "Bachelor in Computer Applications (BCA)"
+    school: "School of Commerce"
+    duration_years: 3
+    seats: 60
+    pattern: "Semester"
+    mode: "Full time, on campus"
+    medium: "English"
+    eligibility: "Class 10+2 (Arts, Commerce or Science) or equivalent from a recognised board, with a minimum of 50% marks in aggregate. Mathematics is not compulsory."
+    entrance_exam: "MAH-CET (BBA/BCA/BMS), NPAT or PERA TEST"
+    selection_process: "Selection is based on the score in one of the qualifying tests, followed by the university's round-wise merit list. First, second and third round merit lists for AY 2026-27 are published on the website."
+    fees:
+      note: "No fee table is published on the university website for AY 2026-27."
+    school_phone: "02562 350600, 92721 10073, 87887 01642"
+  body: |
+    The three year Bachelor in Computer Applications runs on the semester pattern
+    in the School of Commerce with an intake of sixty students for the academic
+    year 2026-27. A candidate must have passed ten plus two in Arts, Commerce or
+    Science or an equivalent examination from a recognised board with a minimum of
+    fifty per cent marks in aggregate, and Mathematics is not compulsory.
+    Selection is based on the MAH-CET score for BBA, BCA and BMS, the NPAT score,
+    or the PERA test, and the university has published first, second and third
+    round merit lists for this programme. A BCA graduate can go on to the two year
+    MCA in the School of Technology, Management and Engineering, which asks for a
+    bachelor's degree in a relevant field such as Computer Applications or
+    Computer Science with at least fifty per cent.
+
+- slug: faq-programmes-not-offered-here
+  category: faq
+  subcategory: programmes
+  title: "Commerce, management and law programmes this university does not run"
+  aliases: ["B.Com", "M.Com", "BBA LLB", "law degree", "MBA", "B.Sc", "CLAT",
+            "बी कॉम", "एमबीए", "एलएलबी", "कायदा", "science degree"]
+  title_localized:
+    hi-IN: "बी.कॉम, एमबीए या कानून की पढ़ाई यहां नहीं है"
+    mr-IN: "बी.कॉम, एमबीए किंवा कायद्याचा अभ्यासक्रम येथे नाही"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [faq, not-offered, commerce, law, management, escalate]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in programme list, admission enquiry form and handouts"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    not_offered:
+      - "B.Com (Hons) and its specialisations, including ACCA, CMA and International Accounting"
+      - "M.Com"
+      - "BBA LL.B. (Hons) or any law degree"
+      - "A standalone MBA at this university"
+      - "B.Sc. programmes"
+    offered_instead:
+      - "BBA (3 years, intake 60)"
+      - "BCA (3 years, intake 60)"
+      - "B.Tech + MBA (Technology Management), a 5-year dual degree"
+      - "B.Pharm + MBA (Pharma Tech), a 5-year dual degree"
+      - "MCA, M.Tech, M.Pharm and Ph.D. programmes"
+    assistant_instruction: "Do not offer a fee, an entrance route or a seat count for these. Management study at this university exists only inside the B.Tech + MBA and B.Pharm + MBA dual degrees. Law, B.Com and a standalone MBA are associated with SVKM's NMIMS (Deemed to be University) and its School of Commerce campus at Dhule, which is a separate institution with its own admission authority; if that is what the caller wants, say so and give them the university's number rather than guessing."
+  body: |
+    SVKM NMIMS Global University at Dhule does not run B.Com in any
+    specialisation, M.Com, a law degree such as BBA LL.B., a B.Sc., or a
+    standalone MBA. In the School of Commerce it offers the three year BBA and the
+    three year BCA. Management study at this university exists inside two dual
+    degrees, the five year B.Tech plus MBA in Technology Management and the five
+    year B.Pharm plus MBA in Pharma Tech, and at postgraduate level through the
+    MCA, M.Tech and M.Pharm. Programmes such as B.Com honours, BBA LL.B. honours
+    and the MBA are associated with SVKM's NMIMS, the deemed to be university in
+    Mumbai, and with its School of Commerce campus at Dhule, which is a separate
+    institution with its own admission authority, its own entrance tests and its
+    own fee structure. Nothing about those programmes can be confirmed from this
+    university's office.

@@ -1,0 +1,295 @@
+# ============================================================================
+# ADMISSIONS  —  process, tests, eligibility, documents, dates
+# ============================================================================
+# Source of truth: the three school-wise admission handouts and the homepage
+# Admission Announcements on https://www.svkmnmimsgu.ac.in/ (retrieved 2026-09-18).
+#
+# What is verified here: the online portal, the round-based merit lists, the
+# qualifying tests per programme family, and the published eligibility. What is
+# NOT verified: an application fee amount, a document list transcribed from the
+# published PDFs, and any specific calendar date — the website publishes those as
+# per-programme PDF schedules that change round by round, so the assistant points
+# to them instead of reciting a date it cannot stand behind.
+
+- slug: admission-process-overview
+  category: admission_process
+  subcategory: steps
+  title: "How admission works, step by step"
+  aliases: ["how to apply", "admission process", "apply online", "registration",
+            "प्रवेश प्रक्रिया", "अर्ज कसा भरावा", "एडमिशन कैसे लें", "आवेदन"]
+  title_localized:
+    hi-IN: "प्रवेश प्रक्रिया"
+    mr-IN: "प्रवेश प्रक्रिया"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [admission, process, apply, portal]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission handouts and homepage admission announcements"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    application_mode: "Online, through the SVKM admission portal"
+    apply_url: "https://sdcappscs.svkm.ac.in:44300/irj/portal"
+    steps:
+      - "Register online on the SVKM admission portal for AY 2026-27"
+      - "Choose the school and the programme, and appear for one of its qualifying tests"
+      - "Wait for the round-wise merit list published on the university website"
+      - "Follow the published admission schedule for that round and submit the listed documents"
+      - "If a round is missed, later rounds and spot admission are published as announcements"
+    rounds_published_for_ay_2026_27:
+      - "Round I, Round II and Round III schedules and merit lists for B.Tech, B.Tech + MBA, M.Tech, MCA, D.Pharm, B.Pharm, B.Pharm + MBA, B.Tech Cosmetic Technology and M.Pharm"
+      - "Direct Second Year schedules and merit lists for B.Tech, B.Tech + MBA, B.Pharm and B.Pharm + MBA"
+      - "Spot admission for the School of Technology, Management & Engineering"
+      - "Ph.D. entrance test notice and the list of qualified candidates for the fall session"
+    enquiry: "Admission enquiry form on the website, or the school office numbers published on the contact page."
+    assistant_instruction: "Give the mechanism, the portal and the school number. Never state a deadline, a cut off or an allotment outcome; the website publishes round schedules as PDFs that change."
+  body: |
+    Admission for the academic year 2026-27 is entirely online. The applicant
+    registers on the SVKM admission portal linked from the university website,
+    chooses the school and the programme, and appears for one of the qualifying
+    tests that programme accepts. The university then publishes round-wise merit
+    lists on its website, and each list is accompanied by an admission schedule
+    for that round which sets out the dates, the reporting procedure and the
+    document list for that programme. For the academic year 2026-27 the university
+    has published round one, round two and round three schedules and merit lists
+    across the engineering, pharmacy and commerce programmes, separate direct
+    second year schedules and merit lists for B.Tech, B.Tech plus MBA, B.Pharm and
+    B.Pharm plus MBA, a spot admission announcement for the School of Technology,
+    Management and Engineering, and for the doctoral programmes a Ph.D. entrance
+    test notice with the list of candidates qualified for the fall session.
+    Applicants who miss a round watch the admission announcements section of the
+    website, and can call the school office for the position in the current round.
+
+- slug: admission-entrance-tests
+  category: entrance_exam
+  subcategory: tests
+  title: "Entrance tests accepted, by programme"
+  aliases: ["entrance exam", "which exam", "MHT CET", "JEE", "NPAT", "PERA test",
+            "NCET", "GPAT", "GATE", "NEET", "MAH CET", "प्रवेश परीक्षा", "परीक्षा"]
+  title_localized:
+    hi-IN: "प्रवेश परीक्षाएं"
+    mr-IN: "प्रवेश परीक्षा"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [admission, entrance-exam, tests]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission handouts"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    tests:
+      - "B.Tech and B.Tech + MBA: MHT-CET (PCM), JEE Main, JEE Advanced, NCET (NMIMS-CET), SAT, PERA TEST (PCM)"
+      - "M.Tech: GATE or PERA TEST"
+      - "MCA: MAH-MCA-CET or PERA TEST (MCA)"
+      - "BBA and BCA: MAH-CET (BBA/BCA/BMS), NPAT, PERA TEST"
+      - "B.Pharm, B.Pharm + MBA and B.Tech Cosmetic Technology: MHT-CET (PCM/PCB), NEET (PCB), NCET (NMIMS-CET), SAT, PERA TEST (PCM/PCB)"
+      - "D.Pharm: no entrance test, merit on 10+2 marks in Physics, Chemistry and the higher of Mathematics or Biology"
+      - "M.Pharm: GPAT or PERA TEST"
+      - "Ph.D.: NET, GATE or GPAT as applicable, or the university's own test, then a personal interview"
+    university_test: "PERA TEST and NCET (NMIMS-CET) are the tests conducted by the NMIMS group; the Ph.D. entrance test is conducted by SVKM NMIMS Global University itself."
+    assistant_instruction: "Name only the tests listed for the programme asked about, and say that the round-wise merit list follows. Do not state a cut off score or a percentile."
+  body: |
+    The qualifying test depends on the programme. For B.Tech and the B.Tech plus
+    MBA dual degree, selection is based on the score in MHT-CET for PCM, JEE Main,
+    JEE Advanced, NCET which is the NMIMS-CET, SAT, or the PERA test for PCM. For
+    M.Tech it is GATE or the PERA test. For MCA it is the MAH-MCA-CET or the PERA
+    test for MCA. For BBA and BCA in the School of Commerce it is the MAH-CET for
+    BBA, BCA and BMS, NPAT, or the PERA test. For B.Pharm, the B.Pharm plus MBA
+    dual degree and B.Tech in Cosmetic Technology it is MHT-CET for PCM or PCB,
+    NEET for PCB, NCET, SAT or the PERA test. The Diploma in Pharmacy has no
+    entrance test at all, and is filled on merit from the ten plus two marks in
+    Physics, Chemistry and the higher of Mathematics or Biology. For M.Pharm it is
+    GPAT or the PERA test. For the doctoral programmes a candidate must have
+    qualified NET, or GATE for technology and GPAT for pharmaceutical science, or
+    the entrance test conducted by the university, and selection then follows a
+    personal interview. Round-wise merit lists are published on the website after
+    the tests.
+
+- slug: admission-eligibility-summary
+  category: eligibility
+  subcategory: summary
+  title: "Eligibility summary by level"
+  aliases: ["eligibility", "am I eligible", "minimum marks", "qualification",
+            "पात्रता", "किती गुण", "टक्केवारी", "शैक्षणिक अर्हता", "आवश्यक गुण"]
+  title_localized:
+    hi-IN: "पात्रता की जानकारी"
+    mr-IN: "पात्रतेची माहिती"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [admission, eligibility, marks]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in admission handouts"
+  source: "https://www.svkmnmimsgu.ac.in/technology-admission-handout"
+  structured:
+    undergraduate: "B.Tech and B.Tech + MBA: 10+2 with English, Physics and Mathematics plus one of Chemistry, a technical vocational subject, Computer Science, Information Technology, Informatics Practices or Engineering Graphics, with at least 45% in Physics, Mathematics and Chemistry or the vocational subject, or 40% for Backward Class Categories, EWS and Persons with Disability candidates. BBA and BCA: 10+2 in Arts, Commerce or Science from a recognised board with at least 50% in aggregate, Mathematics not compulsory."
+    pharmacy_undergraduate: "B.Pharm and B.Pharm + MBA: 10+2 with English as one subject and Physics, Chemistry, Mathematics or Biology as optional subjects individually. B.Tech Cosmetic Technology and D.Pharm: 10+2 with Physics, Chemistry and either Mathematics or Biology or both as major subjects. No minimum percentage is published for these in the AY 2026-27 handout."
+    postgraduate: "M.Tech: a bachelor's degree in the relevant field of Engineering and Technology from an AICTE or Central or State Government approved institution with at least 55%, or 45% for Backward Class Categories, EWS and PwD candidates. MCA: a bachelor's degree in a relevant field such as BCA or Computer Science, or B.Sc., B.Com. or B.A. with Mathematics at 10+2 or graduation level, with at least 50%, or 45% for those categories. M.Pharm: B.Pharm from a PCI-approved institution of an Indian university established by law with not less than 55% over the four years, plus State Pharmacy Council registration."
+    doctoral: "Ph.D.: a master's degree or an equivalent professional degree with at least 55% in aggregate or grade B on the UGC 10-point scale, and a qualified NET, GATE or GPAT score or the university's own test, followed by a personal interview."
+    reserved_categories: "The lower percentages published in the handouts apply to Backward Class Categories, the Economically Weaker Section and Persons with Disability candidates. Caste or category claims require the certificates the university asks for at the time of admission."
+    assistant_instruction: "Quote only the percentage published for the programme asked about, and mention the relaxed percentage for the reserved categories where the handout publishes one. Cut off scores and merit positions are never stated."
+  body: |
+    Eligibility depends on the level. For B.Tech and the B.Tech plus MBA dual
+    degree a candidate must have passed ten plus two or an equivalent examination
+    with English as a compulsory subject, Physics and Mathematics, and one of
+    Chemistry, a technical vocational subject, Computer Science, Information
+    Technology, Informatics Practices or Engineering Graphics, with at least forty
+    five per cent in Physics, Mathematics and Chemistry or the vocational subject,
+    reduced to forty per cent for Backward Class Categories, Economically Weaker
+    Section and Persons with Disability candidates. For BBA and BCA the requirement
+    is ten plus two in Arts, Commerce or Science from a recognised board with at
+    least fifty per cent in aggregate, and Mathematics is not compulsory. For
+    B.Pharm and the B.Pharm plus MBA the requirement is ten plus two with English
+    as one of the subjects and Physics, Chemistry, Mathematics or Biology as
+    optional subjects individually, while for B.Tech in Cosmetic Technology and the
+    Diploma in Pharmacy it is ten plus two with Physics, Chemistry and either
+    Mathematics or Biology or both as major subjects. The handout for this cycle
+    publishes no minimum percentage for the pharmacy programmes. At postgraduate
+    level, M.Tech asks for a bachelor's degree in the relevant field of
+    Engineering and Technology from an approved institution with at least fifty
+    five per cent, or forty five per cent for the reserved categories; MCA asks
+    for a relevant bachelor's degree, or a B.Sc., B.Com. or B.A. with Mathematics
+    at ten plus two or graduation level, with at least fifty per cent, or forty
+    five per cent for those categories; and M.Pharm asks for a B.Pharm from a
+    Pharmacy Council of India approved institution of an Indian university
+    established by law with not less than fifty five per cent over the four years,
+    together with State Pharmacy Council registration. For the Ph.D. a candidate
+    needs a master's degree or an equivalent professional degree with at least
+    fifty five per cent or grade B on the UGC ten point scale, a qualified NET,
+    GATE or GPAT score or the university's own test, and then a personal
+    interview.
+
+- slug: admission-documents-required
+  category: documents
+  subcategory: checklist
+  title: "Documents required for admission"
+  aliases: ["documents", "certificates needed", "what to bring", "document list",
+            "कागदपत्रे", "डॉक्युमेंट्स", "प्रमाणपत्र", "दस्तावेज", "कागजपत्र"]
+  title_localized:
+    hi-IN: "प्रवेश के लिए आवश्यक दस्तावेज"
+    mr-IN: "प्रवेशासाठी आवश्यक कागदपत्रे"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [admission, documents, checklist]
+  verified: false
+  verified_by: null
+  source: "The university publishes a separate document-list PDF per programme (first year and direct second year lists differ); those PDFs are the authority and are not transcribed here."
+  structured:
+    documents_required:
+      - "Class 10 mark sheet and certificate, as proof of date of birth"
+      - "Class 12 mark sheet and certificate"
+      - "Qualifying entrance test score card"
+      - "Graduation or post-graduation mark sheets and the degree or provisional certificate, for PG and doctoral applicants"
+      - "Diploma mark sheets and the diploma certificate, for direct second year applicants"
+      - "Transfer certificate and migration certificate where applicable"
+      - "Caste or category certificate and a non-creamy layer certificate where a relaxed percentage or a reserved seat is claimed"
+      - "Government photo identity proof"
+      - "State Pharmacy Council registration, for M.Pharm applicants"
+    official_lists: "A separate document list PDF is published for each programme on the university website, and first year and direct second year candidates have different lists."
+    assistant_instruction: "Read this as a typical list only, say that the university publishes a programme specific document list on its website, and offer to send the link or the list by SMS. Never confirm that a caller's own documents are sufficient; that verification is done by the admissions office."
+  body: |
+    The university publishes a separate document list for each programme on its
+    website, and the list for first year candidates differs from the one for
+    direct second year candidates, so the published PDF for the specific programme
+    is the authority. A typical list covers the class ten mark sheet and
+    certificate as proof of date of birth, the class twelve mark sheet and
+    certificate, the score card of the qualifying entrance test, graduation and
+    post graduation mark sheets with the degree or provisional certificate for
+    postgraduate and doctoral applicants, diploma mark sheets and the diploma
+    certificate for direct second year applicants, the transfer certificate and
+    migration certificate where applicable, a caste or category certificate and a
+    non creamy layer certificate where a relaxed percentage or a reserved seat is
+    claimed, and a government photo identity proof. Applicants to the Master of
+    Pharmacy also need registration with the State Pharmacy Council, or must
+    obtain it within one month of admission, failing which the admission is
+    cancelled. Whether a specific set of documents is sufficient is decided by the
+    admissions office when they are verified.
+
+- slug: admission-important-dates
+  category: important_dates
+  subcategory: timeline
+  title: "Admission dates and how to get the current schedule"
+  aliases: ["last date", "deadline", "when does admission close", "important dates",
+            "admission schedule", "merit list", "round status", "which round",
+            "is admission still open", "selection list", "waiting list",
+            "शेवटची तारीख", "मुदत", "आखिरी तारीख", "कब तक", "तारीख", "वेळापत्रक",
+            "मेरिट लिस्ट", "गुणवत्ता सूची", "चयन सूची", "राउंड", "प्रवेश अभी खुला है",
+            "मेरिट यादी", "गुणवत्ता यादी", "निवड यादी", "फेरी", "प्रवेश सुरू आहे"]
+  title_localized:
+    hi-IN: "प्रवेश की तारीखें"
+    mr-IN: "प्रवेशाच्या तारखा"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [admission, dates, schedule, escalate]
+  verified: true
+  verified_by: "seed:svkmnmimsgu.ac.in"
+  verified_at: "2026-09-18T00:00:00+05:30"
+  verification_note: "svkmnmimsgu.ac.in homepage admission announcements"
+  source: "https://www.svkmnmimsgu.ac.in/"
+  structured:
+    how_it_works: "Every date for AY 2026-27 is published as a per-programme PDF schedule on the university website, under Admission Announcements for each school, and a separate schedule is issued for each round."
+    # Read off the Admission Announcements tabs on the university homepage on
+    # 17 September 2026. Each school is at a different round, so the rounds are
+    # recorded per programme group rather than as one blanket statement.
+    rounds_running_for_ay_2026_27:
+      - "B.Tech and B.Tech + MBA: schedules and merit lists published for Round I, Round II and Round III"
+      - "Direct Second Year B.Tech: schedules for Round I and Round II, with an extended schedule issued for Round I, and merit lists for both rounds"
+      - "M.Tech: admission schedules published for Round I and Round II"
+      - "MCA: schedules and merit lists published for Round I and Round II"
+      - "Pharmacy — D.Pharm, B.Pharm, B.Pharm + MBA, B.Tech Cosmetic Technology and Direct Second Year B.Pharm: schedules and final merit lists published up to Round III, and M.Pharm up to Round II"
+      - "BBA and BCA: first, second and third round merit lists published, with an admission schedule and document list for the School of Commerce"
+      - "Spot admission for the School of Technology, Management & Engineering"
+      - "Ph.D. entrance test notice and the list of candidates qualified for the fall session"
+    how_to_get_current_dates: "The Admission Announcements section of https://www.svkmnmimsgu.ac.in/ lists the schedule and merit list PDFs for each school and round, and the school office numbers on the contact page confirm the position in the current round."
+    assistant_instruction: "Do not state a specific date, deadline or last date unless it is recorded here and marked verified. Describe the round mechanism, say where the schedule PDF is published, and offer to send the link by SMS or connect the caller to the school office."
+  body: |
+    Every admission date for the academic year 2026-27 is published on the
+    university website as a schedule PDF for a specific programme and a specific
+    round, in the Admission Announcements section for each school, so there is no
+    single last date that applies to everything. For this cycle the School of
+    Technology, Management and Engineering has published schedules and merit lists
+    up to round three for B.Tech and B.Tech plus MBA, up to round two for M.Tech,
+    MCA and direct second year B.Tech, and a spot admission announcement. The
+    School of Pharmacy and Technology Management has published schedules and final
+    merit lists up to round three for D.Pharm, B.Pharm, B.Pharm plus MBA, B.Tech
+    Cosmetic Technology and direct second year B.Pharm, and up to round two for
+    M.Pharm. The School of Commerce has published first, second and third round
+    merit lists for BBA and BCA along with an admission schedule and a document
+    list. For the doctoral programmes there is a Ph.D. entrance test notice with
+    the list of candidates qualified for the fall session. Because each round gets
+    its own PDF and schedules are sometimes extended, the current position for a
+    programme is read from that programme's latest schedule on the website, or
+    confirmed by the school office, rather than from memory.
+
+- slug: admission-application-fee
+  category: fees
+  subcategory: application
+  title: "Application fee"
+  aliases: ["application fee", "form fee", "registration fee", "अर्ज शुल्क",
+            "फॉर्म फी", "आवेदन शुल्क", "रजिस्ट्रेशन फी"]
+  title_localized:
+    hi-IN: "आवेदन शुल्क"
+    mr-IN: "अर्ज शुल्क"
+  academic_year: "2026-27"
+  language: en-IN
+  tags: [admission, fees, application, escalate]
+  verified: false
+  verified_by: null
+  source: "No application or registration fee amount is published on the university website; the SVKM admission portal shows the amount during registration."
+  structured:
+    amount: null
+    payment_mode: "Collected online through the SVKM admission portal during registration."
+    refundable: "Not published."
+    important: "The exact amount is shown in the portal for the programme and round selected."
+    assistant_instruction: "Do not quote an amount, because none is published here. Tell the caller the amount is shown on the SVKM admission portal during registration for the programme selected, say that it is normally not refundable only if the portal states that, and offer to connect them to the school office."
+  body: |
+    Registration for the academic year 2026-27 is through the SVKM admission
+    portal linked from the university website, and the portal is where the
+    application fee is collected. The university website does not publish an
+    application or registration fee amount, or whether it is refundable, so the
+    exact figure is the one shown in the portal for the programme and the round
+    being applied to, and the school office confirms it before payment. Quoting an
+    amount from anywhere else would be a guess.
