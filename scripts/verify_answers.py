@@ -10,13 +10,18 @@ Usage:
     cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000
     .venv/bin/python scripts/verify_answers.py            # or --base-url ...
 
+With ADMIN_AUTH_ENABLED=true, pass --username/--password (or set the
+ADMIN_USERNAME / ADMIN_PASSWORD env vars); with auth off nothing is needed.
+
 Exits non-zero if any case fails, so it can gate a deploy.
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import json
+import os
 import sys
 import urllib.error
 import urllib.request
@@ -185,17 +190,27 @@ CASES: list[Case] = [
 ]
 
 
-def ask(base_url: str, case: Case) -> tuple[bool, list[str], dict[str, Any]]:
+def ask(
+    base_url: str, case: Case, auth_header: str | None = None
+) -> tuple[bool, list[str], dict[str, Any]]:
     payload = {"question": case.question, "language": case.language, "explain": True}
+    headers = {"content-type": "application/json"}
+    if auth_header:
+        headers["authorization"] = auth_header
     request = urllib.request.Request(
         f"{base_url.rstrip('/')}/api/assistant/query",
         data=json.dumps(payload).encode("utf-8"),
-        headers={"content-type": "application/json"},
+        headers=headers,
     )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
             data = json.load(response)
     except urllib.error.HTTPError as exc:  # pragma: no cover - server problem
+        if exc.code == 401 and not auth_header:
+            return False, [
+                f"HTTP {exc.code}: {exc.reason} (admin auth is enabled: pass "
+                "--username/--password or set ADMIN_USERNAME/ADMIN_PASSWORD)"
+            ], {}
         return False, [f"HTTP {exc.code}: {exc.reason}"], {}
     except (urllib.error.URLError, TimeoutError) as exc:  # pragma: no cover
         return False, [f"cannot reach {base_url}: {exc}"], {}
@@ -233,15 +248,32 @@ def ask(base_url: str, case: Case) -> tuple[bool, list[str], dict[str, Any]]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    parser.add_argument(
+        "--username", default=None,
+        help="admin username when auth is enabled (default: $ADMIN_USERNAME)",
+    )
+    parser.add_argument(
+        "--password", default=None,
+        help="admin password when auth is enabled (default: $ADMIN_PASSWORD)",
+    )
     parser.add_argument("-v", "--verbose", action="store_true", help="print every answer")
     parser.add_argument("-k", dest="needle", default=None, help="only cases whose question contains this")
     args = parser.parse_args()
+
+    username = args.username or os.environ.get("ADMIN_USERNAME") or None
+    password = args.password
+    if password is None:
+        password = os.environ.get("ADMIN_PASSWORD")
+    auth_header: str | None = None
+    if username:
+        raw = f"{username}:{password or ''}".encode()
+        auth_header = f"Basic {base64.b64encode(raw).decode('ascii')}"
 
     cases = [c for c in CASES if not args.needle or args.needle.lower() in c.question.lower()]
     passed = failed = 0
     print(f"verifying {len(cases)} caller questions against {args.base_url}\n")
     for case in cases:
-        ok, failures, data = ask(args.base_url, case)
+        ok, failures, data = ask(args.base_url, case, auth_header)
         mark = "PASS" if ok else "FAIL"
         if ok:
             passed += 1

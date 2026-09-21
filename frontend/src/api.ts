@@ -133,6 +133,65 @@ export interface CallSummary {
   recording_consent: boolean | null
 }
 
+// ---------------------------------------------------------------------------
+// Admin auth — HTTP Basic, the scheme backend/app/api/auth.py checks.
+//
+// With ADMIN_AUTH_ENABLED=false (the documented local-development posture) no
+// header is sent. When the admin API is on and a call comes back 401, ask once
+// for the staff credentials and keep them for this browser tab so every panel —
+// analytics, calls, the knowledge-base editor — works against an auth-enabled
+// server instead of failing with "401 Unauthorized".
+// ---------------------------------------------------------------------------
+
+const ADMIN_AUTH_KEY = 'nims-admin-basic'
+
+function basicAuthHeader(): Record<string, string> {
+  try {
+    const saved = sessionStorage.getItem(ADMIN_AUTH_KEY)
+    return saved ? { Authorization: `Basic ${saved}` } : {}
+  } catch {
+    return {}
+  }
+}
+
+function promptForCredentials(): boolean {
+  const username = window.prompt('Admin username (ADMIN_USERNAME):')
+  if (!username) return false
+  const password = window.prompt('Admin password (ADMIN_PASSWORD):')
+  if (password === null || password === '') return false
+  // btoa only speaks Latin-1; go through UTF-8 bytes so any password survives.
+  const bytes = new TextEncoder().encode(`${username}:${password}`)
+  const b64 = btoa(String.fromCharCode(...bytes))
+  try {
+    sessionStorage.setItem(ADMIN_AUTH_KEY, b64)
+  } catch {
+    /* private mode: auth works for this request only */
+  }
+  return true
+}
+
+/** Drop stored staff credentials (e.g. a sign-out control). */
+export function clearAdminCredentials(): void {
+  try {
+    sessionStorage.removeItem(ADMIN_AUTH_KEY)
+  } catch {
+    /* nothing to clear */
+  }
+}
+
+async function authedFetch(path: string, init?: RequestInit): Promise<Response> {
+  const send = (): Promise<Response> =>
+    fetch(path, {
+      ...init,
+      headers: { ...(init?.headers || {}), ...basicAuthHeader() },
+    })
+  let res = await send()
+  if (res.status === 401 && promptForCredentials()) {
+    res = await send()
+  }
+  return res
+}
+
 async function unwrap<T = Record<string, any>>(res: Response): Promise<T> {
   if (!res.ok) {
     let detail = `${res.status} ${res.statusText}`
@@ -148,9 +207,9 @@ async function unwrap<T = Record<string, any>>(res: Response): Promise<T> {
 }
 
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
-    headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
+  const res = await authedFetch(path, {
     ...init,
+    headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
   })
   if (!res.ok) {
     let detail = `${res.status} ${res.statusText}`
@@ -212,12 +271,12 @@ export const api = {
   kbSyncSheet: (url = '') => {
     const fd = new FormData()
     fd.set('url', url)
-    return fetch('/api/kb/sync-sheet', { method: 'POST', body: fd }).then((r) => unwrap(r))
+    return authedFetch('/api/kb/sync-sheet', { method: 'POST', body: fd }).then((r) => unwrap(r))
   },
   kbPurge: () => {
     const fd = new FormData()
     fd.set('confirm', 'PURGE')
-    return fetch('/api/kb/purge', { method: 'POST', body: fd }).then((r) => unwrap(r))
+    return authedFetch('/api/kb/purge', { method: 'POST', body: fd }).then((r) => unwrap(r))
   },
   kbImport: (file: File | null, text: string, dryRun: boolean) => {
     const fd = new FormData()
@@ -225,7 +284,7 @@ export const api = {
     if (text) fd.append('text', text)
     fd.append('source', 'dashboard-import')
     fd.append('dry_run', dryRun ? 'true' : 'false')
-    return fetch('/api/kb/import', { method: 'POST', body: fd }).then((r) => unwrap(r))
+    return authedFetch('/api/kb/import', { method: 'POST', body: fd }).then((r) => unwrap(r))
   },
   kbPreviewChunking: (body: Record<string, unknown>) =>
     http<Record<string, any>>('/api/kb/preview-chunking', { method: 'POST', body: JSON.stringify(body) }),

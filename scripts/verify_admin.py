@@ -11,6 +11,9 @@ Usage:
     cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000
     .venv/bin/python scripts/verify_admin.py            # or --base-url ...
 
+With ADMIN_AUTH_ENABLED=true, pass --username/--password (or set the
+ADMIN_USERNAME / ADMIN_PASSWORD env vars); with auth off nothing is needed.
+
 Everything it creates it deletes again, so it is safe against a real database.
 Exits non-zero on any failure.
 """
@@ -18,9 +21,11 @@ Exits non-zero on any failure.
 from __future__ import annotations
 
 import argparse
+import base64
 import csv
 import io
 import json
+import os
 import sys
 import urllib.error
 import urllib.parse
@@ -51,16 +56,24 @@ def check(name: str, failures: list[str]) -> None:
 
 
 class Client:
-    def __init__(self, base_url: str, token: str | None = None) -> None:
+    """Talks to the admin API over HTTP Basic -- the scheme `require_admin` in
+    backend/app/api/auth.py actually checks. (This client once sent
+    `Authorization: Bearer …`, which the server cannot parse, so every call
+    401'd the moment auth was enabled.)"""
+
+    def __init__(self, base_url: str, username: str | None = None, password: str | None = None) -> None:
         self.base = base_url.rstrip("/")
-        self.token = token
+        self.auth_header: str | None = None
+        if username:
+            raw = f"{username}:{password or ''}".encode()
+            self.auth_header = f"Basic {base64.b64encode(raw).decode('ascii')}"
 
     def _headers(self, content_type: str | None = None) -> dict[str, str]:
         headers: dict[str, str] = {}
         if content_type:
             headers["content-type"] = content_type
-        if self.token:
-            headers["authorization"] = f"Bearer {self.token}"
+        if self.auth_header:
+            headers["authorization"] = self.auth_header
         return headers
 
     def request(
@@ -87,6 +100,11 @@ class Client:
                 return response.status, json.loads(payload or b"null")
         except urllib.error.HTTPError as exc:
             payload = exc.read().decode("utf-8", errors="replace")
+            if exc.code == 401 and not self.auth_header:
+                return exc.code, (
+                    f"{payload} [admin auth is enabled: pass --username/--password "
+                    "or set ADMIN_USERNAME/ADMIN_PASSWORD]"
+                )
             try:
                 return exc.code, json.loads(payload)
             except json.JSONDecodeError:
@@ -119,9 +137,26 @@ class Client:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
-    parser.add_argument("--token", default=None, help="admin bearer token, if auth is enabled")
+    parser.add_argument(
+        "--username", default=None,
+        help="admin username when auth is enabled (default: $ADMIN_USERNAME)",
+    )
+    parser.add_argument(
+        "--password", default=None,
+        help="admin password when auth is enabled (default: $ADMIN_PASSWORD)",
+    )
+    parser.add_argument(
+        "--token", default=None,
+        help="legacy alias: 'username:password' pair (same as --username/--password)",
+    )
     args = parser.parse_args()
-    client = Client(args.base_url, args.token)
+    username = args.username or os.environ.get("ADMIN_USERNAME") or None
+    password = args.password
+    if password is None:
+        password = os.environ.get("ADMIN_PASSWORD")
+    if args.token:
+        username, _, password = args.token.partition(":")
+    client = Client(args.base_url, username, password)
 
     # A distinctive fact, so there is no doubt whose record an answer came from.
     marker = uuid.uuid4().hex[:8]
