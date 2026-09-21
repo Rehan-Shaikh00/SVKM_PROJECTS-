@@ -4,7 +4,12 @@
 # by design, each with the reason recorded so they are not "cleaned up" later.
 target-version = "py311"
 line-length = 100
-extend-exclude = ["frontend", "data", ".venv", "backend/static"]
+# `workspace/` is a legacy, superseded monorepo scaffold (a second, incomplete
+# reimplementation of this assistant: its telephony package is an empty
+# __init__.py and its apps are stubs). It is kept for reference only and is not
+# part of the product — linting it only buries real findings from backend/ and
+# scripts/ in 180+ style errors from dead code.
+extend-exclude = ["frontend", "data", ".venv", "backend/static", "workspace"]
 
 [lint]
 ignore = [
