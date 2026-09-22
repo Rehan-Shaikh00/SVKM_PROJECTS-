@@ -1,0 +1,175 @@
+version: '3.9'
+
+services:
+  # PostgreSQL with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: svkm_postgres
+    environment:
+      POSTGRES_DB: svkm_voice_assistant
+      POSTGRES_USER: svkm_user
+      POSTGRES_PASSWORD: svkm_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U svkm_user -d svkm_voice_assistant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - svkm_network
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: svkm_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - svkm_network
+
+  # FastAPI management API
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      network: host  # 👈 Added to fix network timeouts during pip install
+    container_name: svkm_api
+    environment:
+      DATABASE_URL: postgresql://svkm_user:svkm_password@postgres:5432/svkm_voice_assistant
+      REDIS_URL: redis://redis:6379/0
+      PROVIDERS_MODE: ${PROVIDERS_MODE:-fake}
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    env_file:
+      - .env.local
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./packages:/app/packages
+      - ./config:/app/config
+    command: uvicorn apps.api.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - svkm_network
+
+  # FastAPI realtime WebSocket gateway
+  realtime:
+    build:
+      context: .
+      dockerfile: apps/realtime/Dockerfile
+      network: host  # 👈 Added to fix network timeouts during pip install
+    container_name: svkm_realtime
+    environment:
+      DATABASE_URL: postgresql://svkm_user:svkm_password@postgres:5432/svkm_voice_assistant
+      REDIS_URL: redis://redis:6379/0
+      PROVIDERS_MODE: ${PROVIDERS_MODE:-fake}
+      REALTIME_HOST: 0.0.0.0
+      REALTIME_PORT: 8001
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    env_file:
+      - .env.local
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./apps/realtime:/app/apps/realtime
+      - ./packages:/app/packages
+      - ./config:/app/config
+    command: uvicorn apps.realtime.main:app --host 0.0.0.0 --port 8001 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - svkm_network
+
+  # Background worker
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+      network: host  # 👈 Added to fix network timeouts during pip install
+    container_name: svkm_worker
+    environment:
+      DATABASE_URL: postgresql://svkm_user:svkm_password@postgres:5432/svkm_voice_assistant
+      REDIS_URL: redis://redis:6379/0
+      PROVIDERS_MODE: ${PROVIDERS_MODE:-fake}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    env_file:
+      - .env.local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./apps/worker:/app/apps/worker
+      - ./packages:/app/packages
+      - ./config:/app/config
+      - ./scripts:/app/scripts
+    command: python -m apps.worker.main
+    networks:
+      - svkm_network
+
+  # Next.js web UI (simulator + admin)
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: development
+      network: host  # 👈 Added to fix network timeouts during pnpm install
+    container_name: svkm_web
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_REALTIME_WS_URL: ws://localhost:8001
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+      - realtime
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
+    command: pnpm --filter web dev
+    networks:
+      - svkm_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  svkm_network:
+    driver: bridge
